@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react'
-import { Activity, CheckCircle2, ChevronRight, Eye, Info, Layers, Play, Power, Settings2, Trash2, X, Zap } from 'lucide-react'
+import { Activity, CheckCircle2, ChevronRight, Circle, Copy, Eye, Info, Layers, Minus, Palette, Play, Power, Settings2, Square, Trash2, Type, X, Zap } from 'lucide-react'
 import { useApp } from '../store'
 import { DeviceIcon, deviceTint } from './common/DeviceIcon'
 import { StatusPill } from './common/Modal'
@@ -12,6 +12,7 @@ export function Inspector() {
   if (!store.rightOpen) return null
 
   const device = store.selectedIds.length === 1 ? sim.device(store.selectedIds[0]) : undefined
+  const shape = store.selectedIds.length === 1 ? sim.shapes.find((s) => s.id === store.selectedIds[0]) : undefined
   const link = store.selectedLinkId ? sim.links.find((l) => l.id === store.selectedLinkId) : undefined
   const tables = device && store.tool === 'inspect' ? sim.inspectData(device.id) : []
   const activeTable = tables.find((t) => t.id === tableId) ?? tables[0]
@@ -20,7 +21,7 @@ export function Inspector() {
   return (
     <aside className="flex w-[286px] shrink-0 flex-col border-l border-white/8 bg-ink-900/70">
       <div className="flex items-center justify-between px-3 pb-2 pt-3">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{device ? 'Device' : link ? 'Link' : 'Overview'}</div>
+        <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{device ? 'Device' : shape ? 'Shape' : link ? 'Link' : 'Overview'}</div>
         <button className="btn-icon" title="Hide inspector" onClick={() => store.setRightOpen(false)}>
           <X size={13} />
         </button>
@@ -146,6 +147,72 @@ export function Inspector() {
           </div>
         )}
 
+        {shape && !device && (
+          <div className="space-y-3">
+            <div className="rounded-xl border border-white/8 bg-ink-950/50 p-3">
+              <div className="flex items-center gap-2">
+                <span className="flex h-9 w-9 items-center justify-center rounded-lg border border-white/10" style={{ color: shape.color, backgroundColor: `${shape.color}18` }}>
+                  {shape.kind === 'ellipse' ? <Circle size={17} /> : shape.kind === 'line' ? <Minus size={17} /> : shape.kind === 'text' ? <Type size={17} /> : <Square size={17} />}
+                </span>
+                <div>
+                  <div className="text-sm font-semibold capitalize text-slate-100">{shape.kind} shape</div>
+                  <div className="text-[10px] text-slate-500">{shape.kind === 'line' ? 'Line annotation' : shape.kind === 'text' ? 'Text annotation' : 'Canvas annotation'}</div>
+                </div>
+              </div>
+
+              <div className="mt-3">
+                <div className="label">Color</div>
+                <div className="mt-1 flex flex-wrap items-center gap-1.5">
+                  {['#22d3ee', '#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#fb7185', '#60a5fa', '#e2e8f0'].map((color) => (
+                    <button
+                      key={color}
+                      title={color}
+                      onClick={() => store.updateShape(shape.id, { color })}
+                      className={`h-5 w-5 rounded-full border-2 transition hover:scale-110 ${shape.color.toLowerCase() === color ? 'border-white' : 'border-white/20'}`}
+                      style={{ backgroundColor: color }}
+                    />
+                  ))}
+                  <label className="ml-1 inline-flex cursor-pointer items-center gap-1 rounded-md border border-white/10 px-1.5 py-1 text-[9px] text-slate-400 hover:text-slate-200" title="Custom color">
+                    <Palette size={11} />
+                    <input type="color" value={shape.color} onChange={(e) => store.updateShape(shape.id, { color: e.target.value })} className="h-4 w-5 cursor-pointer border-0 bg-transparent p-0" />
+                  </label>
+                </div>
+              </div>
+
+              <div className="mt-3 flex items-center gap-2">
+                <span className="label">Stroke</span>
+                <input type="range" min={1} max={6} value={shape.stroke} onChange={(e) => store.updateShape(shape.id, { stroke: Number(e.target.value) })} className="flex-1 accent-cyan-400" />
+                <span className="w-5 text-right font-mono text-[10px] text-slate-400">{shape.stroke}</span>
+              </div>
+
+              <div className="mt-3">
+                <label className="label">Label text</label>
+                <input
+                  key={`${shape.id}-${shape.text ?? ''}`}
+                  defaultValue={shape.text ?? ''}
+                  placeholder="Add a label…"
+                  className="input mt-1 text-[11px]"
+                  onBlur={(e) => store.updateShape(shape.id, { text: e.target.value || undefined })}
+                  onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
+                />
+              </div>
+
+              <div className="mt-2 text-[9px] leading-relaxed text-slate-600">
+                {shape.kind === 'line' ? 'Drag the two endpoint handles to move each end of the line.' : shape.kind === 'text' ? 'Drag the label to move it. Double-click to edit its text.' : 'Drag the square handles on the edges and corners to resize.'}
+              </div>
+
+              <div className="mt-3 grid grid-cols-2 gap-1.5">
+                <button className="btn" onClick={() => { store.select([shape.id]); store.duplicateSelection() }}>
+                  <Copy size={12} /> Duplicate
+                </button>
+                <button className="btn btn-danger" onClick={() => { store.select([shape.id]); store.deleteSelection() }}>
+                  <Trash2 size={12} /> Delete
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {link && !device && (
           <div className="space-y-3">
             <div className="rounded-xl border border-white/8 bg-ink-950/50 p-3">
@@ -174,7 +241,7 @@ export function Inspector() {
           </div>
         )}
 
-        {!device && !link && (
+        {!device && !link && !shape && (
           <div className="space-y-3">
             <div className="rounded-xl border border-white/8 bg-gradient-to-br from-cyan-400/10 to-indigo-500/5 p-3">
               <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-100">

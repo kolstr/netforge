@@ -281,7 +281,7 @@ export interface Note {
   color: string
 }
 
-export type ShapeKind = 'rect' | 'ellipse' | 'line'
+export type ShapeKind = 'rect' | 'ellipse' | 'line' | 'text'
 
 export interface Shape {
   id: string
@@ -363,6 +363,7 @@ export type Tool =
   | 'shape-rect'
   | 'shape-ellipse'
   | 'shape-line'
+  | 'text'
   | 'pdu-simple'
   | 'pdu-complex'
   | 'connect'

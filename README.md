@@ -20,7 +20,7 @@ Open the app, choose **Load example lab** on the empty workspace (or from **File
 - **Logical workspace** with pan, wheel zoom, fit-to-screen, marquee selection, multi-device drag, grid, snapping and alignment guides.
 - **Device palette** grouped into routers, switches, end devices, wireless, security and WAN equipment.
 - **Cabling tool** with automatic port filtering, straight-through, crossover, serial (DCE/DTE), console, phone, coax and fiber cables. Link lights show physical state, activity and STP blocking.
-- **Notes, shapes and free text** for annotating topologies.
+- **Notes, shapes and free text** for annotating topologies. The Text tool adds a draggable label; double-click any shape to edit its text, drag to move it, drag its handles to resize it, and press Delete or use the right-click menu to remove it. Select a shape to change its color, stroke width and label in the inspector.
 - **Undo/redo, copy/duplicate, delete, import/export JSON**, browser autosave and manual save.
 - **Physical configuration** for modules, power, interface LEDs and cable selection.
 - **Inspector** for the selected device or link, including runtime neighbors, interface state and port details.

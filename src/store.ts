@@ -85,7 +85,7 @@ interface AppState {
   connect: (from: { deviceId: string; ifaceId: string }, to: { deviceId: string; ifaceId: string }, cable: CableType) => boolean
   createNote: (x: number, y: number) => void
   updateNote: (id: string, patch: Partial<import('./types').Note>) => void
-  createShape: (kind: 'rect' | 'ellipse' | 'line', x: number, y: number, w: number, h: number) => void
+  createShape: (kind: import('./types').ShapeKind, x: number, y: number, w: number, h: number) => void
   updateShape: (id: string, patch: Partial<import('./types').Shape>) => void
 
   mutate: (fn: () => void, opts?: { topology?: boolean; save?: boolean }) => void
@@ -190,9 +190,18 @@ export const useApp = create<AppState>((set, get) => ({
       return
     }
     if (!selectedIds.length) return
+    const deviceIds = selectedIds.filter((id) => sim.devices.has(id))
+    const shapeIds = new Set(sim.shapes.map((s) => s.id))
+    const noteIds = new Set(sim.notes.map((n) => n.id))
+    const selectedShapes = selectedIds.filter((id) => shapeIds.has(id))
+    const selectedNotes = selectedIds.filter((id) => noteIds.has(id))
+    if (!deviceIds.length && !selectedShapes.length && !selectedNotes.length) return
     pushUndo(get())
-    sim.removeDevices(selectedIds)
-    set({ selectedIds: [], statusMessage: `${selectedIds.length} device(s) deleted` })
+    if (deviceIds.length) sim.removeDevices(deviceIds)
+    if (selectedShapes.length) sim.shapes = sim.shapes.filter((s) => !selectedShapes.includes(s.id))
+    if (selectedNotes.length) sim.notes = sim.notes.filter((n) => !selectedNotes.includes(n.id))
+    sim.bump()
+    set({ selectedIds: [], statusMessage: `${deviceIds.length + selectedShapes.length + selectedNotes.length} object(s) deleted` })
     saveTopology(get())
   },
 
@@ -205,19 +214,30 @@ export const useApp = create<AppState>((set, get) => ({
     for (const d of sim.devices.values()) for (const i of d.interfaces) if (i.mac) usedMacs.add(i.mac)
     for (const id of selectedIds) {
       const d = sim.devices.get(id)
-      if (!d) continue
-      const copy = structuredClone(d)
-      copy.id = `${d.kind}-${Math.random().toString(36).slice(2, 9)}`
-      copy.name = sim.nameFor(d.kind)
-      copy.config.hostname = copy.name
-      copy.x += 30
-      copy.y += 30
-      assignFreshMacs(copy, usedMacs)
-      sim.devices.set(copy.id, copy)
-      copies.push(copy.id)
+      if (d) {
+        const copy = structuredClone(d)
+        copy.id = `${d.kind}-${Math.random().toString(36).slice(2, 9)}`
+        copy.name = sim.nameFor(d.kind)
+        copy.config.hostname = copy.name
+        copy.x += 30
+        copy.y += 30
+        assignFreshMacs(copy, usedMacs)
+        sim.devices.set(copy.id, copy)
+        copies.push(copy.id)
+        continue
+      }
+      const shape = sim.shapes.find((s) => s.id === id)
+      if (shape) {
+        const copy = structuredClone(shape)
+        copy.id = `shape-${Math.random().toString(36).slice(2, 8)}`
+        copy.x += 20
+        copy.y += 20
+        sim.shapes.push(copy)
+        copies.push(copy.id)
+      }
     }
     sim.topologyChanged()
-    set({ selectedIds: copies, statusMessage: 'Devices duplicated' })
+    set({ selectedIds: copies, statusMessage: 'Object(s) duplicated' })
     saveTopology(get())
   },
 

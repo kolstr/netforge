@@ -24,6 +24,7 @@ import {
   Send,
   Minus,
   ArrowUpRight,
+  Type,
 } from 'lucide-react'
 import { useApp } from '../store'
 import { fitWorkspace, layoutItems } from '../lib/fitView'
@@ -72,6 +73,7 @@ export function TopToolbar() {
         {toolBtn('shape-rect', <Square size={14} />, 'Draw rectangle')}
         {toolBtn('shape-ellipse', <Circle size={14} />, 'Draw ellipse')}
         {toolBtn('shape-line', <Minus size={14} />, 'Draw line')}
+        {toolBtn('text', <Type size={14} />, 'Add text')}
       </div>
 
       <div className="flex items-center gap-0.5 rounded-lg border border-white/8 bg-ink-950/50 p-0.5">

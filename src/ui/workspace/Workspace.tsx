@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react'
 import { Activity, Cable, CheckCircle2, Eye, Grid3x3, Info, MousePointer2, Network, Play, Plus, Settings2, Sparkles, Trash2, Zap } from 'lucide-react'
-import type { CableType, Device, Interface } from '../../types'
+import type { CableType, Device, Interface, Shape } from '../../types'
 import { useApp } from '../../store'
 import { DeviceNode } from './DeviceNode'
 import { LinkLayer } from './LinkLayer'
@@ -27,6 +27,9 @@ export function Workspace() {
   const [drag, setDrag] = useState<{ ids: string[]; start: Point; origins: Map<string, Point>; moved: boolean } | null>(null)
   const [guides, setGuides] = useState<{ x: number[]; y: number[] }>({ x: [], y: [] })
   const [noteDrag, setNoteDrag] = useState<{ id: string; start: Point; origin: Point; moved: boolean } | null>(null)
+  const [shapeDrag, setShapeDrag] = useState<{ id: string; start: Point; origin: Point; moved: boolean } | null>(null)
+  const [shapeResize, setShapeResize] = useState<{ id: string; handle: string; start: Point; origin: { x: number; y: number; w: number; h: number }; moved: boolean } | null>(null)
+  const [editingShape, setEditingShape] = useState<string | null>(null)
   const panRef = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(null)
   const notePanRef = useRef<{ startX: number; startY: number; originX: number; originY: number } | null>(null)
   const spaceRef = useRef(false)
@@ -166,6 +169,105 @@ export function Workspace() {
   }, [noteDrag, sim, store])
 
   useEffect(() => {
+    if (!shapeDrag) return
+    const move = (e: PointerEvent) => {
+      if (!ref.current) return
+      const rect = ref.current.getBoundingClientRect()
+      const view = useApp.getState().view
+      const wx = (e.clientX - rect.left - view.x) / view.zoom
+      const wy = (e.clientY - rect.top - view.y) / view.zoom
+      const shape = sim.shapes.find((x) => x.id === shapeDrag.id)
+      if (shape) {
+        const nx = shapeDrag.origin.x + (wx - shapeDrag.start.x)
+        const ny = shapeDrag.origin.y + (wy - shapeDrag.start.y)
+        shape.x = store.settings.snapToGrid ? Math.round(nx / 20) * 20 : nx
+        shape.y = store.settings.snapToGrid ? Math.round(ny / 20) * 20 : ny
+        if (!shapeDrag.moved) setShapeDrag({ ...shapeDrag, moved: true })
+        sim.bump()
+      }
+    }
+    const up = () => {
+      if (shapeDrag.moved) {
+        store.saveLocal()
+        store.setStatus('Shape moved')
+      }
+      setShapeDrag(null)
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    return () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+    }
+  }, [shapeDrag, sim, store])
+
+  useEffect(() => {
+    if (!shapeResize) return
+    const move = (e: PointerEvent) => {
+      if (!ref.current) return
+      const rect = ref.current.getBoundingClientRect()
+      const view = useApp.getState().view
+      const wx = (e.clientX - rect.left - view.x) / view.zoom
+      const wy = (e.clientY - rect.top - view.y) / view.zoom
+      const shape = sim.shapes.find((x) => x.id === shapeResize.id)
+      if (!shape) return
+      const o = shapeResize.origin
+      const dx = wx - shapeResize.start.x
+      const dy = wy - shapeResize.start.y
+      if (shape.kind === 'line') {
+        if (shapeResize.handle === 'line-start') {
+          const endX = o.x + o.w
+          const endY = o.y + o.h
+          shape.x = o.x + dx
+          shape.y = o.y + dy
+          shape.w = endX - shape.x
+          shape.h = endY - shape.y
+        } else {
+          shape.w = o.w + dx
+          shape.h = o.h + dy
+        }
+      } else {
+        const min = 20
+        const left = shapeResize.handle.includes('w') ? o.x + dx : o.x
+        const right = shapeResize.handle.includes('e') ? o.x + o.w + dx : o.x + o.w
+        const top = shapeResize.handle.includes('n') ? o.y + dy : o.y
+        const bottom = shapeResize.handle.includes('s') ? o.y + o.h + dy : o.y + o.h
+        let x = left
+        let y = top
+        let w = right - left
+        let h = bottom - top
+        if (w < min) {
+          if (shapeResize.handle.includes('w')) x = right - min
+          w = min
+        }
+        if (h < min) {
+          if (shapeResize.handle.includes('n')) y = bottom - min
+          h = min
+        }
+        shape.x = x
+        shape.y = y
+        shape.w = w
+        shape.h = h
+      }
+      if (!shapeResize.moved) setShapeResize({ ...shapeResize, moved: true })
+      sim.bump()
+    }
+    const up = () => {
+      if (shapeResize.moved) {
+        store.saveLocal()
+        store.setStatus('Shape resized')
+      }
+      setShapeResize(null)
+    }
+    window.addEventListener('pointermove', move)
+    window.addEventListener('pointerup', up)
+    return () => {
+      window.removeEventListener('pointermove', move)
+      window.removeEventListener('pointerup', up)
+    }
+  }, [shapeResize, sim, store])
+
+  useEffect(() => {
     const move = (e: PointerEvent) => {
       const p = panRef.current
       if (!p) return
@@ -214,8 +316,18 @@ export function Workspace() {
       const y = Math.min(shapeDraft.start.y, shapeDraft.current.y)
       const kind = s.tool === 'shape-line' ? 'line' : s.tool === 'shape-ellipse' ? 'ellipse' : 'rect'
       if (kind === 'line') {
-        if (Math.hypot(w, h) > 8) s.createShape('line', shapeDraft.start.x, shapeDraft.start.y, shapeDraft.current.x - shapeDraft.start.x, shapeDraft.current.y - shapeDraft.start.y)
-      } else if (w > 12 && h > 12) s.createShape(kind, x, y, w, h)
+        if (Math.hypot(w, h) > 8) {
+          s.createShape('line', shapeDraft.start.x, shapeDraft.start.y, shapeDraft.current.x - shapeDraft.start.x, shapeDraft.current.y - shapeDraft.start.y)
+          const shape = s.sim.shapes[s.sim.shapes.length - 1]
+          if (shape) s.select([shape.id])
+          s.setTool('select')
+        }
+      } else if (w > 12 && h > 12) {
+        s.createShape(kind, x, y, w, h)
+        const shape = s.sim.shapes[s.sim.shapes.length - 1]
+        if (shape) s.select([shape.id])
+        s.setTool('select')
+      }
       setShapeDraft(null)
     }
     window.addEventListener('pointerup', up)
@@ -239,6 +351,17 @@ export function Workspace() {
       store.createNote(p.x - 95, p.y - 45)
       const n = sim.notes[sim.notes.length - 1]
       if (n) setEditingNote(n.id)
+      return
+    }
+    if (store.tool === 'text') {
+      store.createShape('text', p.x, p.y, 180, 24)
+      const shape = sim.shapes[sim.shapes.length - 1]
+      if (shape) {
+        store.updateShape(shape.id, { text: 'Text', color: '#e2e8f0' })
+        store.select([shape.id])
+        setEditingShape(shape.id)
+        store.setTool('select')
+      }
       return
     }
     if (store.tool.startsWith('shape-')) {
@@ -350,6 +473,59 @@ export function Workspace() {
     })
   }
 
+  const resizeDown = (e: React.PointerEvent, shape: Shape, handle: string) => {
+    e.stopPropagation()
+    e.preventDefault()
+    const s = useApp.getState()
+    s.select([shape.id])
+    s.setRightOpen(true)
+    setShapeResize({ id: shape.id, handle, start: worldPoint(e.clientX, e.clientY), origin: { x: shape.x, y: shape.y, w: shape.w, h: shape.h }, moved: false })
+  }
+
+  const shapeDown = (e: React.PointerEvent, shape: Shape) => {
+    e.stopPropagation()
+    if (e.button !== 0 || editingShape === shape.id) return
+    const s = useApp.getState()
+    if (s.tool === 'delete') {
+      s.select([shape.id])
+      s.deleteSelection()
+      return
+    }
+    if (s.tool !== 'select' && s.tool !== 'inspect') return
+    if (!s.selectedIds.includes(shape.id) || e.shiftKey) s.select([shape.id], e.shiftKey)
+    s.setRightOpen(true)
+    setShapeDrag({ id: shape.id, start: worldPoint(e.clientX, e.clientY), origin: { x: shape.x, y: shape.y }, moved: false })
+    s.setStatus('Shape selected — drag to move, double-click to edit text, Del to delete')
+  }
+
+  const openShapeContext = (e: React.MouseEvent, shape: Shape) => {
+    e.preventDefault()
+    e.stopPropagation()
+    setContext({
+      x: e.clientX,
+      y: e.clientY,
+      items: [
+        { label: 'Edit text', icon: <Settings2 size={13} />, onClick: () => { store.select([shape.id]); setEditingShape(shape.id) } },
+        { label: 'Duplicate', icon: <Plus size={13} />, onClick: () => { store.select([shape.id]); store.duplicateSelection() } },
+        { label: 'Delete', icon: <Trash2 size={13} />, danger: true, onClick: () => { store.select([shape.id]); store.deleteSelection() } },
+      ],
+    })
+  }
+
+  const commitShapeText = (text: string) => {
+    if (!editingShape) return
+    const shape = sim.shapes.find((s) => s.id === editingShape)
+    if (shape?.kind === 'text' && !text.trim()) {
+      sim.shapes = sim.shapes.filter((s) => s.id !== editingShape)
+      store.select([])
+      sim.bump()
+      store.saveLocal()
+    } else {
+      store.updateShape(editingShape, { text })
+    }
+    setEditingShape(null)
+  }
+
   const view = store.view
   const devices = sim.listDevices()
   const visibleEvents = sim.mode === 'simulation' ? sim.log.filter((l) => l.visible) : []
@@ -396,21 +572,6 @@ export function Workspace() {
 
       <div className="pointer-events-none absolute left-0 top-0 origin-top-left" style={{ transform: `translate3d(${view.x}px, ${view.y}px, 0) scale(${view.zoom})` }}>
         <svg className="pointer-events-none absolute left-0 top-0 overflow-visible" width={1} height={1}>
-          {sim.shapes.map((s) => {
-            const selected = store.selectedIds.includes(s.id)
-            return (
-              <g key={s.id}>
-                {s.kind === 'rect' && <rect x={s.x} y={s.y} width={s.w} height={s.h} rx={10} fill={`${s.color}0d`} stroke={s.color} strokeOpacity={selected ? 0.95 : 0.45} strokeWidth={s.stroke} strokeDasharray={selected ? '6 3' : undefined} />}
-                {s.kind === 'ellipse' && <ellipse cx={s.x + s.w / 2} cy={s.y + s.h / 2} rx={Math.abs(s.w / 2)} ry={Math.abs(s.h / 2)} fill={`${s.color}0d`} stroke={s.color} strokeOpacity={selected ? 0.95 : 0.45} strokeWidth={s.stroke} strokeDasharray={selected ? '6 3' : undefined} />}
-                {s.kind === 'line' && <line x1={s.x} y1={s.y} x2={s.x + s.w} y2={s.y + s.h} stroke={s.color} strokeOpacity={0.7} strokeWidth={s.stroke} />}
-                {s.text && s.kind !== 'line' && (
-                  <text x={s.x + 10} y={s.y + 18} fill={s.color} fillOpacity={0.85} fontSize={10} fontWeight={600} className="select-none">
-                    {s.text}
-                  </text>
-                )}
-              </g>
-            )
-          })}
           {shapeDraft && store.tool !== 'shape-line' && (
             <rect
               x={Math.min(shapeDraft.start.x, shapeDraft.current.x)}
@@ -453,6 +614,117 @@ export function Workspace() {
         </svg>
 
         <LinkLayer links={sim.links} selectedLinkId={store.selectedLinkId} onSelectLink={(id) => store.selectLink(id)} onLinkContextMenu={linkContext} />
+
+        {sim.shapes.map((shape) => {
+          const selected = store.selectedIds.includes(shape.id)
+          if (shape.kind === 'line') {
+            const length = Math.hypot(shape.w, shape.h)
+            const angle = Math.atan2(shape.h, shape.w)
+            return (
+              <div
+                key={shape.id}
+                data-shape-id={shape.id}
+                className="pointer-events-auto absolute cursor-move"
+                style={{ left: shape.x, top: shape.y - 6, width: Math.max(8, length), height: 12, transform: `rotate(${angle}rad)`, transformOrigin: '0 6px' }}
+                onPointerDown={(e) => shapeDown(e, shape)}
+                onDoubleClick={(e) => { e.stopPropagation(); setEditingShape(shape.id) }}
+                onContextMenu={(e) => openShapeContext(e, shape)}
+                title="Drag to move · double-click to add text"
+              >
+                <div className="absolute left-0 top-[5px] w-full rounded" style={{ height: shape.stroke, backgroundColor: shape.color, opacity: 0.75 }} />
+                {selected && <div className="absolute inset-0 rounded outline outline-1 outline-cyan-300/80" />}
+                {shape.text && (
+                  <span className="absolute left-1/2 top-[-14px] -translate-x-1/2 whitespace-nowrap rounded bg-ink-950/85 px-1 text-[9px] font-semibold" style={{ color: shape.color }}>
+                    {shape.text}
+                  </span>
+                )}
+              </div>
+            )
+          }
+          return (
+            <div
+              key={shape.id}
+              data-shape-id={shape.id}
+              className={`pointer-events-auto absolute cursor-move ${shape.kind === 'text' ? '' : 'overflow-hidden'}`}
+              style={{
+                left: shape.x,
+                top: shape.y,
+                width: shape.kind === 'text' ? 'max-content' : Math.abs(shape.w),
+                minWidth: shape.kind === 'text' ? Math.abs(shape.w) : undefined,
+                minHeight: shape.kind === 'text' ? 24 : Math.abs(shape.h),
+                borderRadius: shape.kind === 'ellipse' ? '50%' : shape.kind === 'text' ? 4 : 10,
+                border: shape.kind === 'text' ? '1px solid transparent' : `${shape.stroke}px solid ${shape.color}`,
+                backgroundColor: shape.kind === 'text' ? (selected ? 'rgba(34,211,238,0.08)' : 'transparent') : `${shape.color}0d`,
+                color: shape.color,
+                boxShadow: selected ? '0 0 0 2px rgba(103,232,249,0.55)' : undefined,
+                outline: shape.kind === 'text' && selected ? '1px dashed rgba(103,232,249,0.8)' : undefined,
+              }}
+              onPointerDown={(e) => shapeDown(e, shape)}
+              onDoubleClick={(e) => { e.stopPropagation(); setEditingShape(shape.id) }}
+              onContextMenu={(e) => openShapeContext(e, shape)}
+              title="Drag to move · double-click to edit text"
+            >
+              <div className={`whitespace-pre-wrap px-2 ${shape.kind === 'text' ? 'py-1 text-[12px] font-semibold' : 'py-1.5 text-[10px] font-semibold'}`}>
+                {shape.text || (shape.kind === 'text' ? 'Text' : '')}
+              </div>
+            </div>
+          )
+        })}
+
+        {sim.shapes.map((shape) => {
+          if (!store.selectedIds.includes(shape.id) || shape.kind === 'text' || editingShape === shape.id) return null
+          const handles = shape.kind === 'line'
+            ? [
+                { id: 'line-start', x: shape.x, y: shape.y, cursor: 'crosshair' },
+                { id: 'line-end', x: shape.x + shape.w, y: shape.y + shape.h, cursor: 'crosshair' },
+              ]
+            : [
+                { id: 'nw', x: shape.x, y: shape.y, cursor: 'nwse-resize' },
+                { id: 'n', x: shape.x + shape.w / 2, y: shape.y, cursor: 'ns-resize' },
+                { id: 'ne', x: shape.x + shape.w, y: shape.y, cursor: 'nesw-resize' },
+                { id: 'e', x: shape.x + shape.w, y: shape.y + shape.h / 2, cursor: 'ew-resize' },
+                { id: 'se', x: shape.x + shape.w, y: shape.y + shape.h, cursor: 'nwse-resize' },
+                { id: 's', x: shape.x + shape.w / 2, y: shape.y + shape.h, cursor: 'ns-resize' },
+                { id: 'sw', x: shape.x, y: shape.y + shape.h, cursor: 'nesw-resize' },
+                { id: 'w', x: shape.x, y: shape.y + shape.h / 2, cursor: 'ew-resize' },
+              ]
+          return handles.map((h) => (
+            <div
+              key={`${shape.id}-${h.id}`}
+              data-shape-handle={h.id}
+              className="pointer-events-auto absolute z-40 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-sm border-2 border-cyan-200 bg-ink-900 shadow"
+              style={{ left: h.x, top: h.y, cursor: h.cursor }}
+              onPointerDown={(e) => resizeDown(e, shape, h.id)}
+            />
+          ))
+        })}
+
+        {editingShape && (() => {
+          const shape = sim.shapes.find((s) => s.id === editingShape)
+          if (!shape) return null
+          return (
+            <textarea
+              key={shape.id}
+              autoFocus
+              defaultValue={shape.text ?? ''}
+              onFocus={(e) => e.target.select()}
+              onPointerDown={(e) => e.stopPropagation()}
+              onBlur={(e) => commitShapeText(e.target.value)}
+              onKeyDown={(e) => {
+                e.stopPropagation()
+                if (e.key === 'Enter' && !e.shiftKey) {
+                  e.preventDefault()
+                  commitShapeText((e.target as HTMLTextAreaElement).value)
+                } else if (e.key === 'Escape') {
+                  e.preventDefault()
+                  setEditingShape(null)
+                }
+              }}
+              className="pointer-events-auto absolute z-40 resize-none rounded border border-cyan-300/60 bg-ink-950/95 px-2 py-1 text-[12px] text-slate-100 shadow-xl outline-none"
+              style={{ left: shape.x, top: shape.y, width: Math.max(180, Math.abs(shape.w)), minHeight: 28 }}
+            />
+          )
+        })()}
 
         {guides.x.map((x) => (
           <div key={`gx-${x}`} className="pointer-events-none absolute inset-y-0 w-px bg-cyan-300/35" style={{ left: x }} />
