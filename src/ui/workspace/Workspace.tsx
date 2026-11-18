@@ -529,6 +529,9 @@ export function Workspace() {
   const view = store.view
   const devices = sim.listDevices()
   const visibleEvents = sim.mode === 'simulation' ? sim.log.filter((l) => l.visible) : []
+  // While a palette device or a drawing tool is armed, annotations must not swallow the click that creates the new object.
+  const annotationsClickThrough =
+    Boolean(store.palette.kind) || store.tool === 'note' || store.tool === 'text' || store.tool.startsWith('shape-')
 
   const onPickPort = (iface: Interface) => {
     if (!portPicker) return
@@ -622,7 +625,7 @@ export function Workspace() {
               <div
                 key={shape.id}
                 data-shape-id={shape.id}
-                className="pointer-events-auto absolute cursor-move"
+                className={`absolute cursor-move ${annotationsClickThrough ? 'pointer-events-none' : 'pointer-events-auto'}`}
                 style={{ left: shape.x, top: shape.y - 6, width: Math.max(8, length), height: 12, transform: `rotate(${angle}rad)`, transformOrigin: '0 6px' }}
                 onPointerDown={(e) => shapeDown(e, shape)}
                 onDoubleClick={(e) => { e.stopPropagation(); setEditingShape(shape.id) }}
@@ -643,7 +646,7 @@ export function Workspace() {
             <div
               key={shape.id}
               data-shape-id={shape.id}
-              className={`pointer-events-auto absolute cursor-move ${shape.kind === 'text' ? '' : 'overflow-hidden'}`}
+              className={`absolute cursor-move ${annotationsClickThrough ? 'pointer-events-none' : 'pointer-events-auto'} ${shape.kind === 'text' ? '' : 'overflow-hidden'}`}
               style={{
                 left: shape.x,
                 top: shape.y,
@@ -692,7 +695,7 @@ export function Workspace() {
             <div
               key={`${shape.id}-${h.id}`}
               data-shape-handle={h.id}
-              className="pointer-events-auto absolute z-40 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-sm border-2 border-cyan-200 bg-ink-900 shadow"
+              className={`absolute z-40 h-3 w-3 -translate-x-1/2 -translate-y-1/2 rounded-sm border-2 border-cyan-200 bg-ink-900 shadow ${annotationsClickThrough ? 'pointer-events-none' : 'pointer-events-auto'}`}
               style={{ left: h.x, top: h.y, cursor: h.cursor }}
               onPointerDown={(e) => resizeDown(e, shape, h.id)}
             />
@@ -736,7 +739,7 @@ export function Workspace() {
         {sim.notes.map((note) => (
           <div
             key={note.id}
-            className="pointer-events-auto absolute rounded-md border border-amber-200/40 bg-amber-200 text-ink-950 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.7)]"
+            className={`absolute rounded-md border border-amber-200/40 bg-amber-200 text-ink-950 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.7)] ${annotationsClickThrough ? 'pointer-events-none' : 'pointer-events-auto'}`}
             style={{ left: note.x, top: note.y, width: note.w, minHeight: note.h, backgroundColor: note.color, color: '#1c1917' }}
             onPointerDown={(e) => {
               e.stopPropagation()
