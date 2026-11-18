@@ -4,6 +4,8 @@ NetForge Studio is a modern, browser-based network simulation and learning envir
 
 Built with React 19, TypeScript, Vite, Tailwind CSS, Zustand and a dependency-free simulation core.
 
+![NetForge Studio workspace with a simulated lab topology](screenshot.png)
+
 ## Quick start
 
 ```bash
