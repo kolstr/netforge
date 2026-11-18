@@ -15,6 +15,24 @@ npm test         # run the simulation engine regression suite
 
 Open the app, choose **Load example lab** on the empty workspace (or from **File**), then double-click a device to configure it. Use **File → New workspace** to start from scratch.
 
+## Docker deployment
+
+The app is a static single-page bundle, so the image is built in two stages: Node builds the bundle, then nginx serves it.
+
+```bash
+docker compose up -d --build     # http://localhost:5173
+docker compose down              # stop and remove the container
+```
+
+Without Compose:
+
+```bash
+docker build -t netforge-studio .
+docker run -d --name netforge-studio -p 5173:80 netforge-studio
+```
+
+The nginx config in [deploy/nginx.conf](deploy/nginx.conf) adds SPA history fallback, gzip, security headers, and long-lived caching for the content-hashed assets in `/assets/`; `index.html` is always revalidated.
+
 ## Workspace and editing
 
 - **Logical workspace** with pan, wheel zoom, fit-to-screen, marquee selection, multi-device drag, grid, snapping and alignment guides.
