@@ -613,8 +613,6 @@ export function Workspace() {
           )}
         </svg>
 
-        <LinkLayer links={sim.links} selectedLinkId={store.selectedLinkId} onSelectLink={(id) => store.selectLink(id)} onLinkContextMenu={linkContext} />
-
         {sim.shapes.map((shape) => {
           const selected = store.selectedIds.includes(shape.id)
           if (shape.kind === 'line') {
@@ -670,6 +668,8 @@ export function Workspace() {
             </div>
           )
         })}
+
+        <LinkLayer links={sim.links} selectedLinkId={store.selectedLinkId} onSelectLink={(id) => store.selectLink(id)} onLinkContextMenu={linkContext} />
 
         {sim.shapes.map((shape) => {
           if (!store.selectedIds.includes(shape.id) || shape.kind === 'text' || editingShape === shape.id) return null
