@@ -167,7 +167,7 @@ export function CliTerminal({ deviceId, access = 'console', compact = false }: {
   }
 
   return (
-    <div className={`flex min-h-0 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#03080d] ${compact ? 'flex-1' : 'h-[calc(92vh-160px)] min-h-[420px]'}`}>
+    <div className={`nf-palette-default flex min-h-0 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#03080d] ${compact ? 'flex-1' : 'h-[calc(92vh-160px)] min-h-[420px]'}`}>
       <div className="flex shrink-0 items-center gap-2 border-b border-white/8 bg-ink-900/80 px-3 py-1.5">
         <TerminalIcon size={12} className="text-cyan-300" />
         <span className="font-mono text-[10px] text-slate-300">{device?.name ?? 'Device'} — {access === 'console' ? 'console' : 'vty'} session</span>

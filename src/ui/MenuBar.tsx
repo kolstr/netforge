@@ -13,12 +13,14 @@ import {
   Info,
   Keyboard,
   Layers,
+  Moon,
   PanelLeft,
   PanelRight,
   RotateCcw,
   Save,
   Settings,
   Sparkles,
+  Sun,
   Zap,
 } from 'lucide-react'
 import { useApp } from '../store'
@@ -28,6 +30,7 @@ export function MenuBar() {
   const fileRef = useRef<HTMLInputElement>(null)
   const store = useApp()
   const ref = useRef<HTMLDivElement>(null)
+  const dark = store.settings.theme === 'dark'
 
   useEffect(() => {
     const onClick = (e: MouseEvent) => {
@@ -168,6 +171,14 @@ export function MenuBar() {
           <span className={`h-1.5 w-1.5 rounded-full ${store.dirty ? 'bg-amber-400' : 'bg-emerald-400'}`} />
           {store.dirty ? 'Unsaved changes' : store.settings.autoSave ? 'Autosaved locally' : 'Autosave off'}
         </div>
+        <button
+          className="btn-icon"
+          title={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          aria-label={dark ? 'Switch to light mode' : 'Switch to dark mode'}
+          onClick={() => store.setSettings({ theme: dark ? 'light' : 'dark' })}
+        >
+          {dark ? <Sun size={15} /> : <Moon size={15} />}
+        </button>
         <button className="btn-icon" title="Preferences" onClick={() => store.setDialog({ type: 'preferences' })}>
           <Settings size={15} />
         </button>

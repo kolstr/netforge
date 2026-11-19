@@ -17,6 +17,11 @@ import { useApp } from './store'
 export default function App() {
   const dialog = useApp((s) => s.dialog)
   const setDialog = useApp((s) => s.setDialog)
+  const theme = useApp((s) => s.settings.theme)
+
+  useEffect(() => {
+    document.documentElement.dataset.theme = theme
+  }, [theme])
 
   useEffect(() => {
     const seen = localStorage.getItem('netforge.seen')

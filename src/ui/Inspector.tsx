@@ -163,7 +163,7 @@ export function Inspector() {
               <div className="mt-3">
                 <div className="label">Color</div>
                 <div className="mt-1 flex flex-wrap items-center gap-1.5">
-                  {['#22d3ee', '#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#fb7185', '#60a5fa', '#e2e8f0'].map((color) => (
+                  {['#22d3ee', '#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#fb7185', '#60a5fa', '#94a3b8'].map((color) => (
                     <button
                       key={color}
                       title={color}

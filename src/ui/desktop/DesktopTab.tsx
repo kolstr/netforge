@@ -67,7 +67,7 @@ export function DesktopTab({ device }: { device: Device }) {
   }
 
   return (
-    <div className="relative flex min-h-[460px] flex-col overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-[#0b2a3d] via-[#0a1a2e] to-[#170b2d]">
+    <div className="nf-palette-default relative flex min-h-[460px] flex-col overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-[#0b2a3d] via-[#0a1a2e] to-[#170b2d]">
       <div className="pointer-events-none absolute -left-20 top-0 h-72 w-72 rounded-full bg-cyan-500/15 blur-3xl" />
       <div className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl" />
       <div className="flex items-center gap-2 border-b border-white/8 px-4 py-2 text-[10px] text-slate-400">
@@ -77,7 +77,7 @@ export function DesktopTab({ device }: { device: Device }) {
       <div className="relative z-10 grid flex-1 content-start grid-cols-4 gap-4 p-6 sm:grid-cols-5">
         {visible.map((a) => (
           <button key={a.id} className="group flex flex-col items-center gap-2 rounded-xl p-2 transition hover:bg-white/5" onClick={() => setApp(a.id)}>
-            <span className={`flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${a.color} text-white shadow-lg transition group-hover:scale-105`}>{a.icon}</span>
+            <span className={`flex h-14 w-14 items-center justify-center rounded-xl bg-gradient-to-br ${a.color} text-on-solid shadow-lg transition group-hover:scale-105`}>{a.icon}</span>
             <span className="text-center text-[10px] font-medium text-slate-200">{a.label}</span>
           </button>
         ))}

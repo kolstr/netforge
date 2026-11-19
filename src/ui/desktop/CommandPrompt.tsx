@@ -155,7 +155,7 @@ export function CommandPrompt({ device }: { device: Device }) {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-white/10 bg-[#03080d]">
+    <div className="nf-palette-default flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-white/10 bg-[#03080d]">
       <div className="flex items-center gap-2 border-b border-white/8 bg-ink-900/80 px-3 py-1.5">
         <Terminal size={12} className="text-slate-400" />
         <span className="font-mono text-[10px] text-slate-400">Command Prompt — {device.name}</span>

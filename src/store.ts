@@ -15,7 +15,10 @@ export type DialogState =
   | { type: 'assessment'; result: import('./sim/engine').AssessmentResult }
   | null
 
+export type Theme = 'dark' | 'light'
+
 export interface Settings {
+  theme: Theme
   showGrid: boolean
   snapToGrid: boolean
   showLabels: boolean
@@ -25,6 +28,7 @@ export interface Settings {
 }
 
 const defaultSettings: Settings = {
+  theme: 'dark',
   showGrid: true,
   snapToGrid: false,
   showLabels: true,

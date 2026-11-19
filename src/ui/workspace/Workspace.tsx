@@ -357,7 +357,7 @@ export function Workspace() {
       store.createShape('text', p.x, p.y, 180, 24)
       const shape = sim.shapes[sim.shapes.length - 1]
       if (shape) {
-        store.updateShape(shape.id, { text: 'Text', color: '#e2e8f0' })
+        store.updateShape(shape.id, { text: 'Text', color: 'var(--nf-shape-text)' })
         store.select([shape.id])
         setEditingShape(shape.id)
         store.setTool('select')
@@ -739,7 +739,7 @@ export function Workspace() {
         {sim.notes.map((note) => (
           <div
             key={note.id}
-            className={`absolute rounded-md border border-amber-200/40 bg-amber-200 text-ink-950 shadow-[0_12px_30px_-10px_rgba(0,0,0,0.7)] ${annotationsClickThrough ? 'pointer-events-none' : 'pointer-events-auto'}`}
+            className={`absolute rounded-md border border-amber-200/40 bg-amber-200 text-accent-ink shadow-[0_12px_30px_-10px_rgba(0,0,0,0.7)] ${annotationsClickThrough ? 'pointer-events-none' : 'pointer-events-auto'}`}
             style={{ left: note.x, top: note.y, width: note.w, minHeight: note.h, backgroundColor: note.color, color: '#1c1917' }}
             onPointerDown={(e) => {
               e.stopPropagation()
@@ -796,7 +796,7 @@ export function Workspace() {
             className="pointer-events-none absolute rounded-xl border-2 border-dashed border-amber-300/80"
             style={{ left: sim.device(pduFrom)!.x - 74, top: sim.device(pduFrom)!.y - 41, width: 148, height: 82 }}
           >
-            <span className="absolute -top-5 left-1/2 -translate-x-1/2 rounded bg-amber-300 px-1.5 py-0.5 text-[8px] font-bold uppercase text-ink-950">source</span>
+            <span className="absolute -top-5 left-1/2 -translate-x-1/2 rounded bg-amber-300 px-1.5 py-0.5 text-[8px] font-bold uppercase text-accent-ink">source</span>
           </div>
         )}
       </div>
@@ -851,7 +851,7 @@ export function Workspace() {
         <div className="pointer-events-none absolute inset-0 flex items-center justify-center">
           <div className="pointer-events-auto w-[420px] rounded-2xl border border-white/10 bg-ink-900/90 p-7 text-center shadow-[0_40px_120px_-30px_rgba(0,0,0,0.9)] backdrop-blur-xl">
             <div className="mx-auto mb-4 flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-br from-cyan-400 to-indigo-500 shadow-[0_0_40px_-8px_rgba(34,211,238,0.8)]">
-              <Network size={24} className="text-ink-950" />
+              <Network size={24} className="text-accent-ink" />
             </div>
             <h2 className="text-lg font-semibold text-slate-100">Build your network</h2>
             <p className="mx-auto mt-2 max-w-[320px] text-[12px] leading-relaxed text-slate-400">
