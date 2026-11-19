@@ -618,16 +618,82 @@ function buildExample(s: Simulator) {
     { name: 'www.netforge.lab', type: 'A', value: '10.10.10.10' },
     { name: 'server.netforge.lab', type: 'A', value: '10.10.10.10' },
   ]
-  server.config.services.http.files[0].content = `<!doctype html><html><head><meta charset="utf-8"><title>NetForge Lab Server</title>
-<style>body{margin:0;font-family:system-ui,sans-serif;background:radial-gradient(circle at 20% 0%,#123,#080e1a 60%);color:#e2e8f0;display:grid;place-items:center;min-height:100vh}
-.card{background:#111d33cc;border:1px solid #22324d;border-radius:20px;padding:48px 56px;max-width:640px;box-shadow:0 30px 80px #0009}
-h1{margin:0 0 10px;font-size:34px;background:linear-gradient(90deg,#22d3ee,#818cf8);-webkit-background-clip:text;color:transparent}
-p{color:#94a3b8;line-height:1.7}.row{display:flex;gap:10px;flex-wrap:wrap;margin-top:24px}.tag{padding:7px 12px;border-radius:99px;background:#22d3ee1a;color:#67e8f9;font-size:12px;border:1px solid #22d3ee33}
-a{color:#67e8f9}</style></head><body><div class="card"><h1>Welcome to NetForge Studio</h1>
-<p>You are browsing <b>www.netforge.lab</b> from a simulated host. DNS resolved the name, a TCP connection was established and this page was served by the HTTP service on SRV-1.</p>
-<p>Try pinging the server, opening the router CLI, or switching to Simulation Mode to watch packets hop through the network.</p>
-<div class="row"><span class="tag">DNS ✓</span><span class="tag">DHCP ✓</span><span class="tag">HTTP ✓</span><span class="tag">WPA2 Wi-Fi ✓</span><span class="tag">VLANs ✓</span></div>
-<p style="margin-top:24px"><a href="/about.html">About this server</a></p></div></body></html>`
+  server.config.services.http.files[0].content = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NetForge Lab Server</title>
+    <style>
+      body {
+        display: grid;
+        place-items: center;
+        min-height: 100vh;
+        margin: 0;
+        background: radial-gradient(circle at 20% 0%, #123, #080e1a 60%);
+        color: #e2e8f0;
+        font-family: system-ui, sans-serif;
+      }
+      .card {
+        max-width: 640px;
+        padding: 48px 56px;
+        border: 1px solid #22324d;
+        border-radius: 20px;
+        background: #111d33cc;
+        box-shadow: 0 30px 80px #0009;
+      }
+      h1 {
+        margin: 0 0 10px;
+        font-size: 34px;
+        background: linear-gradient(90deg, #22d3ee, #818cf8);
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+      p {
+        color: #94a3b8;
+        line-height: 1.7;
+      }
+      .row {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        margin-top: 24px;
+      }
+      .tag {
+        padding: 7px 12px;
+        border: 1px solid #22d3ee33;
+        border-radius: 99px;
+        background: #22d3ee1a;
+        color: #67e8f9;
+        font-size: 12px;
+      }
+      a {
+        color: #67e8f9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>Welcome to NetForge Studio</h1>
+      <p>
+        You are browsing <b>www.netforge.lab</b> from a simulated host. DNS resolved the name, a TCP connection was
+        established and this page was served by the HTTP service on SRV-1.
+      </p>
+      <p>
+        Try pinging the server, opening the router CLI, or switching to Simulation Mode to watch packets hop through the
+        network.
+      </p>
+      <div class="row">
+        <span class="tag">DNS ✓</span>
+        <span class="tag">DHCP ✓</span>
+        <span class="tag">HTTP ✓</span>
+        <span class="tag">WPA2 Wi-Fi ✓</span>
+        <span class="tag">VLANs ✓</span>
+      </div>
+      <p style="margin-top: 24px"><a href="/about.html">About this server</a></p>
+    </div>
+  </body>
+</html>`
 
   // Links
   s.addLink({ deviceId: router.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: sw.id, ifaceId: 'GigabitEthernet0/1' }, 'straight')
