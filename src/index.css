@@ -52,6 +52,8 @@
   --color-violet-200: #ddd6fe;
   --color-violet-300: #c4b5fd;
   --nf-text: #e2e8f0;
+  /* Placeholders stay clearly dimmer than real input values. */
+  --nf-placeholder: #5c6b80;
   --nf-edge: rgb(255 255 255 / 0.08);
   --nf-edge-strong: rgb(255 255 255 / 0.15);
   --nf-fill-subtle: rgb(255 255 255 / 0.04);
@@ -97,6 +99,8 @@
   --color-violet-200: #6d28d9;
   --color-violet-300: #6d28d9;
   --nf-text: #1e293b;
+  /* Placeholders stay clearly dimmer than real input values. */
+  --nf-placeholder: #98a3b3;
   --nf-edge: rgb(15 23 42 / 0.1);
   --nf-edge-strong: rgb(15 23 42 / 0.18);
   --nf-fill-subtle: rgb(15 23 42 / 0.04);
@@ -135,18 +139,18 @@ body {
   .btn:hover { border-color: var(--nf-edge-strong); background-color: var(--nf-fill-hover); }
   .btn-primary { @apply border-cyan-400/30 bg-cyan-400/15 text-cyan-200 hover:bg-cyan-400/25; }
   .btn-danger { @apply border-rose-400/30 bg-rose-400/10 text-rose-300 hover:bg-rose-400/20; }
-  .btn-icon { @apply inline-flex h-7 w-7 items-center justify-center rounded-md transition; color: var(--nf-slate-400); }
-  .btn-icon:hover { background-color: var(--nf-fill-hover); color: var(--nf-slate-100); }
-  .input { @apply w-full rounded-md px-2 py-1.5 text-xs outline-none transition focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/15; border: 1px solid var(--nf-edge); background-color: color-mix(in oklab, var(--color-ink-950) 70%, transparent); color: var(--nf-slate-100); }
-  .input::placeholder { color: var(--nf-slate-600); }
-  .label { @apply text-[10px] font-semibold uppercase tracking-wider; color: var(--nf-slate-500); }
-  .tab { @apply relative px-3 py-2 text-xs font-medium transition; color: var(--nf-slate-400); }
-  .tab:hover { color: var(--nf-slate-200); }
+  .btn-icon { @apply inline-flex h-7 w-7 items-center justify-center rounded-md transition; color: var(--color-slate-400); }
+  .btn-icon:hover { background-color: var(--nf-fill-hover); color: var(--color-slate-100); }
+  .input { @apply w-full rounded-md px-2 py-1.5 text-xs outline-none transition focus:border-cyan-400/50 focus:ring-2 focus:ring-cyan-400/15; border: 1px solid var(--nf-edge); background-color: color-mix(in oklab, var(--color-ink-950) 70%, transparent); color: var(--color-slate-100); }
+  .input::placeholder { color: var(--nf-placeholder); opacity: 1; }
+  .label { @apply text-[10px] font-semibold uppercase tracking-wider; color: var(--color-slate-500); }
+  .tab { @apply relative px-3 py-2 text-xs font-medium transition; color: var(--color-slate-400); }
+  .tab:hover { color: var(--color-slate-200); }
   .tab-active { @apply text-cyan-200; }
   .tab-active::after { content: ''; @apply absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-cyan-400; }
-  .table-head { @apply text-left text-[10px] font-semibold uppercase tracking-wider; color: var(--nf-slate-500); }
+  .table-head { @apply text-left text-[10px] font-semibold uppercase tracking-wider; color: var(--color-slate-500); }
   .mono { font-family: var(--font-mono); }
-  .kbd { @apply rounded px-1.5 py-0.5 font-mono text-[10px]; border: 1px solid var(--nf-edge-strong); background-color: var(--nf-fill-subtle); color: var(--nf-slate-300); }
+  .kbd { @apply rounded px-1.5 py-0.5 font-mono text-[10px]; border: 1px solid var(--nf-edge-strong); background-color: var(--nf-fill-subtle); color: var(--color-slate-300); }
 }
 
 @keyframes pulse-ring {
