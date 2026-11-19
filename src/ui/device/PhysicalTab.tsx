@@ -3,6 +3,7 @@ import { Boxes, Check, CircleDot, Power, Zap } from 'lucide-react'
 import type { Device } from '../../types'
 import { DEVICE_SPECS } from '../../data/catalog'
 import { useApp } from '../../store'
+import { formatIpWithMask } from '../../lib/ip'
 import { DeviceIcon, deviceTint } from '../common/DeviceIcon'
 import { StatusPill, Toggle } from '../common/Modal'
 import { shortIfaceName } from '../../sim/runtime'
@@ -91,7 +92,7 @@ export function PhysicalTab({ device }: { device: Device }) {
                 <div>Physical: <span className="text-slate-300">{detail.physicalUp ? 'up' : 'down'}</span></div>
                 <div>Speed: <span className="text-slate-300">{detail.speed} Mbps</span></div>
                 <div>MAC: <span className="font-mono text-slate-300">{detail.iface.mac}</span></div>
-                <div>IP: <span className="font-mono text-slate-300">{detail.iface.ip ?? 'unassigned'}</span></div>
+                <div>IP: <span className="font-mono text-slate-300">{formatIpWithMask(detail.iface.ip, detail.iface.mask) ?? 'unassigned'}</span></div>
                 <div>Peer: <span className="text-slate-300">{detail.peer ? sim.device(detail.peer.deviceId)?.name : '—'}</span></div>
                 {detail.iface.kind === 'serial' && <div className="col-span-2">Clock: <span className="text-slate-300">{detail.iface.clockRate ? `${detail.iface.clockRate} bps` : 'not set'}</span></div>}
                 {detail.warning && <div className="col-span-2 text-amber-300">{detail.warning}</div>}
@@ -123,7 +124,7 @@ export function PhysicalTab({ device }: { device: Device }) {
                       <td className="px-2 py-1 font-mono text-slate-300">{i.name}</td>
                       <td className="px-2 py-1 text-slate-500">{i.kind}</td>
                       <td className="px-2 py-1 text-slate-500">{i.speed ? `${i.speed}M` : '—'}</td>
-                      <td className="px-2 py-1 font-mono text-[8.5px] text-slate-500">{i.ip ?? '—'}</td>
+                      <td className="px-2 py-1 font-mono text-[8.5px] text-slate-500">{formatIpWithMask(i.ip, i.mask) ?? '—'}</td>
                       <td className="px-2 py-1">
                         <span className={`inline-flex items-center gap-1 ${d?.physicalUp ? 'text-emerald-300' : 'text-slate-600'}`}>
                           <span className={`h-1.5 w-1.5 rounded-full ${d?.physicalUp ? 'bg-emerald-400' : 'bg-slate-600'}`} />

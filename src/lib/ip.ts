@@ -48,6 +48,13 @@ export function prefixToMask(prefix: number): string {
   return intToIp(n)
 }
 
+/** `192.168.1.1/24` when a valid mask is configured, otherwise just the IP. */
+export function formatIpWithMask(ip?: string, mask?: string): string | undefined {
+  if (!ip) return undefined
+  if (!mask || !isValidMask(mask)) return ip
+  return `${ip}/${maskToPrefix(mask)}`
+}
+
 export function networkAddress(ip: string, mask: string): string {
   const a = parseIp(ip)
   const m = parseIp(mask)

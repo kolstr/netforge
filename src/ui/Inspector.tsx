@@ -3,6 +3,7 @@ import { Activity, CheckCircle2, ChevronRight, Circle, Copy, Eye, Info, Layers, 
 import { useApp } from '../store'
 import { DeviceIcon, deviceTint } from './common/DeviceIcon'
 import { StatusPill } from './common/Modal'
+import { formatIpWithMask } from '../lib/ip'
 
 export function Inspector() {
   const store = useApp()
@@ -83,7 +84,7 @@ export function Inspector() {
                             {p.iface.name.replace('GigabitEthernet', 'Gi').replace('FastEthernet', 'Fa').replace('Ethernet', 'Eth')}
                           </span>
                         </td>
-                        <td className="px-1 py-1 font-mono text-[8px] text-slate-500">{p.iface.ip ?? (p.iface.dhcp ? 'DHCP' : '—')}</td>
+                        <td className="px-1 py-1 font-mono text-[8px] text-slate-500">{formatIpWithMask(p.iface.ip, p.iface.mask) ?? (p.iface.dhcp ? 'DHCP' : '—')}</td>
                         <td className="px-1 py-1 text-slate-500">
                           {p.peer ? sim.device(p.peer.deviceId)?.name : p.iface.kind === 'wireless' && sim.wireless.some((w) => w.clientId === device.id) ? 'Wi-Fi' : '—'}
                         </td>

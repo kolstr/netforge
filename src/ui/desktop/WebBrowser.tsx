@@ -4,6 +4,7 @@ import type { Device } from '../../types'
 import { useApp } from '../../store'
 import type { AppResult } from '../../sim/engine'
 import { HomeRouterAdmin } from './HomeRouterAdmin'
+import { formatIpWithMask } from '../../lib/ip'
 
 type Result = (AppResult & { targetIp?: string; host?: string; path?: string; resolvedFrom?: string; url?: string }) | null
 
@@ -113,10 +114,11 @@ export function WebBrowser({ device }: { device: Device }) {
                 <Search size={13} className="text-cyan-600" /> <span className="font-medium">www.netforge.lab</span> <span className="ml-auto text-[9px] text-slate-400">requires DNS</span>
               </button>
               {servers.map((s) => {
-                const ip = s.interfaces.find((i) => i.ip)?.ip
+                const iface = s.interfaces.find((i) => i.ip)
+                const ip = iface?.ip
                 return (
                   <button key={s.id} className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[11px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate(ip!)}>
-                    <Globe size={13} className="text-slate-500" /> <span className="font-mono">{ip}</span> <span className="ml-auto text-[9px] text-slate-400">{s.name}</span>
+                    <Globe size={13} className="text-slate-500" /> <span className="font-mono">{formatIpWithMask(ip, iface?.mask)}</span> <span className="ml-auto text-[9px] text-slate-400">{s.name}</span>
                   </button>
                 )
               })}

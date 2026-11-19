@@ -10,6 +10,7 @@ import { DesktopTab } from '../desktop/DesktopTab'
 import { ServicesTab } from '../device/ServicesTab'
 import { AttributesTab } from '../device/AttributesTab'
 import { HomeRouterAdmin } from '../desktop/HomeRouterAdmin'
+import { formatIpWithMask } from '../../lib/ip'
 
 type TabId = 'physical' | 'config' | 'cli' | 'desktop' | 'services' | 'gui' | 'attributes'
 
@@ -39,6 +40,8 @@ export function DeviceDialog() {
   tabs.push({ id: 'attributes', label: 'Attributes', icon: <SlidersHorizontal size={11} /> })
 
   const current = tabs.some((t) => t.id === tab) ? tab : 'physical'
+  const primaryIface = device.interfaces.find((i) => i.ip)
+  const primaryAddress = formatIpWithMask(primaryIface?.ip, primaryIface?.mask)
 
   return (
     <Modal
@@ -65,7 +68,7 @@ export function DeviceDialog() {
           {!device.power && <span className="rounded bg-rose-400/10 px-1.5 py-0.5 text-[9px] font-normal text-rose-300">powered off</span>}
         </div>
       }
-      subtitle={`${device.kind} · ${device.interfaces.filter((i) => i.kind !== 'console').length} ports · ${device.interfaces.find((i) => i.ip)?.ip ?? 'no IP address'}`}
+      subtitle={`${device.kind} · ${device.interfaces.filter((i) => i.kind !== 'console').length} ports · ${primaryAddress ?? 'no IP address'}`}
     >
       <div className="flex min-h-0 flex-1 flex-col">
         <Tabs tabs={tabs} value={current} onChange={setTab} />

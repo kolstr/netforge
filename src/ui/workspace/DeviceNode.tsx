@@ -3,6 +3,7 @@ import { Power, Wifi } from 'lucide-react'
 import type { Device } from '../../types'
 import { useApp } from '../../store'
 import { DeviceIcon, deviceTint } from '../common/DeviceIcon'
+import { formatIpWithMask } from '../../lib/ip'
 import { DEVICE_H, DEVICE_W } from './geometry'
 
 export function DeviceNode({
@@ -24,8 +25,10 @@ export function DeviceNode({
   const ipText = useMemo(() => {
     void rev
     const eps = sim.l3Endpoints(device)
-    if (eps.length) return eps.length > 1 ? `${eps[0].ip} +${eps.length - 1}` : eps[0].ip
-    const ip = device.interfaces.find((i) => i.ip)?.ip
+    const primary = formatIpWithMask(eps[0]?.ip, eps[0]?.mask)
+    if (primary) return eps.length > 1 ? `${primary} +${eps.length - 1}` : primary
+    const iface = device.interfaces.find((i) => i.ip)
+    const ip = formatIpWithMask(iface?.ip, iface?.mask)
     if (ip) return ip
     if (device.kind === 'switch') return 'Layer 2 switch'
     return device.model
@@ -46,7 +49,8 @@ export function DeviceNode({
       .slice(0, 8)
       .map((i) => {
         const d = sim.portDetail(device.id, i.id)
-        return `${i.name}: ${!i.adminUp ? 'admin down' : d?.physicalUp ? 'up' : 'down'}${i.ip ? ` · ${i.ip}` : ''}`
+        const addr = formatIpWithMask(i.ip, i.mask)
+        return `${i.name}: ${!i.adminUp ? 'admin down' : d?.physicalUp ? 'up' : 'down'}${addr ? ` · ${addr}` : ''}`
       }),
   ].join('\n')
 

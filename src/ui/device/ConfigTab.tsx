@@ -4,6 +4,7 @@ import type { Acl, Device, DhcpPool, Interface, StaticRoute } from '../../types'
 import { useApp } from '../../store'
 import { Field, Toggle } from '../common/Modal'
 import { shortIfaceName } from '../../sim/runtime'
+import { formatIpWithMask } from '../../lib/ip'
 
 export function ConfigTab({ device }: { device: Device }) {
   const store = useApp()
@@ -149,7 +150,7 @@ export function InterfaceList({ device }: { device: Device }) {
               <button className="flex w-full items-center gap-2 px-2.5 py-2 text-left" onClick={() => setExpanded(open ? null : iface.id)}>
                 <span className={`h-2 w-2 rounded-full ${!iface.adminUp ? 'bg-rose-500' : detail?.physicalUp ? 'bg-emerald-400' : 'bg-slate-600'}`} />
                 <span className="font-mono text-[10px] text-slate-200">{iface.name}</span>
-                <span className="text-[9px] text-slate-600">{[iface.ip, iface.mask].filter(Boolean).join(' / ') || (iface.dhcp ? 'DHCP' : 'unassigned')}</span>
+                <span className="text-[9px] text-slate-600">{formatIpWithMask(iface.ip, iface.mask) ?? (iface.dhcp ? 'DHCP' : 'unassigned')}</span>
                 {iface.nat && <span className="rounded bg-amber-400/10 px-1 py-0.5 text-[8px] text-amber-300">{iface.nat}</span>}
                 {iface.trunk && <span className="rounded bg-cyan-400/10 px-1 py-0.5 text-[8px] text-cyan-300">trunk</span>}
                 <ChevronDown size={10} className={`ml-auto text-slate-600 transition ${open ? '' : '-rotate-90'}`} />

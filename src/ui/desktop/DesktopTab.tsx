@@ -10,6 +10,7 @@ import { WirelessApp } from './WirelessApp'
 import { FTPApp } from './FTPApp'
 import { TrafficApp } from './TrafficApp'
 import { CliTerminal } from '../device/CliTab'
+import { formatIpWithMask } from '../../lib/ip'
 
 type AppId = 'ipconfig' | 'command' | 'browser' | 'email' | 'wireless' | 'ftp' | 'traffic' | 'terminal' | null
 
@@ -21,6 +22,8 @@ export function DesktopTab({ device }: { device: Device }) {
   const hasWifi = device.interfaces.some((i) => i.kind === 'wireless')
   const consoleLink = sim.links.find((l) => l.type === 'console' && (l.a.deviceId === device.id || l.b.deviceId === device.id))
   const consolePeer = consoleLink ? sim.device(consoleLink.a.deviceId === device.id ? consoleLink.b.deviceId : consoleLink.a.deviceId) : undefined
+  const primaryIface = device.interfaces.find((i) => i.ip)
+  const primaryAddress = formatIpWithMask(primaryIface?.ip, primaryIface?.mask) ?? 'no address'
 
   const apps: { id: AppId; label: string; icon: React.ReactNode; color: string; kinds?: Device['kind'][] }[] = [
     { id: 'ipconfig', label: 'IP Configuration', icon: <Settings size={22} />, color: 'from-cyan-500 to-blue-600' },
@@ -72,7 +75,7 @@ export function DesktopTab({ device }: { device: Device }) {
       <div className="pointer-events-none absolute -right-20 bottom-0 h-72 w-72 rounded-full bg-indigo-500/15 blur-3xl" />
       <div className="flex items-center gap-2 border-b border-white/8 px-4 py-2 text-[10px] text-slate-400">
         <Monitor size={12} className="text-cyan-300" /> {device.name} — Desktop
-        <span className="ml-auto font-mono text-[9px] text-slate-500">{device.interfaces.find((i) => i.ip)?.ip ?? 'no address'}</span>
+        <span className="ml-auto font-mono text-[9px] text-slate-500">{primaryAddress}</span>
       </div>
       <div className="relative z-10 grid flex-1 content-start grid-cols-4 gap-4 p-6 sm:grid-cols-5">
         {visible.map((a) => (
