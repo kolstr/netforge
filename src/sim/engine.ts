@@ -1834,7 +1834,17 @@ export class Simulator {
       const clean = path.split('?')[0].replace(/^\//, '') || 'index.html'
       const file = s.http.files.find((f) => f.name === clean)
       if (!file) {
-        respond(`<html><body><h1>404 Not Found</h1><p>${clean} was not found on this server.</p></body></html>`, 404)
+        respond(`<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>404 Not Found</title>
+  </head>
+  <body>
+    <h1>404 Not Found</h1>
+    <p>${clean} was not found on this server.</p>
+  </body>
+</html>`, 404)
       } else {
         respond(file.content, 200)
       }

@@ -150,6 +150,21 @@ body {
   .tab-active::after { content: ''; @apply absolute inset-x-2 -bottom-px h-0.5 rounded-full bg-cyan-400; }
   .table-head { @apply text-left text-[10px] font-semibold uppercase tracking-wider; color: var(--color-slate-500); }
   .mono { font-family: var(--font-mono); }
+  .code-editor { position: relative; overflow: hidden; border-radius: 0.375rem; border: 1px solid var(--nf-edge); background-color: color-mix(in oklab, var(--color-ink-950) 70%, transparent); font-family: var(--font-mono); }
+  .code-editor-layer { position: absolute; inset: 0; margin: 0; padding: 8px 10px; font-family: inherit; font-size: 9px; line-height: 1.625; tab-size: 2; white-space: pre; }
+  .code-editor-pre { overflow: hidden; pointer-events: none; color: var(--color-slate-300); }
+  .code-editor-input { width: 100%; height: 100%; overflow: auto; resize: none; border: 0; outline: none; background-color: transparent; color: transparent; caret-color: var(--color-slate-100); }
+  .code-editor-input::selection { background: rgb(34 211 238 / 0.25); color: transparent; }
+  .tok-comment { color: var(--color-slate-500); font-style: italic; }
+  .tok-doctype { color: var(--color-slate-500); }
+  .tok-tag { color: var(--color-cyan-300); }
+  .tok-attr { color: var(--color-violet-300); }
+  .tok-string { color: var(--color-emerald-300); }
+  .tok-selector { color: var(--color-amber-200); }
+  .tok-prop { color: var(--color-violet-200); }
+  .tok-value { color: var(--color-emerald-200); }
+  .tok-punct { color: var(--color-slate-400); }
+  .tok-text { color: var(--color-slate-200); }
   .kbd { @apply rounded px-1.5 py-0.5 font-mono text-[10px]; border: 1px solid var(--nf-edge-strong); background-color: var(--nf-fill-subtle); color: var(--color-slate-300); }
 }
 

@@ -4,6 +4,7 @@ import type { Device, DhcpPool } from '../../types'
 import { useApp } from '../../store'
 import { ipInNetwork } from '../../lib/ip'
 import { Field, Toggle } from '../common/Modal'
+import { CodeEditor } from '../common/CodeEditor'
 
 type ServiceId = 'http' | 'dns' | 'dhcp' | 'tftp' | 'email' | 'ftp' | 'ntp' | 'syslog' | 'aaa'
 
@@ -64,12 +65,28 @@ export function ServicesTab({ device }: { device: Device }) {
                   <button key={f.name} className={`block w-full truncate rounded px-2 py-1 text-left font-mono text-[9px] ${current?.name === f.name ? 'bg-cyan-400/10 text-cyan-200' : 'text-slate-400 hover:bg-white/5'}`} onClick={() => setHttpFile(f.name)}>{f.name}</button>
                 ))}
                 <div className="flex gap-1 pt-1">
-                  <button className="btn flex-1" onClick={() => { const name = `page${s.http.files.length + 1}.html`; update((d) => d.config.services.http.files.push({ name, content: '<html><body><h1>New page</h1></body></html>' })); setHttpFile(name) }}><Plus size={9} /> Add</button>
+                  <button className="btn flex-1" onClick={() => {
+                    const name = `page${s.http.files.length + 1}.html`
+                    update((d) => d.config.services.http.files.push({
+                      name,
+                      content: `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>New page</title>
+  </head>
+  <body>
+    <h1>New page</h1>
+  </body>
+</html>`,
+                    }))
+                    setHttpFile(name)
+                  }}><Plus size={9} /> Add</button>
                   <button className="btn btn-danger" onClick={() => { if (!current) return; update((d) => (d.config.services.http.files = d.config.services.http.files.filter((f) => f.name !== current.name))); setHttpFile(s.http.files[0]?.name ?? '') }}><Trash2 size={9} /></button>
                 </div>
               </div>
               {current && (
-                <textarea key={current.name} className="input h-64 flex-1 resize-none font-mono text-[9px] leading-relaxed" defaultValue={current.content} onBlur={(e) => update((d) => { const f = d.config.services.http.files.find((x) => x.name === current.name); if (f) f.content = e.target.value })} />
+                <CodeEditor key={current.name} className="h-64 flex-1" defaultValue={current.content} onBlur={(value) => update((d) => { const f = d.config.services.http.files.find((x) => x.name === current.name); if (f) f.content = value })} />
               )}
             </div>
           </div>
