@@ -5,7 +5,7 @@ import { Modal } from '../common/Modal'
 export function WelcomeDialog() {
   const store = useApp()
   return (
-    <Modal onClose={() => store.setDialog(null)} width="max-w-3xl" title="Welcome to NetForge Studio" subtitle="A modern network simulator built for learning and experimentation" icon={<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-ink-950"><Network size={19} /></div>}>
+    <Modal onClose={() => store.setDialog(null)} width="max-w-3xl" title="Welcome to NetForge Studio" subtitle="A modern network simulator built for learning and experimentation" icon={<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-accent-ink"><Network size={19} /></div>}>
       <div className="space-y-4">
         <div className="rounded-xl border border-white/8 bg-gradient-to-br from-cyan-400/10 via-ink-900 to-indigo-500/10 p-4">
           <h3 className="text-sm font-semibold text-slate-100">Build, configure and simulate networks in your browser</h3>
@@ -83,7 +83,7 @@ export function WelcomeDialog() {
 export function AboutDialog() {
   const store = useApp()
   return (
-    <Modal onClose={() => store.setDialog(null)} width="max-w-lg" title="About NetForge Studio" subtitle="Version 1.0.0" icon={<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-ink-950"><Network size={18} /></div>}>
+    <Modal onClose={() => store.setDialog(null)} width="max-w-lg" title="About NetForge Studio" subtitle="Version 1.0.0" icon={<div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-accent-ink"><Network size={18} /></div>}>
       <div className="space-y-3 text-[11px] leading-relaxed text-slate-400">
         <p>NetForge Studio is an independent, browser-based network simulation and learning tool. It is not affiliated with, endorsed by, or connected to Cisco Systems. “Packet Tracer” is a trademark of its respective owner; this project implements similar learning concepts with original code, branding and artwork.</p>
         <div className="grid grid-cols-2 gap-2">

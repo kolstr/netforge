@@ -419,16 +419,84 @@ export function defaultServices(): ServerServices {
       files: [
         {
           name: 'index.html',
-          content: `<!doctype html><html><head><meta charset="utf-8"><title>NetForge Web Server</title>
-<style>body{font-family:system-ui,sans-serif;background:#0b1220;color:#e2e8f0;display:grid;place-items:center;height:100vh;margin:0}
-.card{background:#111d33;border:1px solid #22324d;border-radius:16px;padding:40px 48px;text-align:center;box-shadow:0 20px 60px #0008}
-h1{margin:0 0 8px;font-size:30px;background:linear-gradient(90deg,#22d3ee,#818cf8);-webkit-background-clip:text;color:transparent}
-p{color:#94a3b8;max-width:420px;line-height:1.6}.badge{display:inline-block;margin-top:18px;padding:6px 12px;border-radius:99px;background:#22d3ee22;color:#67e8f9;font-size:12px}</style></head>
-<body><div class="card"><h1>It works!</h1><p>This page is served by the NetForge HTTP service. Edit this file in the server's Services → HTTP tab.</p><div class="badge">NetForge Studio</div></div></body></html>`,
+          content: `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>NetForge Web Server</title>
+    <style>
+      body {
+        display: grid;
+        place-items: center;
+        height: 100vh;
+        margin: 0;
+        background: #0b1220;
+        color: #e2e8f0;
+        font-family: system-ui, sans-serif;
+      }
+      .card {
+        padding: 40px 48px;
+        border: 1px solid #22324d;
+        border-radius: 16px;
+        background: #111d33;
+        text-align: center;
+        box-shadow: 0 20px 60px #0008;
+      }
+      h1 {
+        margin: 0 0 8px;
+        font-size: 30px;
+        background: linear-gradient(90deg, #22d3ee, #818cf8);
+        -webkit-background-clip: text;
+        color: transparent;
+      }
+      p {
+        max-width: 420px;
+        color: #94a3b8;
+        line-height: 1.6;
+      }
+      .badge {
+        display: inline-block;
+        margin-top: 18px;
+        padding: 6px 12px;
+        border-radius: 99px;
+        background: #22d3ee22;
+        color: #67e8f9;
+        font-size: 12px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <h1>It works!</h1>
+      <p>This page is served by the NetForge HTTP service. Edit this file in the server's Services → HTTP tab.</p>
+      <div class="badge">NetForge Studio</div>
+    </div>
+  </body>
+</html>`,
         },
         {
           name: 'about.html',
-          content: `<!doctype html><html><head><meta charset="utf-8"><title>About</title></head><body style="font-family:system-ui;background:#0b1220;color:#e2e8f0;padding:40px"><h1>About this server</h1><p>Add your own pages from the HTTP service configuration.</p></body></html>`,
+          content: `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>About</title>
+    <style>
+      body {
+        padding: 40px;
+        background: #0b1220;
+        color: #e2e8f0;
+        font-family: system-ui, sans-serif;
+      }
+    </style>
+  </head>
+  <body>
+    <h1>About this server</h1>
+    <p>Add your own pages from the HTTP service configuration.</p>
+  </body>
+</html>`,
         },
       ],
     },

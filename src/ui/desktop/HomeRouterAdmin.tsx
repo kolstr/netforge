@@ -20,7 +20,7 @@ export function HomeRouterAdmin({ device }: { device: Device }) {
     return (
       <div className="mx-auto max-w-sm rounded-xl border border-white/10 bg-ink-900 p-6">
         <div className="mb-4 flex items-center justify-center">
-          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-ink-950">
+          <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-gradient-to-br from-cyan-400 to-indigo-500 text-accent-ink">
             <Router size={24} />
           </div>
         </div>

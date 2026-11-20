@@ -2,6 +2,7 @@ import { Cable, Check } from 'lucide-react'
 import type { CableType, Device, Interface } from '../../types'
 import { Modal } from '../common/Modal'
 import { useApp } from '../../store'
+import { formatIpWithMask } from '../../lib/ip'
 
 export function compatiblePort(kind: CableType, iface: Interface): boolean {
   switch (kind) {
@@ -52,6 +53,7 @@ export function PortPicker({
           {ports.map((iface) => {
             const detail = sim.portDetail(device.id, iface.id)
             const busy = !!detail?.peer
+            const addr = formatIpWithMask(iface.ip, iface.mask)
             return (
               <button
                 key={iface.id}
@@ -63,7 +65,7 @@ export function PortPicker({
                   <span className="block truncate font-mono text-[11px] text-slate-200">{iface.name}</span>
                   <span className="block text-[9px] text-slate-500">
                     {iface.kind} · {iface.speed >= 1000 ? `${iface.speed / 1000} Gbps` : `${iface.speed} Mbps`}
-                    {iface.ip ? ` · ${iface.ip}` : ''}
+                    {addr ? ` · ${addr}` : ''}
                     {iface.kind === 'serial' ? ' · serial WAN' : ''}
                     {iface.kind === 'console' ? ' · RS-232' : ''}
                   </span>

@@ -4,6 +4,7 @@ import type { UserPdu } from '../../types'
 import { useApp } from '../../store'
 import { Field, Modal, Toggle } from '../common/Modal'
 import { randomPduColor } from '../../sim/engine'
+import { formatIpWithMask } from '../../lib/ip'
 
 const TYPES: { id: UserPdu['type']; label: string; port?: number }[] = [
   { id: 'ping', label: 'Ping (ICMP)' },
@@ -77,7 +78,10 @@ export function ComplexPduDialog() {
           <Field label="Source device">
             <select className="input" value={sourceId} onChange={(e) => setSourceId(e.target.value)}>
               {!devices.length && <option value="">No configured devices</option>}
-              {devices.map((d) => <option key={d.id} value={d.id}>{d.name} ({d.interfaces.find((i) => i.ip)?.ip})</option>)}
+              {devices.map((d) => {
+                const iface = d.interfaces.find((i) => i.ip)
+                return <option key={d.id} value={d.id}>{d.name} ({formatIpWithMask(iface?.ip, iface?.mask) ?? 'no IP'})</option>
+              })}
             </select>
           </Field>
           <Field label="Destination mode">
@@ -91,7 +95,10 @@ export function ComplexPduDialog() {
           ) : (
             <Field label="Destination device">
               <select className="input" value={destDevice} onChange={(e) => setDestDevice(e.target.value)}>
-                {devices.filter((d) => d.id !== sourceId).map((d) => <option key={d.id} value={d.id}>{d.name} ({sim.l3Endpoints(d)[0]?.ip})</option>)}
+                {devices.filter((d) => d.id !== sourceId).map((d) => {
+                  const ep = sim.l3Endpoints(d)[0]
+                  return <option key={d.id} value={d.id}>{d.name} ({formatIpWithMask(ep?.ip, ep?.mask) ?? 'no IP'})</option>
+                })}
               </select>
             </Field>
           )}

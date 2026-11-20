@@ -44,6 +44,7 @@ The nginx config in [deploy/nginx.conf](deploy/nginx.conf) adds SPA history fall
 - **Undo/redo, copy/duplicate, delete, import/export JSON**, browser autosave and manual save.
 - **Physical configuration** for modules, power, interface LEDs and cable selection.
 - **Inspector** for the selected device or link, including runtime neighbors, interface state and port details.
+- **Dark and light themes**: the sun/moon button next to the settings gear in the header switches themes; the choice is saved with the rest of the workspace preferences.
 - Responsive layout: collapsible palette, collapsible inspector, and a full-width simulation panel.
 
 ## Devices

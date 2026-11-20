@@ -1,4 +1,4 @@
-export const DEVICE_W = 138
+export const DEVICE_W = 156
 export const DEVICE_H = 72
 
 export interface Point {

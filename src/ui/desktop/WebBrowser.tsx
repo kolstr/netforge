@@ -4,6 +4,7 @@ import type { Device } from '../../types'
 import { useApp } from '../../store'
 import type { AppResult } from '../../sim/engine'
 import { HomeRouterAdmin } from './HomeRouterAdmin'
+import { formatIpWithMask } from '../../lib/ip'
 
 type Result = (AppResult & { targetIp?: string; host?: string; path?: string; resolvedFrom?: string; url?: string }) | null
 
@@ -79,7 +80,7 @@ export function WebBrowser({ device }: { device: Device }) {
   }
 
   return (
-    <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-white/10 bg-[#f8fafc]">
+    <div className="nf-palette-default flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-white/10 bg-[#f8fafc]">
       <div className="flex shrink-0 items-center gap-1.5 border-b border-slate-300 bg-slate-200 px-2 py-1.5">
         <button className="rounded p-1 text-slate-600 hover:bg-slate-300 disabled:opacity-30" onClick={goBack} disabled={histIdx <= 0}><ArrowLeft size={14} /></button>
         <button className="rounded p-1 text-slate-600 hover:bg-slate-300 disabled:opacity-30" onClick={goForward} disabled={histIdx >= history.length - 1}><ArrowRight size={14} /></button>
@@ -113,10 +114,11 @@ export function WebBrowser({ device }: { device: Device }) {
                 <Search size={13} className="text-cyan-600" /> <span className="font-medium">www.netforge.lab</span> <span className="ml-auto text-[9px] text-slate-400">requires DNS</span>
               </button>
               {servers.map((s) => {
-                const ip = s.interfaces.find((i) => i.ip)?.ip
+                const iface = s.interfaces.find((i) => i.ip)
+                const ip = iface?.ip
                 return (
                   <button key={s.id} className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[11px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate(ip!)}>
-                    <Globe size={13} className="text-slate-500" /> <span className="font-mono">{ip}</span> <span className="ml-auto text-[9px] text-slate-400">{s.name}</span>
+                    <Globe size={13} className="text-slate-500" /> <span className="font-mono">{formatIpWithMask(ip, iface?.mask)}</span> <span className="ml-auto text-[9px] text-slate-400">{s.name}</span>
                   </button>
                 )
               })}

@@ -99,7 +99,7 @@ export function Toggle({ checked, onChange, label, disabled }: { checked: boolea
       onClick={() => onChange(!checked)}
     >
       <span className={`relative h-5 w-9 rounded-full border transition ${checked ? 'border-cyan-400/50 bg-cyan-400/30' : 'border-white/15 bg-white/10'}`}>
-        <span className={`absolute top-0.5 h-3.5 w-3.5 rounded-full bg-slate-100 transition-all ${checked ? 'left-[18px]' : 'left-0.5'}`} />
+        <span className={`absolute top-0.5 h-3.5 w-3.5 rounded-full bg-slate-50 shadow-sm ring-1 ring-black/20 transition-all ${checked ? 'left-[18px]' : 'left-0.5'}`} />
       </span>
       {label && <span className="text-xs text-slate-300">{label}</span>}
     </button>

@@ -5,6 +5,8 @@ import App from './App'
 import { fitWorkspace, layoutItems } from './lib/fitView'
 import { useApp } from './store'
 
+document.documentElement.dataset.theme = useApp.getState().settings.theme
+
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <App />
