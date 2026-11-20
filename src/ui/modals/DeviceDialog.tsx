@@ -64,8 +64,8 @@ export function DeviceDialog() {
             <DeviceIcon kind={device.kind} size={15} />
           </span>
           <span>{device.name}</span>
-          <span className="rounded bg-white/5 px-1.5 py-0.5 text-[9px] font-normal text-slate-500">{device.model}</span>
-          {!device.power && <span className="rounded bg-rose-400/10 px-1.5 py-0.5 text-[9px] font-normal text-rose-300">powered off</span>}
+          <span className="rounded bg-white/5 px-1.5 py-0.5 text-[10px] font-normal text-slate-500">{device.model}</span>
+          {!device.power && <span className="rounded bg-rose-400/10 px-1.5 py-0.5 text-[10px] font-normal text-rose-300">powered off</span>}
         </div>
       }
       subtitle={`${device.kind} · ${device.interfaces.filter((i) => i.kind !== 'console').length} ports · ${primaryAddress ?? 'no IP address'}`}

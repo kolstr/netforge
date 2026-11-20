@@ -29,7 +29,7 @@ export function WelcomeDialog() {
             <div key={c.title} className="rounded-lg border border-white/8 bg-ink-950/40 p-3">
               <div className="text-cyan-300">{c.icon}</div>
               <div className="mt-1.5 text-[11px] font-semibold text-slate-200">{c.title}</div>
-              <div className="mt-0.5 text-[9px] leading-relaxed text-slate-500">{c.text}</div>
+              <div className="mt-0.5 text-[10px] leading-relaxed text-slate-500">{c.text}</div>
             </div>
           ))}
         </div>
@@ -45,13 +45,13 @@ export function WelcomeDialog() {
                 'Use DHCP or set static IPs; configure DNS/HTTP on a server.',
                 'Switch to Simulation Mode, add a PDU and press Play.',
               ].map((s, i) => (
-                <li key={i} className="flex gap-2"><span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-cyan-400/15 text-[8px] font-bold text-cyan-300">{i + 1}</span>{s}</li>
+                <li key={i} className="flex gap-2"><span className="flex h-4 w-4 shrink-0 items-center justify-center rounded-full bg-cyan-400/15 text-[10px] font-bold text-cyan-300">{i + 1}</span>{s}</li>
               ))}
             </ol>
           </div>
           <div className="rounded-xl border border-white/8 bg-ink-950/40 p-3">
             <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400"><Keyboard size={11} className="text-cyan-300" /> Keyboard shortcuts</div>
-            <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[9px] text-slate-500">
+            <div className="mt-2 grid grid-cols-2 gap-x-3 gap-y-1 text-[10px] text-slate-500">
               {[
                 ['Esc', 'Select tool / cancel'],
                 ['Del', 'Delete selection'],
@@ -96,8 +96,8 @@ export function AboutDialog() {
             ['Storage', 'Local browser autosave + portable JSON export'],
           ].map(([k, v]) => (
             <div key={k} className="rounded-lg border border-white/8 bg-ink-950/40 p-2">
-              <div className="text-[9px] font-semibold uppercase tracking-wider text-cyan-300">{k}</div>
-              <div className="mt-0.5 text-[9px] text-slate-500">{v}</div>
+              <div className="text-[10px] font-semibold uppercase tracking-wider text-cyan-300">{k}</div>
+              <div className="mt-0.5 text-[10px] text-slate-500">{v}</div>
             </div>
           ))}
         </div>

@@ -77,7 +77,7 @@ export function MenuBar() {
           <div className="text-[13px] font-semibold tracking-tight text-slate-100">
             NetForge <span className="font-normal text-slate-500">Studio</span>
           </div>
-          <div className="mt-0.5 text-[9px] uppercase tracking-[0.18em] text-slate-600">Network Simulator</div>
+          <div className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-slate-600">Network Simulator</div>
         </div>
       </div>
 

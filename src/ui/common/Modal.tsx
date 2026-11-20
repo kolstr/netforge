@@ -67,7 +67,7 @@ export function Tabs<T extends string>({
   className?: string
 }) {
   return (
-    <div className={`flex items-center gap-1 overflow-x-auto border-b border-white/8 px-2 ${className}`}>
+    <div className={`flex flex-wrap items-center gap-1 border-b border-white/8 px-2 ${className}`}>
       {tabs.map((t) => (
         <button key={t.id} className={`tab shrink-0 whitespace-nowrap ${value === t.id ? 'tab-active' : ''}`} onClick={() => onChange(t.id)}>
           <span className="inline-flex items-center gap-1.5">

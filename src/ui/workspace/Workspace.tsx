@@ -653,7 +653,7 @@ export function Workspace() {
                 <div className="absolute left-0 top-[5px] w-full rounded" style={{ height: shape.stroke, backgroundColor: shape.color, opacity: 0.75 }} />
                 {selected && <div className="absolute inset-0 rounded outline outline-1 outline-cyan-300/80" />}
                 {shape.text && (
-                  <span className="absolute left-1/2 top-[-14px] -translate-x-1/2 whitespace-nowrap rounded bg-ink-950/85 px-1 text-[9px] font-semibold" style={{ color: shape.color }}>
+                  <span className="absolute left-1/2 top-[-14px] -translate-x-1/2 whitespace-nowrap rounded bg-ink-950/85 px-1 text-[10px] font-semibold" style={{ color: shape.color }}>
                     {shape.text}
                   </span>
                 )}
@@ -770,7 +770,7 @@ export function Workspace() {
             }}
           >
             <div className="flex items-center justify-between border-b border-black/10 px-2 py-1">
-              <span className="text-[9px] font-semibold uppercase tracking-wider opacity-60">Note</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider opacity-60">Note</span>
               <button className="rounded p-0.5 opacity-50 hover:bg-black/10 hover:opacity-100" onClick={() => { sim.notes = sim.notes.filter((n) => n.id !== note.id); sim.bump(); store.saveLocal() }}>
                 <Trash2 size={10} />
               </button>
@@ -814,7 +814,7 @@ export function Workspace() {
             className="pointer-events-none absolute rounded-xl border-2 border-dashed border-amber-300/80"
             style={{ left: sim.device(pduFrom)!.x - 74, top: sim.device(pduFrom)!.y - 41, width: 148, height: 82 }}
           >
-            <span className="absolute -top-5 left-1/2 -translate-x-1/2 rounded bg-amber-300 px-1.5 py-0.5 text-[8px] font-bold uppercase text-accent-ink">source</span>
+            <span className="absolute -top-5 left-1/2 -translate-x-1/2 rounded bg-amber-300 px-1.5 py-0.5 text-[10px] font-bold uppercase text-accent-ink">source</span>
           </div>
         )}
       </div>
@@ -854,14 +854,14 @@ export function Workspace() {
         )}
       </div>
 
-      <div className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-3 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[9px] text-slate-500 shadow-lg backdrop-blur">
+      <div className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-3 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[10px] text-slate-500 shadow-lg backdrop-blur">
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-400" /> up</span>
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-rose-500" /> down</span>
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-400" /> STP blocked</span>
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-cyan-300" /> activity</span>
       </div>
 
-      <div className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[9px] text-slate-600 shadow-lg backdrop-blur">
+      <div className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[10px] text-slate-600 shadow-lg backdrop-blur">
         {store.palette.kind
           ? 'Click to place another · Esc or right-click to finish'
           : store.palette.cable
@@ -898,7 +898,7 @@ export function Workspace() {
                 <div key={s.title} className="rounded-lg border border-white/8 bg-ink-950/50 p-2.5">
                   <div className="text-cyan-300">{s.icon}</div>
                   <div className="mt-1 text-[10px] font-semibold text-slate-200">{s.title}</div>
-                  <div className="mt-0.5 text-[9px] leading-snug text-slate-500">{s.text}</div>
+                  <div className="mt-0.5 text-[10px] leading-snug text-slate-500">{s.text}</div>
                 </div>
               ))}
             </div>
@@ -919,7 +919,7 @@ export function Workspace() {
 
       {context && <ContextMenu x={context.x} y={context.y} items={context.items} onClose={() => setContext(null)} />}
 
-      <div className="pointer-events-none absolute bottom-3 left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-white/8 bg-ink-950/70 px-3 py-1 text-[9px] text-slate-600 backdrop-blur lg:flex">
+      <div className="pointer-events-none absolute bottom-3 left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-white/8 bg-ink-950/70 px-3 py-1 text-[10px] text-slate-600 backdrop-blur lg:flex">
         <Grid3x3 size={10} /> {store.settings.snapToGrid ? 'snap on' : 'snap off'}
       </div>
     </div>

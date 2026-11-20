@@ -84,7 +84,7 @@ export function PortPicker({
                 <span className={`h-2 w-2 rounded-full ${detail?.physicalUp ? 'bg-emerald-400' : busy ? 'bg-amber-400' : 'bg-slate-600'}`} />
                 <span className="min-w-0 flex-1">
                   <span className="block truncate font-mono text-[11px] text-slate-200">{iface.name}</span>
-                  <span className="block text-[9px] text-slate-500">
+                  <span className="block text-[10px] text-slate-500">
                     {iface.kind} · {iface.speed >= 1000 ? `${iface.speed / 1000} Gbps` : `${iface.speed} Mbps`}
                     {addr ? ` · ${addr}` : ''}
                     {iface.kind === 'serial' ? ' · serial WAN' : ''}
@@ -92,7 +92,7 @@ export function PortPicker({
                   </span>
                 </span>
                 {busy ? (
-                  <span className="rounded bg-amber-400/10 px-1.5 py-0.5 text-[9px] text-amber-300">in use</span>
+                  <span className="rounded bg-amber-400/10 px-1.5 py-0.5 text-[10px] text-amber-300">in use</span>
                 ) : (
                   <Check size={13} className="text-slate-600" />
                 )}

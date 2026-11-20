@@ -15,7 +15,7 @@ export function AttributesTab({ device }: { device: Device }) {
         <Field label="Device name"><input className="input" defaultValue={device.name} onBlur={(e) => store.updateDevice(device.id, (d) => { d.name = e.target.value; d.config.hostname = e.target.value })} /></Field>
         <Field label="Model"><input className="input" defaultValue={device.model} disabled /></Field>
         <Field label="Kind"><input className="input" defaultValue={device.kind} disabled /></Field>
-        <Field label="Internal ID"><input className="input font-mono text-[9px]" defaultValue={device.id} disabled /></Field>
+        <Field label="Internal ID"><input className="input font-mono text-[10px]" defaultValue={device.id} disabled /></Field>
         <div className="grid grid-cols-2 gap-2 text-[10px] text-slate-500">
           <div>Workspace X: <span className="text-slate-300">{Math.round(device.x)}</span></div>
           <div>Workspace Y: <span className="text-slate-300">{Math.round(device.y)}</span></div>

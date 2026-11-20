@@ -120,7 +120,7 @@ export function IPConfigApp({ device }: { device: Device }) {
           {dhcp && <button className="btn" onClick={renew}><RefreshCw size={12} /> Renew DHCP</button>}
           {status && <span className="text-[10px] text-cyan-300">{status}</span>}
         </div>
-        <div className="mt-1 text-[9px] text-slate-600">
+        <div className="mt-1 text-[10px] text-slate-600">
           {dhcp ? 'DHCP is active automatically. Renew requests a fresh lease from the server.' : 'Enter static settings above, then apply or press Enter.'}
         </div>
       </div>

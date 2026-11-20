@@ -162,7 +162,7 @@ export function CommandPrompt({ device }: { device: Device }) {
       <div className="flex items-center gap-2 border-b border-white/8 bg-ink-900/80 px-3 py-1.5">
         <Terminal size={12} className="text-slate-400" />
         <span className="font-mono text-[10px] text-slate-400">Command Prompt — {device.name}</span>
-        <span className="ml-auto text-[9px] text-slate-600">{primaryAddress}</span>
+        <span className="ml-auto text-[10px] text-slate-600">{primaryAddress}</span>
       </div>
       <div className="min-h-0 flex-1 overflow-auto px-3 py-2 font-mono text-[11px] leading-[1.55] text-slate-300" onClick={() => inputRef.current?.focus()}>
         {lines.map((line, i) => <div key={i} className="whitespace-pre-wrap">{line || '\u00a0'}</div>)}

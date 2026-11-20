@@ -35,7 +35,7 @@ export function PhysicalTab({ device }: { device: Device }) {
                 <div className="text-[11px] text-slate-500">{device.model} · {device.kind}</div>
                 <div className="mt-2 flex flex-wrap items-center gap-1.5">
                   <StatusPill up={device.power} label={device.power ? 'powered on' : 'powered off'} />
-                  <span className="rounded-full bg-white/5 px-2 py-0.5 text-[9px] text-slate-400">{device.modules.length} modules</span>
+                  <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-slate-400">{device.modules.length} modules</span>
                 </div>
               </div>
             </div>
@@ -50,8 +50,8 @@ export function PhysicalTab({ device }: { device: Device }) {
 
           <div className="mt-5 rounded-lg border border-white/8 bg-ink-950/60 p-3">
             <div className="mb-2 flex items-center justify-between">
-              <span className="text-[9px] font-semibold uppercase tracking-wider text-slate-500">Front panel</span>
-              <span className="text-[9px] text-slate-600">{device.power ? 'ports active' : 'device off'}</span>
+              <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Front panel</span>
+              <span className="text-[10px] text-slate-600">{device.power ? 'ports active' : 'device off'}</span>
             </div>
             <div className="flex flex-wrap gap-1.5">
               {device.interfaces.filter((i) => i.kind !== 'console').map((iface) => {
@@ -67,7 +67,7 @@ export function PhysicalTab({ device }: { device: Device }) {
                   >
                     <span className="flex items-center gap-1">
                       <span className={`h-1.5 w-1.5 rounded-full ${!device.power || !iface.adminUp ? 'bg-slate-600' : d?.physicalUp ? 'bg-emerald-400' : 'bg-rose-500'}`} />
-                      <span className="font-mono text-[8px] text-slate-400">{shortIfaceName(iface.name)}</span>
+                      <span className="font-mono text-[10px] text-slate-400">{shortIfaceName(iface.name)}</span>
                     </span>
                     <span className="mt-0.5 text-[7px] text-slate-600">{iface.kind === 'wireless' ? 'wifi' : iface.kind}</span>
                   </button>
@@ -75,7 +75,7 @@ export function PhysicalTab({ device }: { device: Device }) {
               })}
             </div>
             {device.interfaces.some((i) => i.kind === 'console') && (
-              <div className="mt-2 flex items-center gap-1.5 text-[9px] text-slate-600">
+              <div className="mt-2 flex items-center gap-1.5 text-[10px] text-slate-600">
                 <span className="h-1.5 w-1.5 rounded-full bg-sky-400" /> Console port available for out-of-band CLI
               </div>
             )}
@@ -106,7 +106,7 @@ export function PhysicalTab({ device }: { device: Device }) {
             <Boxes size={12} className="text-cyan-300" /> Interfaces
           </div>
           <div className="overflow-hidden rounded-lg border border-white/8">
-            <table className="w-full text-[9px]">
+            <table className="w-full text-[10px]">
               <thead className="bg-white/[0.03]">
                 <tr>
                   <th className="table-head px-2 py-1.5">Interface</th>
@@ -124,7 +124,7 @@ export function PhysicalTab({ device }: { device: Device }) {
                       <td className="px-2 py-1 font-mono text-slate-300">{i.name}</td>
                       <td className="px-2 py-1 text-slate-500">{i.kind}</td>
                       <td className="px-2 py-1 text-slate-500">{i.speed ? `${i.speed}M` : '—'}</td>
-                      <td className="px-2 py-1 font-mono text-[8.5px] text-slate-500">{formatIpWithMask(i.ip, i.mask) ?? '—'}</td>
+                      <td className="px-2 py-1 font-mono text-[10px] text-slate-500">{formatIpWithMask(i.ip, i.mask) ?? '—'}</td>
                       <td className="px-2 py-1">
                         <span className={`inline-flex items-center gap-1 ${d?.physicalUp ? 'text-emerald-300' : 'text-slate-600'}`}>
                           <span className={`h-1.5 w-1.5 rounded-full ${d?.physicalUp ? 'bg-emerald-400' : 'bg-slate-600'}`} />
@@ -152,7 +152,7 @@ export function PhysicalTab({ device }: { device: Device }) {
                   <div className="flex items-center justify-between gap-2">
                     <div>
                       <div className="font-mono text-[10px] text-slate-200">{m.name}</div>
-                      <div className="mt-0.5 text-[9px] leading-snug text-slate-500">{m.description}</div>
+                      <div className="mt-0.5 text-[10px] leading-snug text-slate-500">{m.description}</div>
                     </div>
                     <button
                       className={`btn shrink-0 ${installed ? 'btn-danger' : 'btn-primary'}`}
@@ -171,7 +171,7 @@ export function PhysicalTab({ device }: { device: Device }) {
                   </div>
                   <div className="mt-2 flex flex-wrap gap-1">
                     {m.ports.map((p) => (
-                      <span key={p.name} className="rounded border border-white/8 bg-ink-950/50 px-1.5 py-0.5 font-mono text-[8px] text-slate-500">{p.name}</span>
+                      <span key={p.name} className="rounded border border-white/8 bg-ink-950/50 px-1.5 py-0.5 font-mono text-[10px] text-slate-500">{p.name}</span>
                     ))}
                   </div>
                 </div>

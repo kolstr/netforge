@@ -111,19 +111,19 @@ export function WebBrowser({ device }: { device: Device }) {
             <p className="mt-1 text-[11px] text-slate-500">Visit a server by IP address or DNS name.</p>
             <div className="mt-5 grid w-full max-w-md gap-2">
               <button className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[11px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate('www.netforge.lab')}>
-                <Search size={13} className="text-cyan-600" /> <span className="font-medium">www.netforge.lab</span> <span className="ml-auto text-[9px] text-slate-400">requires DNS</span>
+                <Search size={13} className="text-cyan-600" /> <span className="font-medium">www.netforge.lab</span> <span className="ml-auto text-[10px] text-slate-400">requires DNS</span>
               </button>
               {servers.map((s) => {
                 const iface = s.interfaces.find((i) => i.ip)
                 const ip = iface?.ip
                 return (
                   <button key={s.id} className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[11px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate(ip!)}>
-                    <Globe size={13} className="text-slate-500" /> <span className="font-mono">{formatIpWithMask(ip, iface?.mask)}</span> <span className="ml-auto text-[9px] text-slate-400">{s.name}</span>
+                    <Globe size={13} className="text-slate-500" /> <span className="font-mono">{formatIpWithMask(ip, iface?.mask)}</span> <span className="ml-auto text-[10px] text-slate-400">{s.name}</span>
                   </button>
                 )
               })}
               <button className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[11px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate('192.168.0.1')}>
-                <Lock size={13} className="text-amber-500" /> <span className="font-mono">192.168.0.1</span> <span className="ml-auto text-[9px] text-slate-400">home router</span>
+                <Lock size={13} className="text-amber-500" /> <span className="font-mono">192.168.0.1</span> <span className="ml-auto text-[10px] text-slate-400">home router</span>
               </button>
             </div>
           </div>
@@ -156,7 +156,7 @@ export function WebBrowser({ device }: { device: Device }) {
           />
         )}
       </div>
-      <div className="flex shrink-0 items-center gap-3 border-t border-slate-300 bg-slate-100 px-2 py-1 text-[9px] text-slate-500">
+      <div className="flex shrink-0 items-center gap-3 border-t border-slate-300 bg-slate-100 px-2 py-1 text-[10px] text-slate-500">
         {result?.ok ? <span>HTTP {result.status ?? 200} · {result.targetIp ?? ''} · {result.resolvedFrom ?? 'direct'}</span> : <span>Ready</span>}
         <span className="ml-auto">{device.name}</span>
       </div>

@@ -67,7 +67,7 @@ export function FTPApp({ device }: { device: Device }) {
         <div className="flex items-center gap-2">
           <FolderOpen size={17} className="text-cyan-300" />
           <div className="text-sm font-semibold text-slate-100">FTP Client</div>
-          <span className="ml-auto text-[9px] text-slate-600">{device.name}</span>
+          <span className="ml-auto text-[10px] text-slate-600">{device.name}</span>
         </div>
         <div className="mt-3 grid grid-cols-4 gap-2">
           <Field label="Server"><input className="input font-mono" value={host} onChange={(e) => setHost(e.target.value)} placeholder="10.10.10.10" /></Field>
@@ -97,12 +97,12 @@ export function FTPApp({ device }: { device: Device }) {
         </div>
         <div className="rounded-xl border border-white/10 bg-ink-900 p-3">
           <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-400">File contents</div>
-          <pre className="mt-2 min-h-[120px] max-h-56 overflow-auto whitespace-pre-wrap rounded border border-white/8 bg-ink-950/60 p-2 font-mono text-[9px] text-slate-400">{content || 'Select a file to preview.'}</pre>
+          <pre className="mt-2 min-h-[120px] max-h-56 overflow-auto whitespace-pre-wrap rounded border border-white/8 bg-ink-950/60 p-2 font-mono text-[10px] text-slate-400">{content || 'Select a file to preview.'}</pre>
           <div className="mt-2 grid grid-cols-2 gap-1">
-            <input className="input text-[9px]" value={uploadName} onChange={(e) => setUploadName(e.target.value)} />
+            <input className="input text-[10px]" value={uploadName} onChange={(e) => setUploadName(e.target.value)} />
             <button className="btn" onClick={upload}><Upload size={10} /> Upload</button>
           </div>
-          <textarea className="input mt-1 h-16 resize-none text-[9px]" value={uploadBody} onChange={(e) => setUploadBody(e.target.value)} />
+          <textarea className="input mt-1 h-16 resize-none text-[10px]" value={uploadBody} onChange={(e) => setUploadBody(e.target.value)} />
         </div>
       </div>
     </div>

@@ -118,7 +118,7 @@ export function ComplexPduDialog() {
           <Toggle checked={periodic} onChange={setPeriodic} label="Periodic" />
           {periodic && <Field label="Interval (s)"><input type="number" className="input w-24" value={interval} onChange={(e) => setInterval(Number(e.target.value))} /></Field>}
           <div className="ml-auto flex items-center gap-1.5">
-            <span className="text-[9px] uppercase tracking-wider text-slate-500">Color</span>
+            <span className="text-[10px] uppercase tracking-wider text-slate-500">Color</span>
             {['#22d3ee', '#a78bfa', '#f472b6', '#fbbf24', '#34d399', '#fb7185'].map((c) => (
               <button key={c} className={`h-4 w-4 rounded-full border-2 ${color === c ? 'border-white' : 'border-transparent'}`} style={{ backgroundColor: c }} onClick={() => setColor(c)} />
             ))}
@@ -127,7 +127,7 @@ export function ComplexPduDialog() {
         <div className="flex items-center gap-2 border-t border-white/8 pt-3">
           <button className="btn btn-primary" onClick={create} disabled={!sourceId || (destMode === 'ip' ? !destIp : !destDevice)}><Send size={12} /> Create PDU</button>
           <button className="btn" onClick={() => store.setDialog(null)}>Cancel</button>
-          <span className="ml-auto text-[9px] text-slate-600">The PDU is added to {sim.activeScenario().name}. Press Play in Simulation Mode to send it.</span>
+          <span className="ml-auto text-[10px] text-slate-600">The PDU is added to {sim.activeScenario().name}. Press Play in Simulation Mode to send it.</span>
         </div>
       </div>
     </Modal>

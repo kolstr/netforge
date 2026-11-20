@@ -41,9 +41,9 @@ export function WirelessApp({ device }: { device: Device }) {
         </div>
         {assoc && signal && (
           <div className="mt-3 grid grid-cols-3 gap-2">
-            <div className="rounded-lg border border-white/8 bg-ink-950/50 p-2"><div className="text-[8px] uppercase text-slate-500">Access point</div><div className="text-[11px] text-slate-200">{assoc.name}</div></div>
-            <div className="rounded-lg border border-white/8 bg-ink-950/50 p-2"><div className="text-[8px] uppercase text-slate-500">Signal</div><div className="text-[11px] text-slate-200">{signal.rssi} dBm</div></div>
-            <div className="rounded-lg border border-white/8 bg-ink-950/50 p-2"><div className="text-[8px] uppercase text-slate-500">Distance</div><div className="text-[11px] text-slate-200">{Math.round(signal.distance)} units</div></div>
+            <div className="rounded-lg border border-white/8 bg-ink-950/50 p-2"><div className="text-[10px] uppercase text-slate-500">Access point</div><div className="text-[11px] text-slate-200">{assoc.name}</div></div>
+            <div className="rounded-lg border border-white/8 bg-ink-950/50 p-2"><div className="text-[10px] uppercase text-slate-500">Signal</div><div className="text-[11px] text-slate-200">{signal.rssi} dBm</div></div>
+            <div className="rounded-lg border border-white/8 bg-ink-950/50 p-2"><div className="text-[10px] uppercase text-slate-500">Distance</div><div className="text-[11px] text-slate-200">{Math.round(signal.distance)} units</div></div>
           </div>
         )}
       </div>
@@ -60,7 +60,7 @@ export function WirelessApp({ device }: { device: Device }) {
               <Signal size={13} className={n.rssi > -60 ? 'text-emerald-300' : n.rssi > -75 ? 'text-amber-300' : 'text-slate-500'} />
               <div className="min-w-0 flex-1">
                 <div className="truncate text-[11px] text-slate-200">{n.ssid}</div>
-                <div className="text-[9px] text-slate-500">{n.security === 'wpa2' ? 'WPA2-PSK' : 'Open'} · channel {n.channel} · {n.rssi} dBm</div>
+                <div className="text-[10px] text-slate-500">{n.security === 'wpa2' ? 'WPA2-PSK' : 'Open'} · channel {n.channel} · {n.rssi} dBm</div>
               </div>
               {n.security === 'wpa2' && <Lock size={11} className="text-amber-300" />}
             </button>

@@ -35,7 +35,7 @@ export function HomeRouterAdmin({ device }: { device: Device }) {
         <button className="btn btn-primary mt-3 w-full" onClick={() => { if (pass === hr.adminPassword) { setAuthed(true); setError('') } else setError('Invalid password') }}>
           <Lock size={12} /> Log in
         </button>
-        <div className="mt-2 text-center text-[9px] text-slate-600">Default password: admin</div>
+        <div className="mt-2 text-center text-[10px] text-slate-600">Default password: admin</div>
       </div>
     )
   }
@@ -54,7 +54,7 @@ export function HomeRouterAdmin({ device }: { device: Device }) {
         <Router size={18} className="text-cyan-300" />
         <div>
           <div className="text-sm font-semibold text-slate-100">{device.name}</div>
-          <div className="text-[9px] text-slate-500">Home gateway web configuration</div>
+          <div className="text-[10px] text-slate-500">Home gateway web configuration</div>
         </div>
         <button className="btn ml-auto" onClick={() => setAuthed(false)}><Lock size={11} /> Log out</button>
       </div>
@@ -69,24 +69,24 @@ export function HomeRouterAdmin({ device }: { device: Device }) {
         {tab === 'status' && (
           <div className="grid grid-cols-2 gap-3">
             <div className="rounded-lg border border-white/8 bg-ink-950/50 p-3">
-              <div className="text-[9px] uppercase tracking-wider text-slate-500">Internet / WAN</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500">Internet / WAN</div>
               <div className="mt-1 font-mono text-[11px] text-slate-200">{hr.wanMode === 'dhcp' ? (sim.rt(device.id).dhcpClient?.ip ?? 'DHCP pending') : hr.wanIp ?? 'not set'}</div>
-              <div className="text-[9px] text-slate-500">{hr.wanMode === 'dhcp' ? sim.rt(device.id).dhcpClient?.mask ?? '' : hr.wanMask ?? ''}</div>
+              <div className="text-[10px] text-slate-500">{hr.wanMode === 'dhcp' ? sim.rt(device.id).dhcpClient?.mask ?? '' : hr.wanMask ?? ''}</div>
             </div>
             <div className="rounded-lg border border-white/8 bg-ink-950/50 p-3">
-              <div className="text-[9px] uppercase tracking-wider text-slate-500">LAN</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500">LAN</div>
               <div className="mt-1 font-mono text-[11px] text-slate-200">{hr.lanIp}</div>
-              <div className="text-[9px] text-slate-500">{hr.lanMask}</div>
+              <div className="text-[10px] text-slate-500">{hr.lanMask}</div>
             </div>
             <div className="rounded-lg border border-white/8 bg-ink-950/50 p-3">
-              <div className="text-[9px] uppercase tracking-wider text-slate-500">Wireless</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500">Wireless</div>
               <div className="mt-1 text-[11px] text-slate-200">{hr.wireless.ssid}</div>
-              <div className="text-[9px] text-slate-500">{hr.wireless.security === 'wpa2' ? 'WPA2-PSK' : 'Open'} · channel {hr.wireless.channel}</div>
+              <div className="text-[10px] text-slate-500">{hr.wireless.security === 'wpa2' ? 'WPA2-PSK' : 'Open'} · channel {hr.wireless.channel}</div>
             </div>
             <div className="rounded-lg border border-white/8 bg-ink-950/50 p-3">
-              <div className="text-[9px] uppercase tracking-wider text-slate-500">Connected clients</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500">Connected clients</div>
               <div className="mt-1 text-[11px] text-slate-200">{sim.rt(device.id).assoc.length} wireless</div>
-              <div className="text-[9px] text-slate-500">{sim.rt(device.id).dhcpLeases.length} DHCP leases</div>
+              <div className="text-[10px] text-slate-500">{sim.rt(device.id).dhcpLeases.length} DHCP leases</div>
             </div>
           </div>
         )}
@@ -114,23 +114,23 @@ export function HomeRouterAdmin({ device }: { device: Device }) {
               <Field label="Maximum users"><input type="number" className="input" defaultValue={hr.dhcpSize} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.dhcpSize = Number(e.target.value) || 1 })} /></Field>
             </div>
             <div className="rounded-lg border border-white/8 bg-ink-950/50 p-2">
-              <div className="text-[9px] uppercase tracking-wider text-slate-500">Active leases</div>
+              <div className="text-[10px] uppercase tracking-wider text-slate-500">Active leases</div>
               {sim.rt(device.id).dhcpLeases.length === 0 && <div className="mt-1 text-[10px] text-slate-600">No active leases.</div>}
               {sim.rt(device.id).dhcpLeases.map((l) => (
-                <div key={l.mac} className="mt-1 flex items-center justify-between font-mono text-[9px] text-slate-400"><span>{l.ip}</span><span>{l.mac}</span></div>
+                <div key={l.mac} className="mt-1 flex items-center justify-between font-mono text-[10px] text-slate-400"><span>{l.ip}</span><span>{l.mac}</span></div>
               ))}
             </div>
           </div>
         )}
         {tab === 'forward' && (
           <div className="space-y-2">
-            <div className="grid grid-cols-5 gap-1 text-[9px] font-semibold uppercase tracking-wider text-slate-500"><span>Name</span><span>Ext port</span><span>Internal IP</span><span>Int port</span><span /></div>
+            <div className="grid grid-cols-5 gap-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500"><span>Name</span><span>Ext port</span><span>Internal IP</span><span>Int port</span><span /></div>
             {hr.portForwarding.map((f, i) => (
               <div key={i} className="grid grid-cols-5 items-center gap-1">
-                <input className="input text-[9px]" defaultValue={f.name} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].name = e.target.value })} />
-                <input type="number" className="input text-[9px]" defaultValue={f.extPort} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].extPort = Number(e.target.value) || 0 })} />
-                <input className="input font-mono text-[9px]" defaultValue={f.intIp} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].intIp = e.target.value })} />
-                <input type="number" className="input text-[9px]" defaultValue={f.intPort} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].intPort = Number(e.target.value) || 0 })} />
+                <input className="input text-[10px]" defaultValue={f.name} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].name = e.target.value })} />
+                <input type="number" className="input text-[10px]" defaultValue={f.extPort} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].extPort = Number(e.target.value) || 0 })} />
+                <input className="input font-mono text-[10px]" defaultValue={f.intIp} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].intIp = e.target.value })} />
+                <input type="number" className="input text-[10px]" defaultValue={f.intPort} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].intPort = Number(e.target.value) || 0 })} />
                 <button className="text-slate-600 hover:text-rose-300" onClick={() => update((d) => d.config.homeRouter?.portForwarding.splice(i, 1))}><Trash2 size={11} /></button>
               </div>
             ))}

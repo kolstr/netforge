@@ -49,7 +49,7 @@ export function Inspector() {
                   <div className="text-[10px] text-slate-500">{device.model} · {device.kind}</div>
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     <StatusPill up={device.power} label={device.power ? 'powered on' : 'powered off'} />
-                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-[9px] text-slate-400">{device.interfaces.length} ports</span>
+                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-slate-400">{device.interfaces.length} ports</span>
                   </div>
                 </div>
               </div>
@@ -72,10 +72,10 @@ export function Inspector() {
             <div>
               <div className="mb-1.5 flex items-center justify-between">
                 <span className="label">Interfaces</span>
-                <span className="text-[9px] text-slate-600">{sim.portViews(device.id).filter((p) => p.protocolUp).length} up</span>
+                <span className="text-[10px] text-slate-600">{sim.portViews(device.id).filter((p) => p.protocolUp).length} up</span>
               </div>
               <div className="overflow-hidden rounded-lg border border-white/8">
-                <table className="w-full text-[9px]">
+                <table className="w-full text-[10px]">
                   <thead className="bg-white/[0.03]">
                     <tr>
                       <th className="table-head px-2 py-1.5">Port</th>
@@ -92,7 +92,7 @@ export function Inspector() {
                             {p.iface.name.replace('GigabitEthernet', 'Gi').replace('FastEthernet', 'Fa').replace('Ethernet', 'Eth')}
                           </span>
                         </td>
-                        <td className="px-1 py-1 font-mono text-[8px] text-slate-500">{formatIpWithMask(p.iface.ip, p.iface.mask) ?? (p.iface.dhcp ? 'DHCP' : '—')}</td>
+                        <td className="px-1 py-1 font-mono text-[10px] text-slate-500">{formatIpWithMask(p.iface.ip, p.iface.mask) ?? (p.iface.dhcp ? 'DHCP' : '—')}</td>
                         <td className="px-1 py-1 text-slate-500">
                           {p.peer ? sim.device(p.peer.deviceId)?.name : p.iface.kind === 'wireless' && sim.wireless.some((w) => w.clientId === device.id) ? 'Wi-Fi' : '—'}
                         </td>
@@ -122,7 +122,7 @@ export function Inspector() {
                     <button
                       key={t.id}
                       onClick={() => setTableId(t.id)}
-                      className={`shrink-0 rounded-md border px-2 py-1 text-[9px] transition ${activeTable?.id === t.id ? 'border-cyan-400/30 bg-cyan-400/10 text-cyan-200' : 'border-white/8 text-slate-500 hover:text-slate-300'}`}
+                      className={`shrink-0 rounded-md border px-2 py-1 text-[10px] transition ${activeTable?.id === t.id ? 'border-cyan-400/30 bg-cyan-400/10 text-cyan-200' : 'border-white/8 text-slate-500 hover:text-slate-300'}`}
                     >
                       {t.label}
                     </button>
@@ -130,10 +130,10 @@ export function Inspector() {
                 </div>
                 {activeTable && (
                   <div className="overflow-hidden rounded-lg border border-white/8">
-                    <div className="border-b border-white/5 bg-white/[0.03] px-2 py-1.5 text-[9px] font-semibold uppercase tracking-wider text-slate-400">{activeTable.label}</div>
+                    <div className="border-b border-white/5 bg-white/[0.03] px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{activeTable.label}</div>
                     {activeTable.rows.length ? (
                       <div className="max-h-56 overflow-auto">
-                        <table className="w-full text-[8.5px]">
+                        <table className="w-full text-[10px]">
                           <thead className="bg-white/[0.02]">
                             <tr>{activeTable.columns.map((c) => <th key={c} className="table-head px-1.5 py-1">{c}</th>)}</tr>
                           </thead>
@@ -181,7 +181,7 @@ export function Inspector() {
                       style={{ backgroundColor: color }}
                     />
                   ))}
-                  <label className="ml-1 inline-flex cursor-pointer items-center gap-1 rounded-md border border-white/10 px-1.5 py-1 text-[9px] text-slate-400 hover:text-slate-200" title="Custom color">
+                  <label className="ml-1 inline-flex cursor-pointer items-center gap-1 rounded-md border border-white/10 px-1.5 py-1 text-[10px] text-slate-400 hover:text-slate-200" title="Custom color">
                     <Palette size={11} />
                     <input type="color" value={shape.color} onChange={(e) => store.updateShape(shape.id, { color: e.target.value })} className="h-4 w-5 cursor-pointer border-0 bg-transparent p-0" />
                   </label>
@@ -206,7 +206,7 @@ export function Inspector() {
                 />
               </div>
 
-              <div className="mt-2 text-[9px] leading-relaxed text-slate-600">
+              <div className="mt-2 text-[10px] leading-relaxed text-slate-600">
                 {shape.kind === 'line' ? 'Drag the two endpoint handles to move each end of the line.' : shape.kind === 'text' ? 'Drag the label to move it. Double-click to edit its text.' : 'Drag the square handles on the edges and corners to resize.'}
               </div>
 
@@ -229,7 +229,7 @@ export function Inspector() {
               <div className="mt-1 text-[10px] text-slate-500">ID {link.id.slice(-6)}</div>
               <div className="mt-2 flex gap-1.5">
                 <StatusPill up={sim.linkUp(link)} label={sim.linkUp(link) ? 'link up' : 'link down'} />
-                <span className="rounded-full bg-white/5 px-2 py-0.5 text-[9px] text-slate-400">{link.lengthM ?? 3} m</span>
+                <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-slate-400">{link.lengthM ?? 3} m</span>
               </div>
               <div className="mt-3 space-y-2 text-[10px]">
                 {[link.a, link.b].map((end, i) => {
@@ -238,7 +238,7 @@ export function Inspector() {
                   return (
                     <div key={i} className="flex items-center justify-between rounded-md border border-white/8 bg-ink-900/60 px-2 py-1.5">
                       <span className="text-slate-300">{d?.name}</span>
-                      <span className="font-mono text-[9px] text-slate-500">{iface?.name}</span>
+                      <span className="font-mono text-[10px] text-slate-500">{iface?.name}</span>
                     </div>
                   )
                 })}
@@ -290,7 +290,7 @@ export function Inspector() {
               <div className="mt-2 space-y-1">
                 {events.length === 0 && <div className="text-[10px] text-slate-600">No events yet. Send a ping or switch to Simulation Mode.</div>}
                 {events.map((e) => (
-                  <button key={e.id} onClick={() => store.setDialog({ type: 'pdu-info', eventId: e.id })} className="block w-full truncate rounded px-1 py-0.5 text-left font-mono text-[8.5px] text-slate-500 hover:bg-white/5 hover:text-slate-300">
+                  <button key={e.id} onClick={() => store.setDialog({ type: 'pdu-info', eventId: e.id })} className="block w-full truncate rounded px-1 py-0.5 text-left font-mono text-[10px] text-slate-500 hover:bg-white/5 hover:text-slate-300">
                     {e.time.toFixed(3)} {e.type} · {sim.device(e.atDeviceId)?.name}
                   </button>
                 ))}
@@ -327,7 +327,7 @@ export function Inspector() {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-white/8 bg-ink-950/40 px-2 py-1.5">
-      <div className="text-[9px] uppercase tracking-wider text-slate-600">{label}</div>
+      <div className="text-[10px] uppercase tracking-wider text-slate-600">{label}</div>
       <div className="text-sm font-semibold text-slate-200">{value}</div>
     </div>
   )

@@ -158,7 +158,7 @@ export function LinkLayer({
                   <span className="packet-pulse absolute h-3 w-3 rounded-full" style={{ backgroundColor: color }} />
                   <span className="h-1.5 w-1.5 rounded-full ring-1 ring-black/40" style={{ backgroundColor: color }} />
                 </span>
-                <span className="rounded bg-ink-950/85 px-1 py-0.5 font-mono text-[8px] text-slate-200 shadow" style={{ borderLeft: `2px solid ${color}` }}>
+                <span className="rounded bg-ink-950/85 px-1 py-0.5 font-mono text-[10px] text-slate-200 shadow" style={{ borderLeft: `2px solid ${color}` }}>
                   {entry.type}
                 </span>
               </div>

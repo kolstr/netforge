@@ -88,8 +88,8 @@ export function DeviceNode({
               <span className="truncate text-[12px] font-semibold text-slate-100">{device.name}</span>
               {device.kind === 'accesspoint' || device.kind === 'homerouter' ? <Wifi size={10} className="shrink-0 text-cyan-300" /> : null}
             </div>
-            {showLabels && <div className="truncate text-[9px] uppercase tracking-wide text-slate-500">{device.model}</div>}
-            {showLabels && <div className="mt-0.5 truncate font-mono text-[9px] text-slate-400">{ipText}</div>}
+            {showLabels && <div className="truncate text-[10px] uppercase tracking-wide text-slate-500">{device.model}</div>}
+            {showLabels && <div className="mt-0.5 truncate font-mono text-[10px] text-slate-400">{ipText}</div>}
           </div>
         </div>
         <div className="flex items-center gap-1.5">
@@ -103,7 +103,7 @@ export function DeviceNode({
               />
             )
           })}
-          <span className="ml-auto text-[8px] font-medium uppercase tracking-wide text-slate-600">
+          <span className="ml-auto text-[10px] font-medium uppercase tracking-wide text-slate-600">
             {wifiAssoc ? `Wi-Fi · ${upCount}/${linkCount}` : linkCount ? `${upCount}/${linkCount} links` : 'no links'}
           </span>
         </div>
