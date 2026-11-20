@@ -29,7 +29,7 @@ export function Modal({
   }, [onClose])
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/75 p-4 backdrop-blur-sm" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-50 flex items-center justify-center bg-ink-950/75 p-4 backdrop-blur-sm" data-modal onMouseDown={onClose}>
       <div
         className={`flex max-h-[92vh] w-full ${width} flex-col overflow-hidden rounded-2xl border border-white/10 bg-ink-900 shadow-[0_30px_120px_-20px_rgba(0,0,0,0.9)]`}
         onMouseDown={(e) => e.stopPropagation()}

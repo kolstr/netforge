@@ -44,6 +44,8 @@ export function Workspace() {
     const el = ref.current
     if (!el) return
     const onWheel = (e: WheelEvent) => {
+      // Overlays such as the port picker are rendered inside the canvas; let them scroll instead of zooming the workspace.
+      if ((e.target as Element | null)?.closest('[data-modal]')) return
       e.preventDefault()
       const s = useApp.getState()
       const rect = el.getBoundingClientRect()
