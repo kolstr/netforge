@@ -41,6 +41,8 @@ export interface PaletteSelection {
   kind?: DeviceKind
   category?: DeviceCategory
   cable?: CableType
+  // A cable dropped onto a device connects a single link and then disarms.
+  once?: boolean
 }
 
 interface AppState {
@@ -67,7 +69,7 @@ interface AppState {
   bump: () => void
   setTool: (t: Tool) => void
   chooseDevice: (kind: DeviceKind, category: DeviceCategory) => void
-  chooseCable: (cable: CableType) => void
+  chooseCable: (cable: CableType, opts?: { once?: boolean }) => void
   clearPalette: () => void
   select: (ids: string[], additive?: boolean) => void
   toggleSelect: (id: string) => void
@@ -81,7 +83,7 @@ interface AppState {
   setRightOpen: (v: boolean) => void
   setSimPanelOpen: (v: boolean) => void
 
-  addDeviceAt: (kind: DeviceKind, x: number, y: number) => void
+  addDeviceAt: (kind: DeviceKind, x: number, y: number, opts?: { keepPlacing?: boolean }) => void
   deleteSelection: () => void
   duplicateSelection: () => void
   moveDevice: (id: string, x: number, y: number) => void
@@ -150,8 +152,14 @@ export const useApp = create<AppState>((set, get) => ({
   setTool: (tool) => set({ tool, palette: tool === 'select' ? {} : get().palette }),
   chooseDevice: (kind, category) =>
     set({ palette: { kind, category }, tool: 'select', statusMessage: `Click the workspace to place a ${kind} — Esc or right-click to finish` }),
-  chooseCable: (cable) =>
-    set({ palette: { cable }, tool: 'connect', statusMessage: 'Click the first device, then choose an interface — Esc or right-click to finish' }),
+  chooseCable: (cable, opts) =>
+    set({
+      palette: { cable, ...(opts?.once ? { once: true } : {}) },
+      tool: 'connect',
+      statusMessage: opts?.once
+        ? 'Pick the interface on this device, then the far end'
+        : 'Click the first device, then choose an interface — Esc or right-click to finish',
+    }),
   clearPalette: () => set({ palette: {}, tool: 'select', connectingFrom: null }),
   select: (ids, additive = false) =>
     set((s) => ({ selectedIds: additive ? Array.from(new Set([...s.selectedIds, ...ids])) : ids, selectedLinkId: null })),
@@ -178,13 +186,18 @@ export const useApp = create<AppState>((set, get) => ({
     setTimeout(() => fitWorkspace((v) => useApp.setState({ view: v }), layoutItems(get().sim)), 80)
   },
 
-  addDeviceAt: (kind, x, y) => {
+  addDeviceAt: (kind, x, y, opts) => {
     const d = get().sim.addDevice(kind, x, y)
-    set({
-      selectedIds: [d.id],
-      palette: { kind, category: DEVICE_SPECS[kind].category },
-      statusMessage: `${d.name} added — click to place another, Esc or right-click to finish`,
-    })
+    const keepPlacing = opts?.keepPlacing ?? true
+    set(
+      keepPlacing
+        ? {
+            selectedIds: [d.id],
+            palette: { kind, category: DEVICE_SPECS[kind].category },
+            statusMessage: `${d.name} added — click to place another, Esc or right-click to finish`,
+          }
+        : { selectedIds: [d.id], palette: {}, tool: 'select', statusMessage: `${d.name} added` },
+    )
     saveTopology(get())
   },
 
@@ -259,13 +272,18 @@ export const useApp = create<AppState>((set, get) => ({
   },
 
   connect: (from, to, cable) => {
-    const { sim } = get()
+    const { sim, palette } = get()
     const res = sim.addLink(from, to, cable)
     if ('error' in res) {
       set({ statusMessage: res.error })
       return false
     }
-    set({ statusMessage: 'Link created', connectingFrom: null })
+    // A cable dropped onto a device connects one link only, then disarms like any other finished tool.
+    set(
+      palette.once
+        ? { statusMessage: 'Link created', connectingFrom: null, palette: {}, tool: 'select' }
+        : { statusMessage: 'Link created', connectingFrom: null },
+    )
     saveTopology(get())
     return true
   },

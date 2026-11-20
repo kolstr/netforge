@@ -30,7 +30,11 @@ export function Palette() {
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Network Components</div>
           <div className="mt-0.5 text-[10px] text-slate-600">
-            {store.palette.kind || store.palette.cable ? 'Keeps placing · Esc or right-click to finish' : 'Click or drag onto the canvas'}
+            {store.palette.once
+              ? 'Connecting one link · Esc to cancel'
+              : store.palette.kind || store.palette.cable
+                ? 'Keeps placing · Esc or right-click to finish'
+                : 'Click or drag onto the canvas'}
           </div>
         </div>
         <button className="btn-icon" title="Hide palette" onClick={() => store.setLeftOpen(false)}>

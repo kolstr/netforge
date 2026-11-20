@@ -389,11 +389,21 @@ export function Workspace() {
 
   const onDrop = (e: React.DragEvent) => {
     e.preventDefault()
-    const p = worldPoint(e.clientX, e.clientY)
+    const s = useApp.getState()
     const kind = e.dataTransfer.getData('application/netforge-device')
-    if (kind) useApp.getState().addDeviceAt(kind as Device['kind'], p.x, p.y)
-    const cable = e.dataTransfer.getData('application/netforge-cable')
-    if (cable) useApp.getState().chooseCable(cable as CableType)
+    if (kind) {
+      const p = worldPoint(e.clientX, e.clientY)
+      s.addDeviceAt(kind as Device['kind'], p.x, p.y, { keepPlacing: false })
+      return
+    }
+    const cable = e.dataTransfer.getData('application/netforge-cable') as CableType | ''
+    if (!cable) return
+    // A cable has to land on a device; dropping it on empty workspace is a no-op.
+    const target = (e.target as HTMLElement | null)?.closest('[data-device-id]')
+    const device = target ? s.sim.device(target.getAttribute('data-device-id') ?? '') : undefined
+    if (!device) return
+    s.chooseCable(cable, { once: true })
+    setPortPicker({ device, cable, stage: 'from' })
   }
 
   const onCanvasContext = (e: React.MouseEvent) => {
@@ -560,10 +570,7 @@ export function Workspace() {
         return
       }
       const connected = s.connect(portPicker.from, { deviceId: portPicker.device.id, ifaceId: iface.id }, portPicker.cable)
-      if (connected) {
-        s.setConnectingFrom(null)
-        if (s.palette.cable) s.setStatus('Link created — click another device to connect, Esc or right-click to finish')
-      }
+      if (connected && s.palette.cable && !s.palette.once) s.setStatus('Link created — click another device to connect, Esc or right-click to finish')
     }
     setPortPicker(null)
   }
@@ -858,7 +865,9 @@ export function Workspace() {
         {store.palette.kind
           ? 'Click to place another · Esc or right-click to finish'
           : store.palette.cable
-            ? 'Click a device to connect · Esc or right-click to finish'
+            ? store.palette.once
+              ? 'Pick an interface on each device to connect them'
+              : 'Click a device to connect · Esc or right-click to finish'
             : 'Wheel to zoom · Space / middle-drag to pan · Double-click to configure'}
       </div>
 
