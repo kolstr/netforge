@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { Simulator } from './engine'
 import { CliSession } from '../cli/session'
-import type { CableType, Device, DeviceKind, Interface, Topology } from '../types'
+import type { AclRule, CableType, Device, DeviceKind, Interface, Topology } from '../types'
 
 const sims: Simulator[] = []
 
@@ -258,28 +258,98 @@ describe('topology import', () => {
   })
 })
 
-describe('shipped WAN examples', () => {
-  const files = import.meta.glob('../../doc/examples/*.json', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
-  const load = (file: string) => {
-    const s = new Simulator()
-    s.dispose()
-    sims.push(s)
-    s.setMode('simulation')
-    s.loadTopology(JSON.parse(files[`../../doc/examples/${file}`]) as Topology)
-    return s
-  }
+const exampleFiles = import.meta.glob('../../doc/examples/*.json', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
+const example = (file: string): Topology => JSON.parse(exampleFiles[`../../doc/examples/${file}`]) as Topology
+const load = (topology: Topology) => {
+  const s = new Simulator()
+  s.dispose()
+  sims.push(s)
+  s.setMode('simulation')
+  s.loadTopology(topology)
+  return s
+}
 
+describe('shipped WAN examples', () => {
   it('routes between two sites across the WAN cloud', async () => {
-    const s = load('wan-cloud-two-sites.json')
+    const s = load(example('wan-cloud-two-sites.json'))
     expect((await s.ping('pc1', '192.168.20.10')).ok).toBe(true)
     expect((await s.ping('srv1', '192.168.10.10')).ok).toBe(true)
   })
 
   it('dials a home router over the coax modem and browses the internet', async () => {
-    const s = load('wan-cloud-home-router.json')
+    const s = load(example('wan-cloud-home-router.json'))
     for (let i = 0; i < 120; i++) s.step()
     expect(s.listDevices().find((d) => d.id === 'home')!.config.homeRouter!.wanIp).toBe('203.0.113.10')
     expect((await s.ping('pc1', '192.0.2.10')).ok).toBe(true)
     expect((await s.httpPath('pc1', 'http://192.0.2.10/')).ok).toBe(true)
+  })
+
+  it('filters the home site with an ACL on the ISP router', async () => {
+    const allowAll = { action: 'permit' as const, proto: 'ip', src: 'any', srcWild: '0.0.0.0', dst: 'any', dstWild: '0.0.0.0' }
+    const withAcl = (rules: AclRule[], direction: 'aclIn' | 'aclOut') => {
+      const topology = example('wan-cloud-home-router.json')
+      const isp = topology.devices.find((d) => d.id === 'isp')!
+      isp.config.acls = [{ id: '100', type: 'extended', rules: [...rules, allowAll] }]
+      isp.interfaces.find((i) => i.id === 'GigabitEthernet0/0')![direction] = '100'
+      return topology
+    }
+
+    // inbound on the WAN port: the home site shows up as the home router's NAT address
+    const inbound = load(withAcl([{ action: 'deny', proto: 'tcp', src: 'any', srcWild: '0.0.0.0', dst: '192.0.2.10', dstWild: '0.0.0.0', dstPort: '80' }], 'aclIn'))
+    for (let i = 0; i < 120; i++) inbound.step()
+    expect((await inbound.httpPath('pc1', 'http://192.0.2.10/')).ok).toBe(false)
+    expect((await inbound.ping('pc1', '192.0.2.10')).ok).toBe(true)
+
+    // outbound on the WAN port filters the return path
+    const outbound = load(withAcl([{ action: 'deny', proto: 'tcp', src: '192.0.2.10', srcWild: '0.0.0.0', dst: 'any', dstWild: '0.0.0.0' }], 'aclOut'))
+    for (let i = 0; i < 120; i++) outbound.step()
+    expect((await outbound.httpPath('pc1', 'http://192.0.2.10/')).ok).toBe(false)
+    expect((await outbound.ping('pc1', '192.0.2.10')).ok).toBe(true)
+  })
+})
+
+describe('default routes', () => {
+  const setDefault = (topology: Topology, deviceId: string, nextHop: string) => {
+    topology.devices.find((d) => d.id === deviceId)!.config.routes = [{ network: '0.0.0.0', mask: '0.0.0.0', nextHop }]
+  }
+
+  it('keeps the LAN local and sends everything else to the gateway of last resort', async () => {
+    const topology = example('wan-cloud-two-sites.json')
+    setDefault(topology, 'r1', '10.0.0.2')
+    setDefault(topology, 'r2', '10.0.0.1')
+    const s = load(topology)
+    expect((await s.ping('pc1', '192.168.10.1')).ok).toBe(true)
+    expect((await s.ping('pc1', '192.168.20.10')).ok).toBe(true)
+    expect((await s.ping('srv1', '192.168.10.10')).ok).toBe(true)
+    const table = await new CliSession(s, 'r1', 'console').execute('show ip route')
+    expect(table).toContain('Gateway of last resort is 10.0.0.2')
+    expect(table).toContain('S     0.0.0.0/0')
+  })
+
+  it('leaves LAN traffic alone when the default route points nowhere', async () => {
+    const topology = example('wan-cloud-two-sites.json')
+    topology.devices.push({
+      id: 'pc2', kind: 'pc', name: 'PC-B', x: 400, y: 620, power: true, modules: [],
+      interfaces: [{ id: 'Ethernet0', name: 'Ethernet0', kind: 'ethernet', speed: 1000, mac: '', adminUp: true, ip: '192.168.10.11', mask: '255.255.255.0' }],
+      config: { gateway: '192.168.10.1' },
+    } as unknown as Device)
+    topology.links.push({ id: 'lan2', type: 'straight', a: { deviceId: 'pc2', ifaceId: 'Ethernet0' }, b: { deviceId: 'sw1', ifaceId: 'FastEthernet0/2' } })
+    setDefault(topology, 'r1', '10.0.0.99')
+    const s = load(topology)
+    expect((await s.ping('pc2', '192.168.10.10')).ok).toBe(true)
+    expect((await s.ping('pc1', '192.168.20.10')).ok).toBe(false)
+  })
+
+  it('installs a default route from ip default-gateway on a router', async () => {
+    const topology = example('wan-cloud-two-sites.json')
+    for (const id of ['r1', 'r2']) topology.devices.find((d) => d.id === id)!.config.routes = []
+    const s = load(topology)
+    for (const [id, gw] of [['r1', '10.0.0.2'], ['r2', '10.0.0.1']] as const) {
+      const cli = new CliSession(s, id, 'console')
+      await cli.execute('enable')
+      await cli.execute('configure terminal')
+      expect(await cli.execute(`ip default-gateway ${gw}`)).toBe('')
+    }
+    expect((await s.ping('pc1', '192.168.20.10')).ok).toBe(true)
   })
 })

@@ -40,6 +40,41 @@ PC-A ── SW1 ── G0/0 [R1-Branch] G0/1 ── Ethernet0 [WAN Cloud] Ethern
 
 Ready-to-import file: [doc/examples/wan-cloud-two-sites.json](examples/wan-cloud-two-sites.json).
 
+### Default route (gateway of last resort)
+
+A site that only needs "LAN stays local, everything else goes to the WAN" does not need a route per remote
+subnet — use a default route (`0.0.0.0/0`) as the gateway of last resort:
+
+```json
+"config": { "routes": [{ "network": "0.0.0.0", "mask": "0.0.0.0", "nextHop": "10.0.0.2" }] }
+```
+
+or in the GUI **Config → Routing** (network `0.0.0.0`, mask `0.0.0.0`, next hop = provider address), or in
+the CLI:
+
+```
+ip route 0.0.0.0 0.0.0.0 10.0.0.2
+```
+
+`ip default-gateway 10.0.0.2` does the same thing here — unlike IOS it installs a real default route on
+routers, not just a management gateway.
+
+How the router chooses:
+
+* Lookup is **longest prefix match**, so connected LAN routes (`192.168.10.0/24`), VLAN/SVI routes and any
+  more specific static or dynamic route always win. Only packets with no better match take `0.0.0.0/0`.
+  A wrong or unreachable default route therefore breaks inter-site traffic while the local LAN keeps working.
+* `show ip route` prints **Gateway of last resort is 10.0.0.2** and the route as `S 0.0.0.0/0 [1/0] via …`;
+  with no default route it says `not set`.
+* The **next hop must be a directly connected address** (the provider router on the cloud segment). There is
+  no recursive lookup, so a next hop that is only reachable through another route is dropped.
+* Use a **next-hop IP, not an egress interface**: an interface-only default asks ARP for the final
+  destination, which nothing on the cloud answers, so the traffic is lost.
+* Static routes carry administrative distance 1 against 0 for connected routes, and the default route is
+  **not redistributed by RIP/OSPF/EIGRP** — every router that needs one must be configured with it.
+* A **home router installs its default route automatically** from its WAN gateway (static WAN mode) or from
+  the DHCP lease (automatic WAN mode); end devices use the *Default gateway* field in their Config tab.
+
 ### Pattern 2 — home LAN to the internet through a cable modem
 
 This is the classic "LAN to WAN" lab: home devices behind the Home Router, the router's **Internet** port
@@ -88,6 +123,62 @@ router.
 The cloud and modem expose **Physical** (power, port LEDs), **Config** and **Attributes** tabs, but they
 have no CLI. Because they are Layer-2 devices, IP addresses entered on their ports in the Config tab are
 ignored and no routing, VLAN or NAT settings apply to them.
+
+## Filtering LAN ↔ WAN traffic with ACLs
+
+The **ISP router is an ordinary router**, so ACLs apply to everything it forwards between the provider side
+and the core — that is the natural place to police a home site that reaches the ISP through the cloud and
+modem. Attach the list to the WAN-facing interface:
+
+| Where | Catches |
+| --- | --- |
+| `GigabitEthernet0/0` **ACL in** | Traffic coming out of the WAN cloud (home site → internet) |
+| `GigabitEthernet0/0` **ACL out** | Traffic heading into the WAN cloud (internet → home site) |
+
+In the Config tab open **Interfaces** and set **ACL in** / **ACL out**, or use the ACL panel to build the
+list; the CLI equivalent is:
+
+```
+access-list 100 deny tcp any host 192.0.2.10 eq 80
+access-list 100 permit ip any any
+interface GigabitEthernet0/0
+ ip access-group 100 in
+```
+
+The same thing when editing [wan-cloud-home-router.json](examples/wan-cloud-home-router.json) by hand — add
+`aclIn` to the ISP router's WAN interface:
+
+```json
+{ "id": "GigabitEthernet0/0", "ip": "203.0.113.1", "mask": "255.255.255.0", "aclIn": "100" }
+```
+
+and an `acls` list inside that device's `config` (keep the existing `dhcpPools` entry so the home router
+still gets a WAN lease):
+
+```json
+"acls": [{ "id": "100", "type": "extended", "rules": [
+  { "action": "deny", "proto": "tcp", "src": "any", "srcWild": "0.0.0.0", "dst": "192.0.2.10", "dstWild": "0.0.0.0", "dstPort": "80" },
+  { "action": "permit", "proto": "ip", "src": "any", "srcWild": "0.0.0.0", "dst": "any", "dstWild": "0.0.0.0" }
+] }]
+```
+
+Things that surprise people in this topology:
+
+* **The home site appears as one address.** The home router NATs every inside host to its WAN lease
+  (`203.0.113.10` in the example), so rules on the ISP router match `203.0.113.0/24`, never
+  `192.168.0.0/24`. To filter individual home devices, build the list on the home router's LAN side instead
+  (home routers have no ACL editor, so use a router or firewall as the gateway).
+* **Lists are stateless.** Permit the return direction explicitly, or the reply is dropped and the client
+  simply times out. A `deny` with a trailing `permit ip any any` only blocks the one direction it names.
+* **Return traffic has no service port.** Rules can only match a *destination* port, so on the WAN **ACL out**
+  you cannot say "deny the replies to port 80" — match the server address instead
+  (`access-list 100 deny tcp host 192.0.2.10 any`), or filter the connection in the forward direction.
+* **The list must exist.** An interface pointing at a missing ACL id filters nothing, and the implicit deny
+  at the end of a list means a list with only a `deny` rule blocks everything it is applied to.
+* **Traffic to the router itself is not filtered** — pinging `203.0.113.1` from the home PC still works even
+  with a deny-all inbound list; use line/VTY settings if you want to restrict management access.
+* For genuinely stateful filtering (return traffic allowed automatically, zones, DMZ) put a **Firewall**
+  between the modem and the ISP router instead of relying on ACLs.
 
 ## Importing a topology JSON file
 
