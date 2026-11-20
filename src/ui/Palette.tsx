@@ -29,7 +29,9 @@ export function Palette() {
       <div className="flex items-center justify-between px-3 pb-2 pt-3">
         <div>
           <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Network Components</div>
-          <div className="mt-0.5 text-[10px] text-slate-600">Click or drag onto the canvas</div>
+          <div className="mt-0.5 text-[10px] text-slate-600">
+            {store.palette.kind || store.palette.cable ? 'Keeps placing · Esc or right-click to finish' : 'Click or drag onto the canvas'}
+          </div>
         </div>
         <button className="btn-icon" title="Hide palette" onClick={() => store.setLeftOpen(false)}>
           <X size={13} />
@@ -69,7 +71,7 @@ export function Palette() {
                       }}
                       onClick={() => {
                         if (active) store.clearPalette()
-                        else store.chooseDevice(spec.kind, spec.category as DeviceCategory, false)
+                        else store.chooseDevice(spec.kind, spec.category as DeviceCategory)
                       }}
                       title={spec.blurb}
                       className={`group flex w-full items-center gap-2 rounded-lg px-1.5 py-1.5 text-left transition ${

@@ -1,7 +1,7 @@
 import { create } from 'zustand'
 import type { CableType, DeviceKind, DeviceCategory, Tool, Topology, UserPdu, Assessment, Device } from './types'
 import { Simulator } from './sim/engine'
-import { addModule, assignFreshMacs } from './data/catalog'
+import { DEVICE_SPECS, addModule, assignFreshMacs } from './data/catalog'
 import { fitWorkspace, layoutItems } from './lib/fitView'
 
 export type DialogState =
@@ -37,7 +37,6 @@ export interface PaletteSelection {
   kind?: DeviceKind
   category?: DeviceCategory
   cable?: CableType
-  locked?: boolean
 }
 
 interface AppState {
@@ -63,8 +62,8 @@ interface AppState {
 
   bump: () => void
   setTool: (t: Tool) => void
-  chooseDevice: (kind: DeviceKind, category: DeviceCategory, locked?: boolean) => void
-  chooseCable: (cable: CableType, locked?: boolean) => void
+  chooseDevice: (kind: DeviceKind, category: DeviceCategory) => void
+  chooseCable: (cable: CableType) => void
   clearPalette: () => void
   select: (ids: string[], additive?: boolean) => void
   toggleSelect: (id: string) => void
@@ -145,8 +144,10 @@ export const useApp = create<AppState>((set, get) => ({
 
   bump: () => set((s) => ({ rev: s.rev + 1 })),
   setTool: (tool) => set({ tool, palette: tool === 'select' ? {} : get().palette }),
-  chooseDevice: (kind, category, locked = false) => set({ palette: { kind, category, locked }, tool: 'select', statusMessage: `Click the workspace to place a ${kind}` }),
-  chooseCable: (cable, locked = false) => set({ palette: { cable, locked }, tool: 'connect', statusMessage: 'Click the first device, then choose an interface' }),
+  chooseDevice: (kind, category) =>
+    set({ palette: { kind, category }, tool: 'select', statusMessage: `Click the workspace to place a ${kind} — Esc or right-click to finish` }),
+  chooseCable: (cable) =>
+    set({ palette: { cable }, tool: 'connect', statusMessage: 'Click the first device, then choose an interface — Esc or right-click to finish' }),
   clearPalette: () => set({ palette: {}, tool: 'select', connectingFrom: null }),
   select: (ids, additive = false) =>
     set((s) => ({ selectedIds: additive ? Array.from(new Set([...s.selectedIds, ...ids])) : ids, selectedLinkId: null })),
@@ -175,8 +176,11 @@ export const useApp = create<AppState>((set, get) => ({
 
   addDeviceAt: (kind, x, y) => {
     const d = get().sim.addDevice(kind, x, y)
-    set({ selectedIds: [d.id], statusMessage: `${d.name} added` })
-    if (!get().palette.locked) set({ palette: {} })
+    set({
+      selectedIds: [d.id],
+      palette: { kind, category: DEVICE_SPECS[kind].category },
+      statusMessage: `${d.name} added — click to place another, Esc or right-click to finish`,
+    })
     saveTopology(get())
   },
 

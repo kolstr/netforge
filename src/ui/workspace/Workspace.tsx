@@ -394,6 +394,15 @@ export function Workspace() {
     if (cable) useApp.getState().chooseCable(cable as CableType)
   }
 
+  const onCanvasContext = (e: React.MouseEvent) => {
+    e.preventDefault()
+    const s = useApp.getState()
+    if (s.palette.kind || s.palette.cable || s.connectingFrom) {
+      s.clearPalette()
+      s.setStatus('Placement cancelled')
+    }
+  }
+
   const deviceDown = (e: React.PointerEvent, device: Device) => {
     e.stopPropagation()
     if (e.button === 1 || spaceRef.current) {
@@ -551,7 +560,7 @@ export function Workspace() {
       const connected = s.connect(portPicker.from, { deviceId: portPicker.device.id, ifaceId: iface.id }, portPicker.cable)
       if (connected) {
         s.setConnectingFrom(null)
-        if (!s.palette.locked) s.clearPalette()
+        if (s.palette.cable) s.setStatus('Link created — click another device to connect, Esc or right-click to finish')
       }
     }
     setPortPicker(null)
@@ -565,7 +574,7 @@ export function Workspace() {
       onPointerMove={onCanvasMove}
       onDrop={onDrop}
       onDragOver={(e) => e.preventDefault()}
-      onContextMenu={(e) => e.preventDefault()}
+      onContextMenu={onCanvasContext}
       style={{ cursor: store.palette.kind || store.palette.cable || spaceRef.current ? 'crosshair' : 'default' }}
     >
       <div
@@ -844,7 +853,11 @@ export function Workspace() {
       </div>
 
       <div className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[9px] text-slate-600 shadow-lg backdrop-blur">
-        Wheel to zoom · Space / middle-drag to pan · Double-click to configure
+        {store.palette.kind
+          ? 'Click to place another · Esc or right-click to finish'
+          : store.palette.cable
+            ? 'Click a device to connect · Esc or right-click to finish'
+            : 'Wheel to zoom · Space / middle-drag to pan · Double-click to configure'}
       </div>
 
       {devices.length === 0 && !store.palette.kind && (
