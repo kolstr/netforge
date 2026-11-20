@@ -871,13 +871,14 @@ export class CliSession {
   }
 
   private natOverload(a: string[], negate: boolean): string {
-    const listIdx = a.findIndex((x) => x.toLowerCase() === 'list')
     if (negate) {
       delete this.config.nat.insideSourceList
       return ''
     }
-    if (listIdx === -1) return '% Incomplete command'
-    const aclId = a[listIdx + 1]
+    // the command name already consumed "list", so the ACL id is the first argument
+    const listIdx = a.findIndex((x) => x.toLowerCase() === 'list')
+    const aclId = listIdx === -1 ? a[0] : a[listIdx + 1]
+    if (!aclId) return '% Incomplete command'
     const ifaceIdx = a.findIndex((x) => x.toLowerCase() === 'interface')
     const iface = ifaceIdx !== -1 ? this.sim.interfaceByName(this.device, a[ifaceIdx + 1] ?? '') : undefined
     this.config.nat.insideSourceList = { aclId, iface: iface?.id, overload: a.some((x) => x.toLowerCase() === 'overload') }

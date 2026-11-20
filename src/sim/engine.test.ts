@@ -121,6 +121,17 @@ describe('network engine', () => {
     expect(s.hasPendingActivity()).toBe(true)
   })
 
+  it('configures NAT overload with an inside source list through the CLI', async () => {
+    const { s, r } = lab()
+    const cli = new CliSession(s, r.id, 'console')
+    await cli.execute('enable')
+    await cli.execute('configure terminal')
+    await cli.execute('access-list 1 permit 192.168.1.0 0.0.0.255')
+    expect(await cli.execute('ip nat inside source list 1 interface GigabitEthernet0/1 overload')).toBe('')
+    expect(r.config.nat.insideSourceList).toEqual({ aclId: '1', iface: 'GigabitEthernet0/1', overload: true })
+    expect(await cli.execute('show running-config')).toContain('ip nat inside source list 1 interface GigabitEthernet0/1 overload')
+  })
+
   it('applies interface-range commands to every port', async () => {
     const s = new Simulator()
     s.dispose()

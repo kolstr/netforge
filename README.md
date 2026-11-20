@@ -74,6 +74,8 @@ Double-click a device to open its window:
 
 Supported CLI areas include interface configuration, VLAN and trunk configuration, SVI creation, static routes, RIP, OSPF, EIGRP, DHCP pools, NAT, ACLs, line/VTY settings, SSH, and verification commands (`show ip interface brief`, `show ip route`, `show vlan brief`, `show spanning-tree`, `show running-config`, etc.).
 
+See [doc/acl.md](doc/acl.md) for a walkthrough of access control lists: where they are evaluated, the GUI and CLI workflow, worked examples for standard/extended/named lists, NAT and firewall policies, and the current limitations.
+
 ## Simulation
 
 - **Realtime mode** for immediate end-to-end application traffic.
