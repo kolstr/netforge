@@ -1,0 +1,54 @@
+{
+  "format": "netforge",
+  "version": 1,
+  "devices": [
+    {
+      "id": "isp", "kind": "router", "name": "ISP-R", "x": 240, "y": 140,
+      "interfaces": [
+        { "id": "GigabitEthernet0/0", "ip": "203.0.113.1", "mask": "255.255.255.0" },
+        { "id": "GigabitEthernet0/1", "ip": "192.0.2.1", "mask": "255.255.255.0" }
+      ],
+      "config": {
+        "dhcpPools": [
+          { "name": "DOCSIS", "network": "203.0.113.0", "mask": "255.255.255.0", "start": "203.0.113.10", "size": 16, "gateway": "203.0.113.1", "dns": "192.0.2.10" }
+        ]
+      }
+    },
+    {
+      "id": "cloud-1", "kind": "cloud", "name": "ISP-WAN", "x": 620, "y": 140,
+      "interfaces": [{ "id": "Ethernet0" }, { "id": "Coax0" }]
+    },
+    {
+      "id": "modem-1", "kind": "modem", "name": "Cable-Modem", "x": 900, "y": 140,
+      "interfaces": [{ "id": "Coax0" }, { "id": "Ethernet0" }]
+    },
+    {
+      "id": "home", "kind": "homerouter", "name": "HomeGW", "x": 1160, "y": 140,
+      "interfaces": [{ "id": "Internet" }, { "id": "Ethernet1" }],
+      "config": {
+        "homeRouter": {
+          "wanMode": "dhcp",
+          "lanIp": "192.168.0.1", "lanMask": "255.255.255.0",
+          "dhcpEnabled": true, "dhcpStart": "192.168.0.100", "dhcpSize": 20,
+          "wireless": { "ssid": "HomeNet", "security": "wpa2", "key": "welcome123", "channel": 6, "band": "2.4GHz", "enabled": true }
+        }
+      }
+    },
+    {
+      "id": "www", "kind": "server", "name": "WWW", "x": 240, "y": 420,
+      "interfaces": [{ "id": "Ethernet0", "ip": "192.0.2.10", "mask": "255.255.255.0" }],
+      "config": { "gateway": "192.0.2.1" }
+    },
+    {
+      "id": "pc1", "kind": "pc", "name": "HomePC", "x": 1160, "y": 420,
+      "interfaces": [{ "id": "Ethernet0", "dhcp": true }]
+    }
+  ],
+  "links": [
+    { "id": "l1", "type": "straight", "a": { "deviceId": "isp", "ifaceId": "GigabitEthernet0/0" }, "b": { "deviceId": "cloud-1", "ifaceId": "Ethernet0" } },
+    { "id": "l2", "type": "coax", "a": { "deviceId": "cloud-1", "ifaceId": "Coax0" }, "b": { "deviceId": "modem-1", "ifaceId": "Coax0" } },
+    { "id": "l3", "type": "straight", "a": { "deviceId": "modem-1", "ifaceId": "Ethernet0" }, "b": { "deviceId": "home", "ifaceId": "Internet" } },
+    { "id": "l4", "type": "straight", "a": { "deviceId": "home", "ifaceId": "Ethernet1" }, "b": { "deviceId": "pc1", "ifaceId": "Ethernet0" } },
+    { "id": "l5", "type": "crossover", "a": { "deviceId": "isp", "ifaceId": "GigabitEthernet0/1" }, "b": { "deviceId": "www", "ifaceId": "Ethernet0" } }
+  ]
+}

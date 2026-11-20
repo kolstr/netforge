@@ -1,7 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { Simulator } from './engine'
 import { CliSession } from '../cli/session'
-import type { CableType, Device, DeviceKind, Interface } from '../types'
+import type { CableType, Device, DeviceKind, Interface, Topology } from '../types'
 
 const sims: Simulator[] = []
 
@@ -208,5 +208,78 @@ describe('copper cable compatibility', () => {
     const { s, a, b, ethA, ethB } = pair('pc', 'pc')
     s.links.push({ id: 'legacy', type: 'straight', a: { deviceId: a.id, ifaceId: ethA.id }, b: { deviceId: b.id, ifaceId: ethB.id } })
     expect(s.linkUp(s.links[0])).toBe(false)
+  })
+})
+
+describe('topology import', () => {
+  type RawDevice = { id: string; kind: DeviceKind; name: string; interfaces: Interface[]; config?: Record<string, unknown> }
+  const iface = (id: string, extra: Partial<Interface> = {}): Interface =>
+    ({ id, name: id, kind: 'ethernet', speed: 1000, mac: '', adminUp: true, ...extra }) as Interface
+  const device = (id: string, kind: DeviceKind, name: string, interfaces: Interface[], config?: Record<string, unknown>): RawDevice =>
+    ({ id, kind, name, interfaces, config })
+
+  it('fills in defaults for a hand-written WAN cloud topology and routes through it', async () => {
+    const s = new Simulator()
+    s.dispose()
+    sims.push(s)
+    s.setMode('simulation')
+    s.loadTopology({
+      devices: [
+        device('cloud', 'cloud', 'WAN', [iface('Ethernet0'), iface('Ethernet1')]),
+        device('r1', 'router', 'R1', [
+          iface('GigabitEthernet0/0', { ip: '192.168.10.1', mask: '255.255.255.0' }),
+          iface('GigabitEthernet0/1', { ip: '10.0.0.1', mask: '255.255.255.252' }),
+        ], { routes: [{ network: '192.168.20.0', mask: '255.255.255.0', nextHop: '10.0.0.2' }] }),
+        device('r2', 'router', 'R2', [
+          iface('GigabitEthernet0/0', { ip: '192.168.20.1', mask: '255.255.255.0' }),
+          iface('GigabitEthernet0/1', { ip: '10.0.0.2', mask: '255.255.255.252' }),
+        ], { routes: [{ network: '192.168.10.0', mask: '255.255.255.0', nextHop: '10.0.0.1' }] }),
+        device('pc1', 'pc', 'PC1', [iface('Ethernet0', { ip: '192.168.10.10', mask: '255.255.255.0' })], { gateway: '192.168.10.1' }),
+        device('pc2', 'pc', 'PC2', [iface('Ethernet0', { ip: '192.168.20.10', mask: '255.255.255.0' })], { gateway: '192.168.20.1' }),
+      ],
+      links: [
+        { id: 'l1', type: 'crossover', a: { deviceId: 'pc1', ifaceId: 'Ethernet0' }, b: { deviceId: 'r1', ifaceId: 'GigabitEthernet0/0' } },
+        { id: 'l2', type: 'straight', a: { deviceId: 'r1', ifaceId: 'GigabitEthernet0/1' }, b: { deviceId: 'cloud', ifaceId: 'Ethernet0' } },
+        { id: 'l3', type: 'straight', a: { deviceId: 'r2', ifaceId: 'GigabitEthernet0/1' }, b: { deviceId: 'cloud', ifaceId: 'Ethernet1' } },
+        { id: 'l4', type: 'crossover', a: { deviceId: 'pc2', ifaceId: 'Ethernet0' }, b: { deviceId: 'r2', ifaceId: 'GigabitEthernet0/0' } },
+      ],
+      notes: [],
+      shapes: [],
+      scenarios: [],
+    } as unknown as Topology)
+
+    const r1 = s.listDevices().find((d) => d.id === 'r1')!
+    expect(r1.config.rip.enabled).toBe(false)
+    expect(r1.config.services.http.files.length).toBeGreaterThan(0)
+    expect(r1.interfaces.filter((i) => i.kind !== 'console').every((i) => i.mac)).toBe(true)
+    expect(r1.interfaces.map((i) => i.name)).toContain('GigabitEthernet0/2')
+    expect((await s.ping('pc1', '192.168.20.10')).ok).toBe(true)
+    expect((await s.ping('pc2', '192.168.10.10')).ok).toBe(true)
+  })
+})
+
+describe('shipped WAN examples', () => {
+  const files = import.meta.glob('../../doc/examples/*.json', { query: '?raw', import: 'default', eager: true }) as Record<string, string>
+  const load = (file: string) => {
+    const s = new Simulator()
+    s.dispose()
+    sims.push(s)
+    s.setMode('simulation')
+    s.loadTopology(JSON.parse(files[`../../doc/examples/${file}`]) as Topology)
+    return s
+  }
+
+  it('routes between two sites across the WAN cloud', async () => {
+    const s = load('wan-cloud-two-sites.json')
+    expect((await s.ping('pc1', '192.168.20.10')).ok).toBe(true)
+    expect((await s.ping('srv1', '192.168.10.10')).ok).toBe(true)
+  })
+
+  it('dials a home router over the coax modem and browses the internet', async () => {
+    const s = load('wan-cloud-home-router.json')
+    for (let i = 0; i < 120; i++) s.step()
+    expect(s.listDevices().find((d) => d.id === 'home')!.config.homeRouter!.wanIp).toBe('203.0.113.10')
+    expect((await s.ping('pc1', '192.0.2.10')).ok).toBe(true)
+    expect((await s.httpPath('pc1', 'http://192.0.2.10/')).ok).toBe(true)
   })
 })

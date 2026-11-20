@@ -76,6 +76,8 @@ Supported CLI areas include interface configuration, VLAN and trunk configuratio
 
 See [doc/acl.md](doc/acl.md) for a walkthrough of access control lists: where they are evaluated, the GUI and CLI workflow, worked examples for standard/extended/named lists, NAT and firewall policies, and the current limitations.
 
+See [doc/wan-cloud.md](doc/wan-cloud.md) for WAN emulation: how the WAN Cloud and Cable Modem bridge sites, how to route a LAN onto a WAN, cabling and serial clocking rules, the topology JSON format, and two importable examples in [doc/examples](doc/examples).
+
 ## Simulation
 
 - **Realtime mode** for immediate end-to-end application traffic.

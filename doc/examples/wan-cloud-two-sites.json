@@ -1,0 +1,52 @@
+{
+  "format": "netforge",
+  "version": 1,
+  "devices": [
+    {
+      "id": "cloud-1", "kind": "cloud", "name": "WAN", "x": 700, "y": 140,
+      "interfaces": [{ "id": "Ethernet0" }, { "id": "Ethernet1" }]
+    },
+    {
+      "id": "r1", "kind": "router", "name": "R1-Branch", "x": 320, "y": 140,
+      "interfaces": [
+        { "id": "GigabitEthernet0/0", "ip": "192.168.10.1", "mask": "255.255.255.0" },
+        { "id": "GigabitEthernet0/1", "ip": "10.0.0.1", "mask": "255.255.255.252" }
+      ],
+      "config": { "routes": [{ "network": "192.168.20.0", "mask": "255.255.255.0", "nextHop": "10.0.0.2" }] }
+    },
+    {
+      "id": "r2", "kind": "router", "name": "R2-HQ", "x": 1080, "y": 140,
+      "interfaces": [
+        { "id": "GigabitEthernet0/0", "ip": "192.168.20.1", "mask": "255.255.255.0" },
+        { "id": "GigabitEthernet0/1", "ip": "10.0.0.2", "mask": "255.255.255.252" }
+      ],
+      "config": { "routes": [{ "network": "192.168.10.0", "mask": "255.255.255.0", "nextHop": "10.0.0.1" }] }
+    },
+    {
+      "id": "sw1", "kind": "switch", "name": "SW1-Branch", "x": 320, "y": 380,
+      "interfaces": [{ "id": "FastEthernet0/1" }, { "id": "GigabitEthernet0/1" }]
+    },
+    {
+      "id": "sw2", "kind": "switch", "name": "SW2-HQ", "x": 1080, "y": 380,
+      "interfaces": [{ "id": "FastEthernet0/1" }, { "id": "GigabitEthernet0/1" }]
+    },
+    {
+      "id": "pc1", "kind": "pc", "name": "PC-A", "x": 160, "y": 560,
+      "interfaces": [{ "id": "Ethernet0", "ip": "192.168.10.10", "mask": "255.255.255.0" }],
+      "config": { "gateway": "192.168.10.1" }
+    },
+    {
+      "id": "srv1", "kind": "server", "name": "SRV-HQ", "x": 1080, "y": 560,
+      "interfaces": [{ "id": "Ethernet0", "ip": "192.168.20.10", "mask": "255.255.255.0" }],
+      "config": { "gateway": "192.168.20.1" }
+    }
+  ],
+  "links": [
+    { "id": "l1", "type": "straight", "a": { "deviceId": "pc1", "ifaceId": "Ethernet0" }, "b": { "deviceId": "sw1", "ifaceId": "FastEthernet0/1" } },
+    { "id": "l2", "type": "straight", "a": { "deviceId": "sw1", "ifaceId": "GigabitEthernet0/1" }, "b": { "deviceId": "r1", "ifaceId": "GigabitEthernet0/0" } },
+    { "id": "l3", "type": "straight", "a": { "deviceId": "r1", "ifaceId": "GigabitEthernet0/1" }, "b": { "deviceId": "cloud-1", "ifaceId": "Ethernet0" } },
+    { "id": "l4", "type": "straight", "a": { "deviceId": "r2", "ifaceId": "GigabitEthernet0/1" }, "b": { "deviceId": "cloud-1", "ifaceId": "Ethernet1" } },
+    { "id": "l5", "type": "straight", "a": { "deviceId": "sw2", "ifaceId": "GigabitEthernet0/1" }, "b": { "deviceId": "r2", "ifaceId": "GigabitEthernet0/0" } },
+    { "id": "l6", "type": "straight", "a": { "deviceId": "srv1", "ifaceId": "Ethernet0" }, "b": { "deviceId": "sw2", "ifaceId": "FastEthernet0/1" } }
+  ]
+}

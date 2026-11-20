@@ -7,6 +7,7 @@ import type {
   Interface,
   PortKind,
   ServerServices,
+  Topology,
   WirelessSettings,
 } from '../types'
 import { macOffset, randomMac } from '../lib/ip'
@@ -693,4 +694,105 @@ export function removeModule(device: Device, moduleId: string): void {
 export function defaultGatewayName(kind: DeviceKind, index: number): string {
   const spec = DEVICE_SPECS[kind]
   return `${spec.label.replace(/\s/g, '')}${index}`
+}
+
+function fillServices(given: Partial<ServerServices> | undefined): ServerServices {
+  const def = defaultServices()
+  return {
+    http: { ...def.http, ...given?.http },
+    https: { ...def.https, ...given?.https },
+    dns: { ...def.dns, ...given?.dns },
+    dhcp: { ...def.dhcp, ...given?.dhcp },
+    tftp: { ...def.tftp, ...given?.tftp },
+    email: { ...def.email, ...given?.email },
+    ftp: { ...def.ftp, ...given?.ftp },
+    ntp: { ...def.ntp, ...given?.ntp },
+    syslog: { ...def.syslog, ...given?.syslog },
+    aaa: { ...def.aaa, ...given?.aaa },
+  }
+}
+
+function normalizeInterface(d: Device, iface: Interface): Interface {
+  const name = iface.name ?? iface.id
+  const spec = DEVICE_SPECS[d.kind]?.ports.find((p) => p.name === name)
+  return {
+    ...iface,
+    id: iface.id ?? name,
+    name,
+    adminUp: iface.adminUp ?? true,
+    kind: iface.kind ?? spec?.kind ?? 'ethernet',
+    speed: iface.speed ?? spec?.speed ?? 1000,
+    mac: iface.mac ?? '',
+  }
+}
+
+/**
+ * Fills in everything a hand-written or older topology file may omit, so a file
+ * containing only ids, ports and IP addresses can be imported.
+ */
+export function normalizeTopology(t: Topology): Topology {
+  const devices = (t.devices ?? []).map((d) => {
+    const config = (d.config ?? {}) as Partial<DeviceConfig>
+    const defaults = defaultConfig(d.name ?? 'Device', d.kind)
+    const normalized: DeviceConfig = {
+      ...defaults,
+      ...config,
+      rip: { ...defaults.rip, ...config.rip },
+      ospf: { ...defaults.ospf, ...config.ospf },
+      eigrp: { ...defaults.eigrp, ...config.eigrp },
+      nat: { ...defaults.nat, ...config.nat },
+      services: fillServices(config.services),
+      vlans: config.vlans ?? defaults.vlans,
+      routes: config.routes ?? defaults.routes,
+      dhcpPools: config.dhcpPools ?? defaults.dhcpPools,
+      dhcpExcluded: config.dhcpExcluded ?? defaults.dhcpExcluded,
+      acls: config.acls ?? defaults.acls,
+      users: config.users ?? defaults.users,
+      firewallRules: config.firewallRules ?? defaults.firewallRules,
+      homeRouter: defaults.homeRouter ? { ...defaults.homeRouter, ...config.homeRouter } : config.homeRouter,
+    }
+    const modules = d.modules ?? []
+    const interfaces = (d.interfaces ?? []).map((i) => normalizeInterface(d, i))
+    const spec = DEVICE_SPECS[d.kind]
+    const specPorts = [...(spec?.ports ?? [])]
+    for (const moduleId of modules) {
+      const mod = spec?.modules.find((m) => m.id === moduleId)
+      if (mod) specPorts.push(...mod.ports)
+    }
+    for (const port of specPorts) {
+      if (!interfaces.some((i) => i.name === port.name)) interfaces.push(makeInterface(port, interfaces.length, randomMac()))
+    }
+    if (d.kind === 'homerouter' && interfaces[0] && !interfaces[0].nat) interfaces[0].nat = 'outside'
+    if (d.kind === 'firewall') {
+      for (const [name, level] of [['inside', 100], ['outside', 0], ['dmz', 50]] as const) {
+        const iface = interfaces.find((i) => i.name === name)
+        if (iface) iface.securityLevel = iface.securityLevel ?? level
+      }
+      const inside = interfaces.find((i) => i.name === 'inside')
+      const outside = interfaces.find((i) => i.name === 'outside')
+      if (inside && !inside.nat) inside.nat = 'inside'
+      if (outside && !outside.nat) outside.nat = 'outside'
+    }
+    return {
+      ...d,
+      model: d.model ?? spec?.model ?? d.kind,
+      power: d.power ?? true,
+      modules,
+      interfaces,
+      config: normalized,
+    }
+  })
+
+  const used = new Set<string>()
+  for (const d of devices) for (const i of d.interfaces) if (i.mac) used.add(i.mac)
+  for (const d of devices) if (d.interfaces.some((i) => i.kind !== 'console' && !i.mac)) assignFreshMacs(d, used)
+
+  return {
+    ...t,
+    devices,
+    links: t.links ?? [],
+    notes: t.notes ?? [],
+    shapes: t.shapes ?? [],
+    scenarios: t.scenarios?.length ? t.scenarios : [{ id: 'scenario-0', name: 'Scenario 0', description: '', pdus: [] }],
+  }
 }

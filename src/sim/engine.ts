@@ -16,7 +16,7 @@ import type {
   DhcpPool,
   Assessment,
 } from '../types'
-import { DEVICE_SPECS, addModule as addModuleToDevice, assignFreshMacs, copperRole, makeDevice, removeModule as removeModuleFromDevice } from '../data/catalog'
+import { DEVICE_SPECS, addModule as addModuleToDevice, assignFreshMacs, copperRole, makeDevice, normalizeTopology, removeModule as removeModuleFromDevice } from '../data/catalog'
 import {
   BROADCAST_MAC,
   broadcastAddress,
@@ -3329,15 +3329,16 @@ export class Simulator {
   }
 
   loadTopology(t: Topology) {
+    const topology = normalizeTopology(t)
     this.devices.clear()
-    for (const d of t.devices ?? []) this.devices.set(d.id, d)
+    for (const d of topology.devices ?? []) this.devices.set(d.id, d)
     this.repairDuplicateMacs()
-    this.links = t.links ?? []
-    this.notes = t.notes ?? []
-    this.shapes = t.shapes ?? []
-    this.scenarios = t.scenarios?.length ? t.scenarios : [{ id: 'scenario-0', name: 'Scenario 0', description: '', pdus: [] }]
+    this.links = topology.links ?? []
+    this.notes = topology.notes ?? []
+    this.shapes = topology.shapes ?? []
+    this.scenarios = topology.scenarios?.length ? topology.scenarios : [{ id: 'scenario-0', name: 'Scenario 0', description: '', pdus: [] }]
     this.activeScenarioId = this.scenarios[0].id
-    this.assessment = t.assessment
+    this.assessment = topology.assessment
     this.time = 0
     this.batch = 0
     this.queue = []
