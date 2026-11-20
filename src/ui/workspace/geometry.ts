@@ -1,3 +1,6 @@
+import type { CableType } from '../../types'
+import { CABLE_COLORS } from '../../data/catalog'
+
 export const DEVICE_W = 156
 export const DEVICE_H = 72
 
@@ -29,18 +32,5 @@ export function clamp(v: number, min: number, max: number) {
 
 export function cableColor(type: string, up: boolean): string {
   if (!up) return '#ef4444'
-  switch (type) {
-    case 'console':
-      return '#38bdf8'
-    case 'serial':
-      return '#a78bfa'
-    case 'fiber':
-      return '#22d3ee'
-    case 'coax':
-      return '#eab308'
-    case 'phone':
-      return '#f472b6'
-    default:
-      return '#34d399'
-  }
+  return CABLE_COLORS[type as CableType] ?? '#94a3b8'
 }

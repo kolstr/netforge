@@ -16,7 +16,7 @@ import type {
   DhcpPool,
   Assessment,
 } from '../types'
-import { DEVICE_SPECS, addModule as addModuleToDevice, assignFreshMacs, makeDevice, removeModule as removeModuleFromDevice } from '../data/catalog'
+import { DEVICE_SPECS, addModule as addModuleToDevice, assignFreshMacs, copperRole, makeDevice, removeModule as removeModuleFromDevice } from '../data/catalog'
 import {
   BROADCAST_MAC,
   broadcastAddress,
@@ -277,8 +277,8 @@ export class Simulator {
     const kindsB = [b.kind]
     if (type === 'console') {
       if (!kindsA.includes('console') || !kindsB.includes('console')) return 'Console cable requires two console ports'
-      if (!(da.kind === 'pc' || da.kind === 'laptop') && !(db.kind === 'pc' || db.kind === 'laptop'))
-        return 'One end of a console cable must be a PC or laptop'
+      const pcs = [da, db].filter((d) => d.kind === 'pc' || d.kind === 'laptop').length
+      if (pcs !== 1) return 'Console cable connects one PC/laptop serial port to a device console port'
     } else if (type === 'serial') {
       if (!kindsA.includes('serial') || !kindsB.includes('serial')) return 'Serial cable requires serial interfaces (install a NIM-2T module)'
     } else if (type === 'coax') {
@@ -288,8 +288,13 @@ export class Simulator {
     } else if (type === 'fiber') {
       if (!['ethernet', 'fiber'].includes(a.kind) || !['ethernet', 'fiber'].includes(b.kind)) return 'Fiber requires Ethernet/fiber ports'
     } else {
-      if (!['ethernet', 'fiber', 'wireless'].includes(a.kind) || !['ethernet', 'fiber', 'wireless'].includes(b.kind))
-        return 'Copper cable requires Ethernet ports'
+      if (!['ethernet', 'fiber'].includes(a.kind) || !['ethernet', 'fiber'].includes(b.kind))
+        return 'Copper cable requires Ethernet or fiber ports'
+      const like = copperRole(da, a) === copperRole(db, b)
+      if (type === 'straight' && like)
+        return `Copper Straight-Through connects unlike devices — use Copper Cross-Over between like devices (${da.name} ↔ ${db.name})`
+      if (type === 'crossover' && !like)
+        return `Copper Cross-Over connects like devices — use Copper Straight-Through between unlike devices (${da.name} ↔ ${db.name})`
     }
     return null
   }
@@ -319,6 +324,7 @@ export class Simulator {
     const ib = db.interfaces.find((i) => i.id === link.b.ifaceId)
     if (!ia || !ib) return false
     if (!ia.adminUp || !ib.adminUp) return false
+    if (this.checkCable(link.type, ia, ib, da, db)) return false
     if (link.type === 'serial') {
       const dceIface = link.dceSide === 'a' ? ia : ib
       if (!dceIface.clockRate) return false

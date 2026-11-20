@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { Simulator } from './engine'
 import { CliSession } from '../cli/session'
+import type { CableType, Device, DeviceKind, Interface } from '../types'
 
 const sims: Simulator[] = []
 
@@ -36,7 +37,7 @@ function lab() {
   expect('error' in s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: sw.id, ifaceId: 'GigabitEthernet0/1' }, 'straight')).toBe(false)
   expect('error' in s.addLink({ deviceId: sw.id, ifaceId: 'FastEthernet0/1' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')).toBe(false)
   expect('error' in s.addLink({ deviceId: sw.id, ifaceId: 'FastEthernet0/2' }, { deviceId: pc2.id, ifaceId: 'Ethernet0' }, 'straight')).toBe(false)
-  expect('error' in s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')).toBe(false)
+  expect('error' in s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')).toBe(false)
   s.resetSimulation()
   return { s, r, sw, pc, pc2, server }
 }
@@ -135,5 +136,66 @@ describe('network engine', () => {
     const ports = sw.interfaces.filter((i) => i.name.startsWith('FastEthernet0/') && Number(i.name.split('/')[1]) <= 4)
     expect(ports.every((p) => !p.adminUp)).toBe(true)
     expect(ports.every((p) => p.vlan === 20)).toBe(true)
+  })
+})
+
+describe('copper cable compatibility', () => {
+  function pair(kindA: DeviceKind, kindB: DeviceKind) {
+    const s = new Simulator()
+    s.dispose()
+    sims.push(s)
+    const a = s.addDevice(kindA, 0, 0)
+    const b = s.addDevice(kindB, 300, 0)
+    const ethA = a.interfaces.find((i) => i.kind === 'ethernet' || i.kind === 'wireless')!
+    const ethB = b.interfaces.find((i) => i.kind === 'ethernet' || i.kind === 'wireless')!
+    return { s, a, b, ethA, ethB }
+  }
+
+  function connect(s: Simulator, a: Device, ea: Interface, b: Device, eb: Interface, type: CableType) {
+    return s.addLink({ deviceId: a.id, ifaceId: ea.id }, { deviceId: b.id, ifaceId: eb.id }, type)
+  }
+
+  it('connects two PCs with a cross-over cable and carries a ping', async () => {
+    const { s, a, b, ethA, ethB } = pair('pc', 'pc')
+    ethA.ip = '192.168.1.1'; ethA.mask = '255.255.255.0'
+    ethB.ip = '192.168.1.2'; ethB.mask = '255.255.255.0'
+    const wrong = connect(s, a, ethA, b, ethB, 'straight')
+    expect('error' in wrong && wrong.error).toMatch(/Cross-Over/)
+    const ok = connect(s, a, ethA, b, ethB, 'crossover')
+    expect('error' in ok).toBe(false)
+    expect((await s.ping(a.id, '192.168.1.2')).ok).toBe(true)
+  })
+
+  it('requires a cross-over between two switches', () => {
+    const { s, a, b, ethA, ethB } = pair('switch', 'switch')
+    const wrong = connect(s, a, ethA, b, ethB, 'straight')
+    expect('error' in wrong && wrong.error).toMatch(/Cross-Over/)
+    expect('error' in connect(s, a, ethA, b, ethB, 'crossover')).toBe(false)
+  })
+
+  it('requires a cross-over between a router and a PC', () => {
+    const { s, a, b, ethA, ethB } = pair('router', 'pc')
+    const wrong = connect(s, a, ethA, b, ethB, 'straight')
+    expect('error' in wrong && wrong.error).toMatch(/Cross-Over/)
+    expect('error' in connect(s, a, ethA, b, ethB, 'crossover')).toBe(false)
+  })
+
+  it('keeps straight-through for unlike devices and rejects a cross-over there', () => {
+    const { s, a, b, ethA, ethB } = pair('router', 'switch')
+    const wrong = connect(s, a, ethA, b, ethB, 'crossover')
+    expect('error' in wrong && wrong.error).toMatch(/Straight-Through/)
+    expect('error' in connect(s, a, ethA, b, ethB, 'straight')).toBe(false)
+  })
+
+  it('rejects copper on wireless ports', () => {
+    const { s, a, b, ethA, ethB } = pair('pc', 'tablet')
+    const res = connect(s, a, ethA, b, ethB, 'straight')
+    expect('error' in res && res.error).toMatch(/Ethernet or fiber ports/)
+  })
+
+  it('keeps a persisted mismatched link down', () => {
+    const { s, a, b, ethA, ethB } = pair('pc', 'pc')
+    s.links.push({ id: 'legacy', type: 'straight', a: { deviceId: a.id, ifaceId: ethA.id }, b: { deviceId: b.id, ifaceId: ethB.id } })
+    expect(s.linkUp(s.links[0])).toBe(false)
   })
 })

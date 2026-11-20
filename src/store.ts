@@ -701,7 +701,7 @@ function buildExample(s: Simulator) {
 
   // Links
   s.addLink({ deviceId: router.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: sw.id, ifaceId: 'GigabitEthernet0/1' }, 'straight')
-  s.addLink({ deviceId: router.id, ifaceId: 'GigabitEthernet0/2' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+  s.addLink({ deviceId: router.id, ifaceId: 'GigabitEthernet0/2' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
   s.addLink({ deviceId: sw.id, ifaceId: 'FastEthernet0/1' }, { deviceId: pc1.id, ifaceId: 'Ethernet0' }, 'straight')
   s.addLink({ deviceId: sw.id, ifaceId: 'FastEthernet0/2' }, { deviceId: pc2.id, ifaceId: 'Ethernet0' }, 'straight')
   s.addLink({ deviceId: sw.id, ifaceId: 'FastEthernet0/3' }, { deviceId: ap.id, ifaceId: 'Ethernet0' }, 'straight')

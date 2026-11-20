@@ -39,7 +39,7 @@ The nginx config in [deploy/nginx.conf](deploy/nginx.conf) adds SPA history fall
 
 - **Logical workspace** with pan, wheel zoom, fit-to-screen, marquee selection, multi-device drag, grid, snapping and alignment guides.
 - **Device palette** grouped into routers, switches, end devices, wireless, security and WAN equipment. A picked device stays armed so you can place several in a row; press Esc, right-click the workspace or click the palette entry again to stop.
-- **Cabling tool** with automatic port filtering, straight-through, crossover, serial (DCE/DTE), console, phone, coax and fiber cables. A chosen cable type stays armed for connecting several links in a row; Esc or right-click finishes. Link lights show physical state, activity and STP blocking.
+- **Cabling tool** with automatic port filtering, straight-through, crossover, serial (DCE/DTE), console, phone, coax and fiber cables. Cable ends are validated: straight-through pairs unlike ports (host ↔ switch), cross-over pairs like ports (PC ↔ PC, switch ↔ switch, router ↔ router), and a mismatched pair is refused. A chosen cable type stays armed for connecting several links in a row; Esc or right-click finishes. Link lights show physical state, activity and STP blocking.
 - **Notes, shapes and free text** for annotating topologies. The Text tool adds a draggable label; double-click any shape to edit its text, drag to move it, drag its handles to resize it, and press Delete or use the right-click menu to remove it. Select a shape to change its color, stroke width and label in the inspector.
 - **Undo/redo, copy/duplicate, delete, import/export JSON**, browser autosave and manual save.
 - **Physical configuration** for modules, power, interface LEDs and cable selection.

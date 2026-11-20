@@ -902,6 +902,7 @@ export function Workspace() {
           device={portPicker.device}
           cable={portPicker.cable}
           title={portPicker.stage === 'from' ? 'Select source interface' : 'Select destination interface'}
+          peer={portPicker.stage === 'to' ? portPicker.from : undefined}
           onPick={onPickPort}
           onClose={() => setPortPicker(null)}
         />

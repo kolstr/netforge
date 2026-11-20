@@ -1,4 +1,5 @@
 import type {
+  CableType,
   Device,
   DeviceCategory,
   DeviceConfig,
@@ -402,15 +403,51 @@ export const CATEGORY_LABELS: Record<DeviceCategory, string> = {
 
 export const CATEGORY_ORDER: DeviceCategory[] = ['routers', 'switches', 'end', 'wireless', 'security', 'wan']
 
-export const CABLE_SPECS: { type: import('../types').CableType; label: string; color: string; hint: string }[] = [
-  { type: 'straight', label: 'Copper Straight-Through', color: '#22c55e', hint: 'Connect unlike devices (switch ↔ PC/router)' },
-  { type: 'crossover', label: 'Copper Cross-Over', color: '#f59e0b', hint: 'Connect like devices (switch ↔ switch, PC ↔ PC)' },
-  { type: 'fiber', label: 'Fiber', color: '#38bdf8', hint: 'Fiber ports only' },
-  { type: 'serial', label: 'Serial DCE/DTE', color: '#a78bfa', hint: 'Serial WAN link, clocking on DCE end' },
-  { type: 'console', label: 'Console', color: '#0ea5e9', hint: 'PC RS-232 ↔ device console port' },
-  { type: 'coax', label: 'Coaxial', color: '#eab308', hint: 'Cable modem / WAN cloud' },
-  { type: 'phone', label: 'Phone', color: '#f472b6', hint: 'Analog phone line' },
+/** Canonical cable colours — every cable rendering (palette, canvas, port picker) reads from here. */
+export const CABLE_COLORS: Record<CableType, string> = {
+  straight: '#22c55e',
+  crossover: '#f59e0b',
+  fiber: '#38bdf8',
+  serial: '#a78bfa',
+  console: '#f472b6',
+  coax: '#eab308',
+  phone: '#2dd4bf',
+}
+
+export const CABLE_SPECS: { type: CableType; label: string; color: string; hint: string }[] = [
+  { type: 'straight', label: 'Copper Straight-Through', color: CABLE_COLORS.straight, hint: 'Unlike devices (PC ↔ switch, router ↔ switch)' },
+  { type: 'crossover', label: 'Copper Cross-Over', color: CABLE_COLORS.crossover, hint: 'Like devices (PC ↔ PC, switch ↔ switch, router ↔ router)' },
+  { type: 'fiber', label: 'Fiber', color: CABLE_COLORS.fiber, hint: 'Ethernet/fiber uplink ports' },
+  { type: 'serial', label: 'Serial DCE/DTE', color: CABLE_COLORS.serial, hint: 'Serial WAN link, clocking on DCE end' },
+  { type: 'console', label: 'Console', color: CABLE_COLORS.console, hint: 'PC RS-232 ↔ device console port' },
+  { type: 'coax', label: 'Coaxial', color: CABLE_COLORS.coax, hint: 'Cable modem / WAN cloud' },
+  { type: 'phone', label: 'Phone', color: CABLE_COLORS.phone, hint: 'Analog phone line' },
 ]
+
+export type CopperRole = 'mdi' | 'mdix'
+
+/**
+ * MDI/MDI-X role of a copper port. A straight-through cable pairs an MDI port
+ * (PC, router, server …) with an MDI-X port (switch, hub, LAN port …); a
+ * cross-over cable pairs two ports with the same role.
+ */
+export function copperRole(device: Device, iface: Interface): CopperRole {
+  switch (device.kind) {
+    case 'switch':
+    case 'hub':
+    case 'cloud':
+    case 'modem':
+      return 'mdix'
+    case 'homerouter':
+      return iface.name === 'Internet' ? 'mdi' : 'mdix'
+    case 'phone':
+      return iface.name === 'Switch0' ? 'mdi' : 'mdix'
+    case 'router':
+      return iface.moduleSlot === 'NIM-ES2-4' ? 'mdix' : 'mdi'
+    default:
+      return 'mdi'
+  }
+}
 
 export function defaultServices(): ServerServices {
   return {

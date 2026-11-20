@@ -100,12 +100,12 @@ export function LinkLayer({
               {showLights && <LinkLight x={pa.x + (pb.x - pa.x) * 0.08 + nx * 5} y={pa.y + (pb.y - pa.y) * 0.08 + ny * 5} up={up} active={activeA} stp={stpA} />}
               {showLights && <LinkLight x={pb.x + (pa.x - pb.x) * 0.08 + nx * 5} y={pb.y + (pa.y - pb.y) * 0.08 + ny * 5} up={up} active={activeB} stp={stpB} />}
               {link.type === 'serial' && (
-                <text x={mid.x + nx * 9} y={mid.y + ny * 9} textAnchor="middle" fill="#a78bfa" fontSize={7} className="pointer-events-none select-none">
+                <text x={mid.x + nx * 9} y={mid.y + ny * 9} textAnchor="middle" fill={cableColor('serial', true)} fontSize={7} className="pointer-events-none select-none">
                   {link.dceSide === 'a' ? 'DCE' : 'DTE'}
                 </text>
               )}
               {link.type === 'console' && (
-                <text x={mid.x} y={mid.y - 6} textAnchor="middle" fill="#38bdf8" fontSize={7} className="pointer-events-none select-none">
+                <text x={mid.x} y={mid.y - 6} textAnchor="middle" fill={cableColor('console', true)} fontSize={7} className="pointer-events-none select-none">
                   console
                 </text>
               )}

@@ -129,8 +129,8 @@ describe('Layer 3', () => {
     r2b.ip = '10.2.0.1'; r2b.mask = '255.255.255.0'
     r1.config.ospf = { enabled: true, processId: 1, networks: [{ network: '10.1.0.0', wildcard: '0.0.0.255', area: 0 }, { network: '10.0.0.0', wildcard: '0.0.0.255', area: 0 }], passive: [] }
     r2.config.ospf = { enabled: true, processId: 1, networks: [{ network: '10.2.0.0', wildcard: '0.0.0.255', area: 0 }, { network: '10.0.0.0', wildcard: '0.0.0.255', area: 0 }], passive: [] }
-    s.addLink({ deviceId: r1.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc1.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: r2.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: pc2.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: r1.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc1.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: r2.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: pc2.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.addLink({ deviceId: r1.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: r2.id, ifaceId: 'GigabitEthernet0/0' }, 'crossover')
     s.recompute()
     expect(s.routesFor(r1.id).some((r) => r.network === '10.2.0.0' && r.type === 'ospf')).toBe(true)
@@ -151,8 +151,8 @@ describe('Layer 3', () => {
     outside.ip = '203.0.113.1'; outside.mask = '255.255.255.0'; outside.nat = 'outside'
     r.config.acls.push({ id: '1', type: 'standard', rules: [{ action: 'permit', src: '192.168.1.0', srcWild: '0.0.0.255' }] })
     r.config.nat.insideSourceList = { aclId: '1', iface: 'GigabitEthernet0/1', overload: true }
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     const res = await s.ping(pc.id, '203.0.113.10', 1, true)
     expect(res.ok).toBe(true)
@@ -171,8 +171,8 @@ describe('Layer 3', () => {
     const outside = r.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!
     outside.ip = '10.0.0.1'; outside.mask = '255.255.255.0'; outside.aclOut = '100'
     r.config.acls.push({ id: '100', type: 'extended', rules: [{ action: 'deny', proto: 'icmp', src: '192.168.1.0', srcWild: '0.0.0.255', dst: '10.0.0.10', dstWild: '0.0.0.0' }, { action: 'permit', proto: 'ip', src: 'any', srcWild: '0.0.0.0', dst: 'any', dstWild: '0.0.0.0' }] })
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     const blocked = await s.ping(pc.id, '10.0.0.10', 1, true)
     expect(blocked.ok).toBe(false)
@@ -201,8 +201,8 @@ describe('Home gateway', () => {
     const ispLan = isp.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!
     ispLan.ip = '10.9.0.1'; ispLan.mask = '255.255.255.0'
     s.addLink({ deviceId: home.id, ifaceId: 'Ethernet1' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: home.id, ifaceId: 'Internet' }, { deviceId: isp.id, ifaceId: 'GigabitEthernet0/0' }, 'straight')
-    s.addLink({ deviceId: isp.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: home.id, ifaceId: 'Internet' }, { deviceId: isp.id, ifaceId: 'GigabitEthernet0/0' }, 'crossover')
+    s.addLink({ deviceId: isp.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     s.startDhcpFor(pc.id)
     for (let i = 0; i < 40; i++) s.step()
@@ -231,8 +231,8 @@ describe('Wireless, relay and static NAT', () => {
     ispWan.ip = '203.0.113.1'; ispWan.mask = '255.255.255.0'
     const ispLan = isp.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!
     ispLan.ip = '10.9.0.1'; ispLan.mask = '255.255.255.0'
-    s.addLink({ deviceId: home.id, ifaceId: 'Internet' }, { deviceId: isp.id, ifaceId: 'GigabitEthernet0/0' }, 'straight')
-    s.addLink({ deviceId: isp.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: home.id, ifaceId: 'Internet' }, { deviceId: isp.id, ifaceId: 'GigabitEthernet0/0' }, 'crossover')
+    s.addLink({ deviceId: isp.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     expect(s.wireless.some((w) => w.clientId === tablet.id)).toBe(true)
     s.startDhcpFor(tablet.id)
@@ -305,8 +305,8 @@ describe('Wireless, relay and static NAT', () => {
     lan.ip = '192.168.5.1'; lan.mask = '255.255.255.0'; lan.helper = '10.0.0.10'
     const wan = relay.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!
     wan.ip = '10.0.0.1'; wan.mask = '255.255.255.0'
-    s.addLink({ deviceId: relay.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: relay.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: relay.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: relay.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     s.startDhcpFor(pc.id)
     for (let i = 0; i < 40; i++) s.step()
@@ -327,8 +327,8 @@ describe('Wireless, relay and static NAT', () => {
     const outside = r.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!
     outside.ip = '203.0.113.1'; outside.mask = '255.255.255.0'; outside.nat = 'outside'
     r.config.nat.static.push({ inside: '192.168.1.50', outside: '203.0.113.50' })
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: insideServer.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: outsidePc.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: insideServer.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: outsidePc.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     const res = await s.ping(outsidePc.id, '203.0.113.50', 1, true)
     expect(res.ok).toBe(true)
@@ -348,8 +348,8 @@ describe('Application services', () => {
     inside.ip = '192.168.1.1'; inside.mask = '255.255.255.0'
     const outside = r.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!
     outside.ip = '10.0.0.1'; outside.mask = '255.255.255.0'
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     const sent = await s.sendEmail(pc.id, { address: 'alice@mail.local', outgoing: '10.0.0.10', user: 'alice', password: 'secret' }, { to: 'alice@mail.local', subject: 'Hello', body: 'Test body' })
     expect(sent.ok).toBe(true)
@@ -371,8 +371,8 @@ describe('Application services', () => {
     inside.ip = '192.168.1.1'; inside.mask = '255.255.255.0'
     const outside = r.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!
     outside.ip = '10.0.0.1'; outside.mask = '255.255.255.0'
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     const list = await s.ftpRequest(pc.id, '10.0.0.10', { action: 'list', user: 'admin', password: 'admin' })
     expect(list.ok).toBe(true)
@@ -429,8 +429,8 @@ describe('DNS routing', () => {
     outside.ip = '192.168.1.1'; outside.mask = '255.255.255.0'; outside.nat = 'outside'
     r.config.acls = [{ id: '1', type: 'standard', rules: [{ action: 'permit', proto: 'ip', src: '192.168.3.0', srcWild: '0.0.0.255' }] }]
     r.config.nat.insideSourceList = { aclId: '1', overload: true }
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     const ping = await s.ping(pc.id, '192.168.1.100', 1, true)
     expect(ping.ok).toBe(true)
@@ -456,8 +456,8 @@ describe('DNS through firewall', () => {
     inside.ip = '192.168.3.1'; inside.mask = '255.255.255.0'; inside.securityLevel = 100
     const outside = fw.interfaces.find((i) => i.name === 'outside')!
     outside.ip = '192.168.1.1'; outside.mask = '255.255.255.0'; outside.securityLevel = 0
-    s.addLink({ deviceId: fw.id, ifaceId: 'inside' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: fw.id, ifaceId: 'outside' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: fw.id, ifaceId: 'inside' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: fw.id, ifaceId: 'outside' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     expect((await s.ping(pc.id, '192.168.1.100', 1, true)).ok).toBe(true)
     const dns = await s.resolveName(pc.id, 'netforge.net')
@@ -481,9 +481,9 @@ describe('Firewall', () => {
     const other = s.addDevice('server', 300, 220)
     const oe = other.interfaces.find((i) => i.name === 'Ethernet0')!
     oe.ip = '10.0.0.11'; oe.mask = '255.255.255.0'; other.config.gateway = '10.0.0.1'
-    s.addLink({ deviceId: fw.id, ifaceId: 'inside' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: fw.id, ifaceId: 'outside' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'straight')
-    s.addLink({ deviceId: fw.id, ifaceId: 'outside' }, { deviceId: other.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: fw.id, ifaceId: 'inside' }, { deviceId: pc.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: fw.id, ifaceId: 'outside' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.addLink({ deviceId: fw.id, ifaceId: 'outside' }, { deviceId: other.id, ifaceId: 'Ethernet0' }, 'crossover')
     s.recompute()
     const out = await s.ping(pc.id, '10.0.0.10')
     expect(out.ok).toBe(true)

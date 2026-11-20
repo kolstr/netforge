@@ -15,6 +15,14 @@ export function Inspector() {
   const device = store.selectedIds.length === 1 ? sim.device(store.selectedIds[0]) : undefined
   const shape = store.selectedIds.length === 1 ? sim.shapes.find((s) => s.id === store.selectedIds[0]) : undefined
   const link = store.selectedLinkId ? sim.links.find((l) => l.id === store.selectedLinkId) : undefined
+  const linkIssue = (() => {
+    if (!link) return null
+    const da = sim.device(link.a.deviceId)
+    const db = sim.device(link.b.deviceId)
+    const ia = da?.interfaces.find((i) => i.id === link.a.ifaceId)
+    const ib = db?.interfaces.find((i) => i.id === link.b.ifaceId)
+    return da && db && ia && ib ? sim.checkCable(link.type, ia, ib, da, db) : null
+  })()
   const tables = device && store.tool === 'inspect' ? sim.inspectData(device.id) : []
   const activeTable = tables.find((t) => t.id === tableId) ?? tables[0]
 
@@ -235,6 +243,11 @@ export function Inspector() {
                   )
                 })}
               </div>
+              {linkIssue && (
+                <div className="mt-3 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-1.5 text-[10px] leading-relaxed text-amber-200">
+                  {linkIssue}
+                </div>
+              )}
               <button className="btn btn-danger mt-3 w-full" onClick={() => store.deleteSelection()}>
                 <Trash2 size={12} /> Delete link
               </button>
