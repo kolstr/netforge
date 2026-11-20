@@ -4,7 +4,7 @@ import type { Acl, Device, DhcpPool, Interface, StaticRoute } from '../../types'
 import { useApp } from '../../store'
 import { Field, Toggle } from '../common/Modal'
 import { shortIfaceName } from '../../sim/runtime'
-import { formatIpWithMask } from '../../lib/ip'
+import { formatIpWithMask, parseAclAddress } from '../../lib/ip'
 
 export function ConfigTab({ device }: { device: Device }) {
   const store = useApp()
@@ -455,7 +455,25 @@ function AclSection({ device }: { device: Device }) {
   const store = useApp()
   const update = (fn: (d: Device) => void) => store.updateDevice(device.id, fn)
   const [newId, setNewId] = useState('100')
-  const [form, setForm] = useState({ action: 'permit', proto: 'ip', src: 'any', srcWild: '0.0.0.0', dst: 'any', dstWild: '0.0.0.0', dstPort: '' })
+  const [form, setForm] = useState({ action: 'permit', proto: 'ip', src: 'any', dst: 'any', dstPort: '' })
+  const [error, setError] = useState('')
+  const src = parseAclAddress(form.src)
+  const dst = parseAclAddress(form.dst)
+  const patchForm = (patch: Partial<typeof form>) => {
+    setError('')
+    setForm({ ...form, ...patch })
+  }
+  const addRule = (aclId: string) => {
+    if (!src || !dst) {
+      setError('Address must be any, host 10.0.0.1, 10.0.0.1 or 192.168.1.0/24')
+      return
+    }
+    setError('')
+    update((d) => {
+      const a = d.config.acls.find((x) => x.id === aclId)
+      a?.rules.push({ action: form.action as 'permit' | 'deny', proto: form.proto, src: src.addr, srcWild: src.wildcard, dst: dst.addr, dstWild: dst.wildcard, dstPort: form.dstPort || undefined })
+    })
+  }
   return (
     <Section title="Access control lists" icon={<Shield size={12} />} defaultOpen={false}>
       <div className="flex gap-1.5">
@@ -478,12 +496,15 @@ function AclSection({ device }: { device: Device }) {
             {!acl.rules.length && <div className="text-[9px] text-slate-600">No rules — implicit deny.</div>}
           </div>
           <div className="mt-1.5 grid grid-cols-6 gap-1">
-            <select className="input px-1 py-0.5 text-[8px]" value={form.action} onChange={(e) => setForm({ ...form, action: e.target.value })}><option>permit</option><option>deny</option></select>
-            <select className="input px-1 py-0.5 text-[8px]" value={form.proto} onChange={(e) => setForm({ ...form, proto: e.target.value })}><option>ip</option><option>tcp</option><option>udp</option><option>icmp</option></select>
-            <input className="input px-1 py-0.5 text-[8px]" value={form.src} onChange={(e) => setForm({ ...form, src: e.target.value })} placeholder="src" />
-            <input className="input px-1 py-0.5 text-[8px]" value={form.dst} onChange={(e) => setForm({ ...form, dst: e.target.value })} placeholder="dst" />
-            <input className="input px-1 py-0.5 text-[8px]" value={form.dstPort} onChange={(e) => setForm({ ...form, dstPort: e.target.value })} placeholder="port" />
-            <button className="btn px-1 py-0.5 text-[8px]" onClick={() => update((d) => { const a = d.config.acls.find((x) => x.id === acl.id); a?.rules.push({ action: form.action as 'permit' | 'deny', proto: form.proto, src: form.src, srcWild: form.srcWild, dst: form.dst, dstWild: form.dstWild, dstPort: form.dstPort || undefined }) })}>Add</button>
+            <select className="input px-1 py-0.5 text-[8px]" value={form.action} onChange={(e) => patchForm({ action: e.target.value })}><option>permit</option><option>deny</option></select>
+            <select className="input px-1 py-0.5 text-[8px]" value={form.proto} onChange={(e) => patchForm({ proto: e.target.value })}><option>ip</option><option>tcp</option><option>udp</option><option>icmp</option></select>
+            <input className="input px-1 py-0.5 text-[8px]" value={form.src} onChange={(e) => patchForm({ src: e.target.value })} placeholder="src" title="any, host 10.0.0.1, 10.0.0.1 or 192.168.1.0/24" />
+            <input className="input px-1 py-0.5 text-[8px]" value={form.dst} onChange={(e) => patchForm({ dst: e.target.value })} placeholder="dst" title="any, host 10.0.0.1, 10.0.0.1 or 192.168.1.0/24" />
+            <input className="input px-1 py-0.5 text-[8px]" value={form.dstPort} onChange={(e) => patchForm({ dstPort: e.target.value })} placeholder="port" />
+            <button className="btn px-1 py-0.5 text-[8px]" onClick={() => addRule(acl.id)}>Add</button>
+          </div>
+          <div className={`mt-1 font-mono text-[8px] ${error ? 'text-rose-300' : 'text-slate-600'}`}>
+            {error || (src && dst ? `${form.action} ${form.proto} ${src.addr} ${src.wildcard} ${dst.addr} ${dst.wildcard}${form.dstPort ? ' eq ' + form.dstPort : ''}` : 'Address: any, host 10.0.0.1, 10.0.0.1 or 192.168.1.0/24')}
           </div>
         </div>
       ))}

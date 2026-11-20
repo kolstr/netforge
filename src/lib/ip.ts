@@ -91,6 +91,32 @@ export function ipInNetwork(ip: string, network: string, mask: string): boolean 
   return ipInWildcard(ip, network, intToIp(~(parseIp(mask) ?? 0) >>> 0))
 }
 
+/**
+ * Parse an ACL address field: `any`, `host 10.0.0.5`, `10.0.0.5`, `10.0.0.0 0.0.0.255` or a CIDR network
+ * such as `192.168.1.0/24`. The result is always a base address plus wildcard, with the base normalised to
+ * the network address so it can be compared with `ipInWildcard`.
+ */
+export function parseAclAddress(text: string): { addr: string; wildcard: string } | null {
+  const value = text.trim()
+  if (!value) return null
+  if (value.toLowerCase() === 'any') return { addr: 'any', wildcard: '0.0.0.0' }
+  const host = /^host\s+(\S+)$/i.exec(value)
+  const spec = host ? host[1] : value
+  const explicit = /^(\S+)\s+(\S+)$/.exec(spec)
+  if (explicit) {
+    const base = parseIp(explicit[1])
+    const wildcard = parseIp(explicit[2])
+    if (base === null || wildcard === null || !isValidMask(intToIp(~wildcard >>> 0))) return null
+    return { addr: intToIp(base & ~wildcard >>> 0), wildcard: intToIp(wildcard) }
+  }
+  const [base, prefix, extra] = spec.split('/')
+  if (extra !== undefined || !isValidIp(base)) return null
+  if (prefix === undefined) return { addr: base, wildcard: '0.0.0.0' }
+  if (!/^\d{1,2}$/.test(prefix) || Number(prefix) > 32) return null
+  const mask = prefixToMask(Number(prefix))
+  return { addr: networkAddress(base, mask), wildcard: intToIp(~(parseIp(mask) ?? 0) >>> 0) }
+}
+
 export function incrementIp(ip: string, by = 1): string {
   const n = parseIp(ip)
   if (n === null) return ip

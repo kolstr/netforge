@@ -1,6 +1,7 @@
 import { afterEach, describe, expect, it } from 'vitest'
 import { Simulator } from './engine'
 import type { WirePacket } from '../types'
+import { parseAclAddress } from '../lib/ip'
 
 const sims: Simulator[] = []
 function makeSim() {
@@ -179,6 +180,34 @@ describe('Layer 3', () => {
     outside.aclOut = undefined
     const allowed = await s.ping(pc.id, '10.0.0.10', 1, true)
     expect(allowed.ok).toBe(true)
+  })
+
+  it('filters a whole subnet from a CIDR entry', async () => {
+    const s = makeSim()
+    const r = s.addDevice('router', 0, 0)
+    const inside = r.interfaces.find((i) => i.name === 'GigabitEthernet0/0')!
+    inside.ip = '192.168.1.1'; inside.mask = '255.255.255.0'; inside.aclIn = '10'
+    const outside = r.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!
+    outside.ip = '10.0.0.1'; outside.mask = '255.255.255.0'
+    const server = s.addDevice('server', 300, 0)
+    const se = server.interfaces.find((i) => i.name === 'Ethernet0')!
+    se.ip = '10.0.0.10'; se.mask = '255.255.255.0'; server.config.gateway = '10.0.0.1'
+    const sw = s.addDevice('switch', 100, 200)
+    const pcLow = staticPc(s, -100, 200, '192.168.1.10', '255.255.255.0', '192.168.1.1')
+    const pcEdge = staticPc(s, -100, 260, '192.168.1.126', '255.255.255.0', '192.168.1.1')
+    const pcHigh = staticPc(s, -100, 320, '192.168.1.130', '255.255.255.0', '192.168.1.1')
+    const denied = parseAclAddress('192.168.1.0/25')!
+    r.config.acls.push({ id: '10', type: 'standard', rules: [{ action: 'deny', src: denied.addr, srcWild: denied.wildcard }, { action: 'permit', src: 'any', srcWild: '0.0.0.0' }] })
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/0' }, { deviceId: sw.id, ifaceId: 'GigabitEthernet0/1' }, 'straight')
+    s.addLink({ deviceId: sw.id, ifaceId: 'FastEthernet0/1' }, { deviceId: pcLow.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: sw.id, ifaceId: 'FastEthernet0/2' }, { deviceId: pcEdge.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: sw.id, ifaceId: 'FastEthernet0/3' }, { deviceId: pcHigh.id, ifaceId: 'Ethernet0' }, 'straight')
+    s.addLink({ deviceId: r.id, ifaceId: 'GigabitEthernet0/1' }, { deviceId: server.id, ifaceId: 'Ethernet0' }, 'crossover')
+    s.recompute()
+    await s.ping(pcHigh.id, '10.0.0.10', 1, true)
+    expect((await s.ping(pcLow.id, '10.0.0.10', 1, true)).ok).toBe(false)
+    expect((await s.ping(pcEdge.id, '10.0.0.10', 1, true)).ok).toBe(false)
+    expect((await s.ping(pcHigh.id, '10.0.0.10', 1, true)).ok).toBe(true)
   })
 })
 

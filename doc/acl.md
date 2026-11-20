@@ -41,9 +41,19 @@ frame arrives ─► L2 handling ─► TTL check ─► [ACL in] ─► NAT ins
    **ACL out** fields. Switch ports have no ACL fields, so attach lists with `ip access-group` on the SVI or
    access port (see Example 6).
 
-The form builds host rules only, because it uses a `0.0.0.0` wildcard for both addresses. Rules covering a
-whole subnet (for example `192.168.10.0 0.0.0.255`) have to be written in the CLI or imported with the
-topology JSON.
+The source and destination fields accept the same forms as the CLI, and a CIDR suffix generates the
+wildcard mask automatically:
+
+| Input | Rule that is stored |
+| --- | --- |
+| `any` | `any 0.0.0.0` |
+| `10.0.0.5` or `host 10.0.0.5` | `10.0.0.5 0.0.0.0` |
+| `192.168.10.0/24` | `192.168.10.0 0.0.0.255` |
+| `192.168.10.130/24` | `192.168.10.0 0.0.0.255` (host bits are cleared) |
+| `192.168.10.0 0.0.0.255` | `192.168.10.0 0.0.0.255` |
+
+The line below the row previews the rule exactly as it will be evaluated; input that cannot be parsed is
+rejected with a hint instead of adding a rule that matches nothing.
 
 For NAT, **Config → NAT → Inside source ACL** points at an ACL that selects which inside hosts are
 translated.
@@ -85,7 +95,8 @@ Extended rules accept the usual Cisco-style address forms:
 | `eq <port>` after a destination | `permit tcp any host 203.0.113.10 eq 443` | that destination port |
 
 Wildcards are inverted masks: `0.0.0.0` matches one address, `0.0.0.255` matches a /24, `0.0.255.255` a /16,
-`255.255.255.255` everything.
+`255.255.255.255` everything. CIDR notation (`192.168.10.0/24`) is a Config tab convenience that is converted
+to that wildcard form; in the CLI write the wildcard explicitly.
 
 The protocol keyword is matched against the packet type:
 
