@@ -3,6 +3,7 @@ import { RefreshCw, Save } from 'lucide-react'
 import type { Device } from '../../types'
 import { useApp } from '../../store'
 import { Field } from '../common/Modal'
+import { isValidMask } from '../../lib/ip'
 
 export function IPConfigApp({ device }: { device: Device }) {
   const store = useApp()
@@ -11,17 +12,19 @@ export function IPConfigApp({ device }: { device: Device }) {
   const [ifaceId, setIfaceId] = useState(nics[0]?.id ?? '')
   const iface = device.interfaces.find((i) => i.id === ifaceId) ?? nics[0]
   const [ip, setIp] = useState(iface?.ip ?? '')
-  const [mask, setMask] = useState(iface?.mask ?? '255.255.255.0')
+  const [mask, setMask] = useState(iface?.mask ?? '')
   const [gateway, setGateway] = useState(device.config.gateway ?? '')
   const [dns, setDns] = useState(device.config.dnsServer ?? '')
   const [ipv6, setIpv6] = useState(iface?.ipv6 ?? '')
   const [dhcp, setDhcp] = useState(!!iface?.dhcp)
   const [status, setStatus] = useState('')
+  const [error, setError] = useState('')
   if (!iface) return <div className="p-4 text-[11px] text-slate-500">No Ethernet or wireless interface on this device.</div>
   const detail = sim.portDetail(device.id, iface.id)
   const lease = sim.rt(device.id).dhcpClient
 
   const chooseDhcp = () => {
+    setError('')
     setDhcp(true)
     store.updateDevice(device.id, (d) => {
       const i = d.interfaces.find((x) => x.id === iface.id)
@@ -36,6 +39,11 @@ export function IPConfigApp({ device }: { device: Device }) {
   }
 
   const apply = () => {
+    if (!dhcp && ip && !isValidMask(mask)) {
+      setError('Enter a subnet mask, e.g. 255.255.255.0')
+      return
+    }
+    setError('')
     store.updateDevice(device.id, (d) => {
       const i = d.interfaces.find((x) => x.id === iface.id)
       if (!i) return
@@ -86,7 +94,7 @@ export function IPConfigApp({ device }: { device: Device }) {
         </div>
 
         {nics.length > 1 && (
-          <select className="input mt-3" value={ifaceId} onChange={(e) => { setIfaceId(e.target.value); const i = device.interfaces.find((x) => x.id === e.target.value); setIp(i?.ip ?? ''); setMask(i?.mask ?? '255.255.255.0'); setDhcp(!!i?.dhcp) }}>
+          <select className="input mt-3" value={ifaceId} onChange={(e) => { setIfaceId(e.target.value); const i = device.interfaces.find((x) => x.id === e.target.value); setIp(i?.ip ?? ''); setMask(i?.mask ?? ''); setDhcp(!!i?.dhcp); setError('') }}>
             {nics.map((n) => <option key={n.id} value={n.id}>{n.name}</option>)}
           </select>
         )}
@@ -101,8 +109,8 @@ export function IPConfigApp({ device }: { device: Device }) {
         </div>
 
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <Field label="IPv4 address"><input className="input font-mono" value={dhcp ? (lease?.ip ?? '') : ip} onChange={(e) => setIp(e.target.value)} disabled={dhcp} placeholder="192.168.1.10" /></Field>
-          <Field label="Subnet mask"><input className="input font-mono" value={dhcp ? (lease?.mask ?? '') : mask} onChange={(e) => setMask(e.target.value)} disabled={dhcp} /></Field>
+          <Field label="IPv4 address"><input className="input font-mono" value={dhcp ? (lease?.ip ?? '') : ip} onChange={(e) => { setIp(e.target.value); setError('') }} disabled={dhcp} placeholder="192.168.1.10" /></Field>
+          <Field label="Subnet mask"><input className="input font-mono" value={dhcp ? (lease?.mask ?? '') : mask} onChange={(e) => { setMask(e.target.value); setError('') }} disabled={dhcp} placeholder="255.255.255.0" /></Field>
           <Field label="Default gateway"><input className="input font-mono" value={dhcp ? (lease?.gateway ?? '') : gateway} onChange={(e) => setGateway(e.target.value)} disabled={dhcp} /></Field>
           <Field label="DNS server"><input className="input font-mono" value={dhcp ? (lease?.dns ?? '') : dns} onChange={(e) => setDns(e.target.value)} disabled={dhcp} /></Field>
           <Field label="IPv6 address" className="col-span-2"><input className="input font-mono" value={ipv6} onChange={(e) => setIpv6(e.target.value)} disabled={dhcp} placeholder="2001:db8::1" /></Field>
@@ -118,7 +126,7 @@ export function IPConfigApp({ device }: { device: Device }) {
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {!dhcp && <button className="btn btn-primary" onClick={apply}><Save size={12} /> Apply static configuration</button>}
           {dhcp && <button className="btn" onClick={renew}><RefreshCw size={12} /> Renew DHCP</button>}
-          {status && <span className="text-[10px] text-cyan-300">{status}</span>}
+          {error ? <span className="text-[10px] text-rose-300">{error}</span> : status && <span className="text-[10px] text-cyan-300">{status}</span>}
         </div>
         <div className="mt-1 text-[10px] text-slate-600">
           {dhcp ? 'DHCP is active automatically. Renew requests a fresh lease from the server.' : 'Enter static settings above, then apply or press Enter.'}
