@@ -54,12 +54,12 @@ export function ActivityWizard() {
     <Modal onClose={() => store.setDialog(null)} width="max-w-4xl" title="Activity Wizard" subtitle="Define instructions and automatically graded checks" icon={<FlaskConical size={17} className="text-violet-300" />}>
       <div className="flex gap-4">
         <div className="w-36 shrink-0 space-y-1">
-          <button className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-[11px] ${tab === 'instructions' ? 'bg-violet-400/10 text-violet-200' : 'text-slate-400 hover:bg-white/5'}`} onClick={() => setTab('instructions')}><FlaskConical size={12} /> Instructions</button>
-          <button className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-[11px] ${tab === 'checks' ? 'bg-violet-400/10 text-violet-200' : 'text-slate-400 hover:bg-white/5'}`} onClick={() => setTab('checks')}><CheckCircle2 size={12} /> Checks <span className="ml-auto text-[10px] text-slate-600">{checks.length}</span></button>
+          <button className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-[12px] ${tab === 'instructions' ? 'bg-violet-400/10 text-violet-200' : 'text-slate-400 hover:bg-white/5'}`} onClick={() => setTab('instructions')}><FlaskConical size={12} /> Instructions</button>
+          <button className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-[12px] ${tab === 'checks' ? 'bg-violet-400/10 text-violet-200' : 'text-slate-400 hover:bg-white/5'}`} onClick={() => setTab('checks')}><CheckCircle2 size={12} /> Checks <span className="ml-auto text-[11px] text-slate-600">{checks.length}</span></button>
           <div className="mt-3 border-t border-white/8 pt-2">
-            <div className="text-[10px] uppercase tracking-wider text-slate-600">Add check</div>
+            <div className="text-[11px] uppercase tracking-wider text-slate-600">Add check</div>
             {KINDS.map((k) => (
-              <button key={k.id} className="mt-1 flex w-full items-center gap-1.5 rounded px-2 py-1 text-left text-[10px] text-slate-500 hover:bg-white/5 hover:text-slate-300" onClick={() => addCheck(k.id)}><Plus size={9} /> {k.label}</button>
+              <button key={k.id} className="mt-1 flex w-full items-center gap-1.5 rounded px-2 py-1 text-left text-[11px] text-slate-500 hover:bg-white/5 hover:text-slate-300" onClick={() => addCheck(k.id)}><Plus size={9} /> {k.label}</button>
             ))}
           </div>
         </div>
@@ -68,16 +68,16 @@ export function ActivityWizard() {
             <div className="space-y-2">
               <Field label="Activity title"><input className="input" value={title} onChange={(e) => setTitle(e.target.value)} /></Field>
               <Field label="Instructions">
-                <textarea className="input h-52 resize-none font-mono text-[10px] leading-relaxed" value={instructions} onChange={(e) => setInstructions(e.target.value)} />
+                <textarea className="input h-52 resize-none font-mono text-[11px] leading-relaxed" value={instructions} onChange={(e) => setInstructions(e.target.value)} />
               </Field>
-              <div className="rounded-lg border border-white/8 bg-ink-950/40 p-2 text-[10px] leading-relaxed text-slate-500">
+              <div className="rounded-lg border border-white/8 bg-ink-950/40 p-2 text-[11px] leading-relaxed text-slate-500">
                 Students see these instructions in the inspector. Checks are evaluated against the live topology; each check contributes its weight to the score.
               </div>
             </div>
           )}
           {tab === 'checks' && (
             <div className="space-y-2">
-              {!checks.length && <div className="rounded-lg border border-dashed border-white/10 p-8 text-center text-[10px] text-slate-600">No checks yet. Add one from the left.</div>}
+              {!checks.length && <div className="rounded-lg border border-dashed border-white/10 p-8 text-center text-[11px] text-slate-600">No checks yet. Add one from the left.</div>}
               {checks.map((c) => (
                 <div key={c.id} className="rounded-lg border border-white/8 bg-ink-950/40 p-2.5">
                   <div className="flex items-center gap-1.5">
@@ -92,17 +92,17 @@ export function ActivityWizard() {
                     {(c.kind === 'connectivity' || c.kind === 'custom') && (
                       <>
                         <Field label="Source device">
-                          <select className="input text-[10px]" value={c.sourceId ?? ''} onChange={(e) => updateCheck(c.id, { sourceId: e.target.value })}>
+                          <select className="input text-[11px]" value={c.sourceId ?? ''} onChange={(e) => updateCheck(c.id, { sourceId: e.target.value })}>
                             <option value="">—</option>
                             {devices.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                           </select>
                         </Field>
-                        <Field label="Destination IP"><input className="input font-mono text-[10px]" value={c.destIp ?? ''} onChange={(e) => updateCheck(c.id, { destIp: e.target.value })} placeholder="10.10.10.10" /></Field>
+                        <Field label="Destination IP"><input className="input font-mono text-[11px]" value={c.destIp ?? ''} onChange={(e) => updateCheck(c.id, { destIp: e.target.value })} placeholder="10.10.10.10" /></Field>
                       </>
                     )}
                     {(c.kind === 'interface-ip' || c.kind === 'hostname' || c.kind === 'vlan' || c.kind === 'route') && (
                       <Field label="Device">
-                        <select className="input text-[10px]" value={c.deviceId ?? ''} onChange={(e) => updateCheck(c.id, { deviceId: e.target.value })}>
+                        <select className="input text-[11px]" value={c.deviceId ?? ''} onChange={(e) => updateCheck(c.id, { deviceId: e.target.value })}>
                           <option value="">—</option>
                           {devices.map((d) => <option key={d.id} value={d.id}>{d.name}</option>)}
                         </select>
@@ -111,16 +111,16 @@ export function ActivityWizard() {
                     {c.kind === 'interface-ip' && (
                       <>
                         <Field label="Interface">
-                          <select className="input text-[10px]" value={c.ifaceId ?? ''} onChange={(e) => updateCheck(c.id, { ifaceId: e.target.value })}>
+                          <select className="input text-[11px]" value={c.ifaceId ?? ''} onChange={(e) => updateCheck(c.id, { ifaceId: e.target.value })}>
                             <option value="">—</option>
                             {sim.device(c.deviceId ?? '')?.interfaces.filter((i) => i.kind !== 'console').map((i) => <option key={i.id} value={i.id}>{i.name}</option>)}
                           </select>
                         </Field>
-                        <Field label="Expected IP"><input className="input font-mono text-[10px]" value={c.expected ?? ''} onChange={(e) => updateCheck(c.id, { expected: e.target.value })} /></Field>
+                        <Field label="Expected IP"><input className="input font-mono text-[11px]" value={c.expected ?? ''} onChange={(e) => updateCheck(c.id, { expected: e.target.value })} /></Field>
                       </>
                     )}
                     {(c.kind === 'hostname' || c.kind === 'vlan' || c.kind === 'route') && (
-                      <Field label="Expected value"><input className="input font-mono text-[10px]" value={c.expected ?? ''} onChange={(e) => updateCheck(c.id, { expected: e.target.value })} placeholder={c.kind === 'vlan' ? '10' : c.kind === 'route' ? '0.0.0.0' : 'hostname'} /></Field>
+                      <Field label="Expected value"><input className="input font-mono text-[11px]" value={c.expected ?? ''} onChange={(e) => updateCheck(c.id, { expected: e.target.value })} placeholder={c.kind === 'vlan' ? '10' : c.kind === 'route' ? '0.0.0.0' : 'hostname'} /></Field>
                     )}
                   </div>
                 </div>
@@ -132,7 +132,7 @@ export function ActivityWizard() {
             <button className="btn" onClick={() => store.runAssessment()} disabled={!checks.length}><Play size={11} /> Check now</button>
             <button className="btn" onClick={() => { store.setAssessment(undefined); store.setDialog(null) }}>Disable</button>
             <div className="ml-auto flex items-center gap-2">
-              <span className="text-[10px] text-slate-500">Enabled</span>
+              <span className="text-[11px] text-slate-500">Enabled</span>
               <Toggle checked={existing?.enabled ?? false} onChange={(v) => { if (existing) store.setAssessment({ ...existing, enabled: v }) }} />
             </div>
           </div>
@@ -150,7 +150,7 @@ export function AssessmentDialog({ result }: { result: import('../../sim/engine'
       <div className="space-y-3">
         <div className="rounded-xl border border-white/8 bg-ink-950/40 p-4 text-center">
           <div className="text-4xl font-bold text-slate-100">{pct}%</div>
-          <div className="mt-1 text-[10px] text-slate-500">{result.score} / {result.total} points</div>
+          <div className="mt-1 text-[11px] text-slate-500">{result.score} / {result.total} points</div>
           <div className="mt-3 h-2 overflow-hidden rounded-full bg-white/10">
             <div className={`h-full rounded-full transition ${pct >= 80 ? 'bg-emerald-400' : pct >= 50 ? 'bg-amber-400' : 'bg-rose-400'}`} style={{ width: `${pct}%` }} />
           </div>
@@ -160,10 +160,10 @@ export function AssessmentDialog({ result }: { result: import('../../sim/engine'
             <div key={i.id} className="flex items-start gap-2 rounded-lg border border-white/8 bg-ink-950/40 p-2.5">
               {i.passed ? <CheckCircle2 size={14} className="mt-0.5 shrink-0 text-emerald-400" /> : <XCircle size={14} className="mt-0.5 shrink-0 text-rose-400" />}
               <div className="min-w-0 flex-1">
-                <div className="text-[11px] font-medium text-slate-200">{i.label}</div>
-                <div className="text-[10px] text-slate-500">{i.detail}</div>
+                <div className="text-[12px] font-medium text-slate-200">{i.label}</div>
+                <div className="text-[11px] text-slate-500">{i.detail}</div>
               </div>
-              <span className="text-[10px] text-slate-600">{i.weight} pts</span>
+              <span className="text-[11px] text-slate-600">{i.weight} pts</span>
             </div>
           ))}
         </div>

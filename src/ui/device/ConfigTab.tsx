@@ -33,23 +33,23 @@ export function ConfigTab({ device }: { device: Device }) {
           )}
           {isRouter && (
             <div className="flex items-center justify-between rounded-md border border-white/8 bg-ink-950/40 px-2 py-1.5">
-              <span className="text-[10px] text-slate-300">IP routing</span>
+              <span className="text-[11px] text-slate-300">IP routing</span>
               <Toggle checked={device.config.ipRouting} onChange={(v) => update((d) => (d.config.ipRouting = v))} />
             </div>
           )}
           {isEnd && (
             <>
               <div className="rounded-md border border-white/8 bg-ink-950/40 p-2">
-                <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">IPv4 configuration</div>
+                <div className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">IPv4 configuration</div>
                 <div className="flex gap-1">
                   <button
-                    className={`flex-1 rounded px-2 py-1 text-[10px] ${device.interfaces[0]?.dhcp ? 'bg-cyan-400/15 text-cyan-200' : 'text-slate-500 hover:text-slate-300'}`}
+                    className={`flex-1 rounded px-2 py-1 text-[11px] ${device.interfaces[0]?.dhcp ? 'bg-cyan-400/15 text-cyan-200' : 'text-slate-500 hover:text-slate-300'}`}
                     onClick={() => { update((d) => { d.interfaces.forEach((i) => (i.dhcp = true)) }); sim.startDhcpFor(device.id); store.setStatus('DHCP requested') }}
                   >
                     DHCP
                   </button>
                   <button
-                    className={`flex-1 rounded px-2 py-1 text-[10px] ${!device.interfaces[0]?.dhcp ? 'bg-white/10 text-slate-200' : 'text-slate-500 hover:text-slate-300'}`}
+                    className={`flex-1 rounded px-2 py-1 text-[11px] ${!device.interfaces[0]?.dhcp ? 'bg-white/10 text-slate-200' : 'text-slate-500 hover:text-slate-300'}`}
                     onClick={() => update((d) => d.interfaces.forEach((i) => (i.dhcp = false)))}
                   >
                     Static
@@ -66,7 +66,7 @@ export function ConfigTab({ device }: { device: Device }) {
           )}
           {isAp && <WirelessEditor device={device} onChange={(fn) => update((d) => { const w = d.interfaces.find((i) => i.kind === 'wireless'); if (w?.wireless) fn(w.wireless) })} />}
           {isHome && (
-            <div className="rounded-md border border-white/8 bg-ink-950/40 px-2 py-1.5 text-[10px] text-slate-500">
+            <div className="rounded-md border border-white/8 bg-ink-950/40 px-2 py-1.5 text-[11px] text-slate-500">
               Configure the home gateway from the <span className="text-cyan-300">GUI</span> tab or edit LAN/WAN settings below.
             </div>
           )}
@@ -95,7 +95,7 @@ export function ConfigTab({ device }: { device: Device }) {
             </select>
           </Field>
           <div className="flex items-center justify-between rounded-md border border-white/8 bg-ink-950/40 px-2 py-1.5">
-            <span className="text-[10px] text-slate-300">SSH RSA keys</span>
+            <span className="text-[11px] text-slate-300">SSH RSA keys</span>
             <Toggle checked={device.config.sshKeys} onChange={(v) => update((d) => (d.config.sshKeys = v))} />
           </div>
           <Field label="NTP server">
@@ -125,7 +125,7 @@ export function Section({ title, icon, children, defaultOpen = true }: { title: 
     <div className="overflow-hidden rounded-xl border border-white/8 bg-ink-950/40">
       <button className="flex w-full items-center gap-2 border-b border-white/8 px-3 py-2 text-left" onClick={() => setOpen(!open)}>
         <span className="text-cyan-300">{icon}</span>
-        <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-300">{title}</span>
+        <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-300">{title}</span>
         <ChevronDown size={11} className={`ml-auto text-slate-600 transition ${open ? '' : '-rotate-90'}`} />
       </button>
       {open && <div className="space-y-2 p-3">{children}</div>}
@@ -149,10 +149,10 @@ export function InterfaceList({ device }: { device: Device }) {
             <div key={iface.id} className={`rounded-lg border ${open ? 'border-cyan-400/20 bg-ink-900/70' : 'border-white/8 bg-ink-900/40'}`}>
               <button className="flex w-full items-center gap-2 px-2.5 py-2 text-left" onClick={() => setExpanded(open ? null : iface.id)}>
                 <span className={`h-2 w-2 rounded-full ${!iface.adminUp ? 'bg-rose-500' : detail?.physicalUp ? 'bg-emerald-400' : 'bg-slate-600'}`} />
-                <span className="font-mono text-[10px] text-slate-200">{iface.name}</span>
-                <span className="text-[10px] text-slate-600">{formatIpWithMask(iface.ip, iface.mask) ?? (iface.dhcp ? 'DHCP' : 'unassigned')}</span>
-                {iface.nat && <span className="rounded bg-amber-400/10 px-1 py-0.5 text-[10px] text-amber-300">{iface.nat}</span>}
-                {iface.trunk && <span className="rounded bg-cyan-400/10 px-1 py-0.5 text-[10px] text-cyan-300">trunk</span>}
+                <span className="font-mono text-[11px] text-slate-200">{iface.name}</span>
+                <span className="text-[11px] text-slate-600">{formatIpWithMask(iface.ip, iface.mask) ?? (iface.dhcp ? 'DHCP' : 'unassigned')}</span>
+                {iface.nat && <span className="rounded bg-amber-400/10 px-1 py-0.5 text-[11px] text-amber-300">{iface.nat}</span>}
+                {iface.trunk && <span className="rounded bg-cyan-400/10 px-1 py-0.5 text-[11px] text-cyan-300">trunk</span>}
                 <ChevronDown size={10} className={`ml-auto text-slate-600 transition ${open ? '' : '-rotate-90'}`} />
               </button>
               {open && (
@@ -212,7 +212,7 @@ export function InterfaceList({ device }: { device: Device }) {
                   <Field label="Description">
                     <input key={`${iface.id}-desc`} defaultValue={iface.description ?? ''} className="input" onBlur={(e) => update((d) => { const i = d.interfaces.find((x) => x.id === iface.id); if (i) i.description = e.target.value || undefined })} />
                   </Field>
-                  <div className="grid grid-cols-3 gap-2 text-[10px] text-slate-500">
+                  <div className="grid grid-cols-3 gap-2 text-[11px] text-slate-500">
                     <div>MAC <span className="font-mono text-slate-400">{iface.mac}</span></div>
                     <div>Speed <span className="text-slate-400">{iface.speed} Mbps</span></div>
                     <div>Peer <span className="text-slate-400">{detail?.peer ? sim.device(detail.peer.deviceId)?.name : '—'}</span></div>
@@ -234,7 +234,7 @@ function SwitchInterfaces({ device }: { device: Device }) {
   return (
     <Section title="Switch ports" icon={<Network size={12} />}>
       <div className="max-h-[320px] overflow-auto rounded-lg border border-white/8">
-        <table className="w-full text-[10px]">
+        <table className="w-full text-[11px]">
           <thead className="sticky top-0 bg-ink-850">
             <tr>
               <th className="table-head px-2 py-1.5">Port</th>
@@ -256,18 +256,18 @@ function SwitchInterfaces({ device }: { device: Device }) {
                       {shortIfaceName(iface.name)}
                     </span>
                   </td>
-                  <td className="px-1.5 py-1 text-[10px] text-slate-500">{d?.peer ? sim.device(d.peer.deviceId)?.name : '—'}</td>
+                  <td className="px-1.5 py-1 text-[11px] text-slate-500">{d?.peer ? sim.device(d.peer.deviceId)?.name : '—'}</td>
                   <td className="px-1.5 py-1">
-                    <select className="input px-1 py-0.5 text-[10px]" value={iface.trunk ? 'trunk' : 'access'} onChange={(e) => update((dd) => { const i = dd.interfaces.find((x) => x.id === iface.id); if (i) i.trunk = e.target.value === 'trunk' })}>
+                    <select className="input px-1 py-0.5 text-[11px]" value={iface.trunk ? 'trunk' : 'access'} onChange={(e) => update((dd) => { const i = dd.interfaces.find((x) => x.id === iface.id); if (i) i.trunk = e.target.value === 'trunk' })}>
                       <option value="access">access</option>
                       <option value="trunk">trunk</option>
                     </select>
                   </td>
                   <td className="px-1.5 py-1">
-                    <input type="number" min={1} max={4094} className="input w-14 px-1 py-0.5 text-[10px]" defaultValue={iface.vlan ?? 1} onBlur={(e) => update((dd) => { const i = dd.interfaces.find((x) => x.id === iface.id); if (i) i.vlan = Number(e.target.value) || 1 })} />
+                    <input type="number" min={1} max={4094} className="input w-14 px-1 py-0.5 text-[11px]" defaultValue={iface.vlan ?? 1} onBlur={(e) => update((dd) => { const i = dd.interfaces.find((x) => x.id === iface.id); if (i) i.vlan = Number(e.target.value) || 1 })} />
                   </td>
                   <td className="px-1.5 py-1">
-                    <input className="input w-20 px-1 py-0.5 text-[10px]" defaultValue={Array.isArray(iface.allowedVlans) ? iface.allowedVlans.join(',') : 'all'} onBlur={(e) => update((dd) => { const i = dd.interfaces.find((x) => x.id === iface.id); if (!i) return; const v = e.target.value.trim(); i.allowedVlans = v === 'all' || !v ? 'all' : v.split(',').map(Number).filter(Boolean) })} />
+                    <input className="input w-20 px-1 py-0.5 text-[11px]" defaultValue={Array.isArray(iface.allowedVlans) ? iface.allowedVlans.join(',') : 'all'} onBlur={(e) => update((dd) => { const i = dd.interfaces.find((x) => x.id === iface.id); if (!i) return; const v = e.target.value.trim(); i.allowedVlans = v === 'all' || !v ? 'all' : v.split(',').map(Number).filter(Boolean) })} />
                   </td>
                   <td className="px-1.5 py-1">
                     <input type="checkbox" checked={!!iface.portfast} onChange={(e) => update((dd) => { const i = dd.interfaces.find((x) => x.id === iface.id); if (i) i.portfast = e.target.checked })} className="accent-cyan-400" />
@@ -278,7 +278,7 @@ function SwitchInterfaces({ device }: { device: Device }) {
           </tbody>
         </table>
       </div>
-      <p className="text-[10px] text-slate-600">Access ports carry one untagged VLAN. Trunk ports carry 802.1Q tags for the allowed VLAN list.</p>
+      <p className="text-[11px] text-slate-600">Access ports carry one untagged VLAN. Trunk ports carry 802.1Q tags for the allowed VLAN list.</p>
     </Section>
   )
 }
@@ -291,56 +291,56 @@ function RoutingSection({ device }: { device: Device }) {
   return (
     <Section title="Routing" icon={<Route size={12} />}>
       <div className="space-y-2">
-        <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Static routes</div>
-        {device.config.routes.length === 0 && <div className="text-[10px] text-slate-600">No static routes.</div>}
+        <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Static routes</div>
+        {device.config.routes.length === 0 && <div className="text-[11px] text-slate-600">No static routes.</div>}
         {device.config.routes.map((r, idx) => (
           <div key={idx} className="flex items-center gap-1.5 rounded-md border border-white/8 bg-ink-900/50 p-1.5">
-            <input className="input flex-1 font-mono text-[10px]" defaultValue={r.network} placeholder="network" onBlur={(e) => update((d) => (d.config.routes[idx].network = e.target.value))} />
-            <input className="input w-28 font-mono text-[10px]" defaultValue={r.mask} placeholder="mask" onBlur={(e) => update((d) => (d.config.routes[idx].mask = e.target.value))} />
-            <input className="input w-28 font-mono text-[10px]" defaultValue={r.nextHop ?? r.iface ?? ''} placeholder="next hop" onBlur={(e) => update((d) => { d.config.routes[idx].nextHop = e.target.value; delete d.config.routes[idx].iface })} />
+            <input className="input flex-1 font-mono text-[11px]" defaultValue={r.network} placeholder="network" onBlur={(e) => update((d) => (d.config.routes[idx].network = e.target.value))} />
+            <input className="input w-28 font-mono text-[11px]" defaultValue={r.mask} placeholder="mask" onBlur={(e) => update((d) => (d.config.routes[idx].mask = e.target.value))} />
+            <input className="input w-28 font-mono text-[11px]" defaultValue={r.nextHop ?? r.iface ?? ''} placeholder="next hop" onBlur={(e) => update((d) => { d.config.routes[idx].nextHop = e.target.value; delete d.config.routes[idx].iface })} />
             <button className="text-slate-600 hover:text-rose-300" onClick={() => update((d) => d.config.routes.splice(idx, 1))}><Trash2 size={11} /></button>
           </div>
         ))}
         <div className="flex items-center gap-1.5">
-          <input className="input flex-1 font-mono text-[10px]" value={route.network} onChange={(e) => setRoute({ ...route, network: e.target.value })} placeholder="0.0.0.0" />
-          <input className="input w-28 font-mono text-[10px]" value={route.mask} onChange={(e) => setRoute({ ...route, mask: e.target.value })} placeholder="mask" />
-          <input className="input w-28 font-mono text-[10px]" value={route.nextHop} onChange={(e) => setRoute({ ...route, nextHop: e.target.value })} placeholder="next hop" />
+          <input className="input flex-1 font-mono text-[11px]" value={route.network} onChange={(e) => setRoute({ ...route, network: e.target.value })} placeholder="0.0.0.0" />
+          <input className="input w-28 font-mono text-[11px]" value={route.mask} onChange={(e) => setRoute({ ...route, mask: e.target.value })} placeholder="mask" />
+          <input className="input w-28 font-mono text-[11px]" value={route.nextHop} onChange={(e) => setRoute({ ...route, nextHop: e.target.value })} placeholder="next hop" />
           <button className="btn btn-primary" onClick={() => { if (!route.network) return; update((d) => { d.config.routes.push(route); sim.recompute() }); setRoute({ network: '', mask: '255.255.255.0', nextHop: '' }) }}><Plus size={10} /></button>
         </div>
       </div>
       <div className="mt-3 grid gap-2 md:grid-cols-3">
         <div className="rounded-lg border border-white/8 bg-ink-900/40 p-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-slate-300">RIPv2</span>
+            <span className="text-[11px] font-semibold text-slate-300">RIPv2</span>
             <Toggle checked={device.config.rip.enabled} onChange={(v) => update((d) => { d.config.rip.enabled = v; sim.recompute() })} />
           </div>
-          <textarea key={`rip-${device.config.rip.networks.join(',')}`} className="input mt-1 h-14 resize-none font-mono text-[10px]" defaultValue={device.config.rip.networks.join('\n')} placeholder="192.168.10.0" onBlur={(e) => update((d) => { d.config.rip.networks = e.target.value.split('\n').map((x) => x.trim()).filter(Boolean); sim.recompute() })} />
-          <div className="mt-1 text-[10px] text-slate-600">One network statement per line.</div>
+          <textarea key={`rip-${device.config.rip.networks.join(',')}`} className="input mt-1 h-14 resize-none font-mono text-[11px]" defaultValue={device.config.rip.networks.join('\n')} placeholder="192.168.10.0" onBlur={(e) => update((d) => { d.config.rip.networks = e.target.value.split('\n').map((x) => x.trim()).filter(Boolean); sim.recompute() })} />
+          <div className="mt-1 text-[11px] text-slate-600">One network statement per line.</div>
         </div>
         <div className="rounded-lg border border-white/8 bg-ink-900/40 p-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-slate-300">OSPF</span>
+            <span className="text-[11px] font-semibold text-slate-300">OSPF</span>
             <Toggle checked={device.config.ospf.enabled} onChange={(v) => update((d) => { d.config.ospf.enabled = v; sim.recompute() })} />
           </div>
-          <textarea key={`ospf-${device.config.ospf.networks.map((n) => n.network).join(',')}`} className="input mt-1 h-14 resize-none font-mono text-[10px]" defaultValue={device.config.ospf.networks.map((n) => `${n.network} ${n.wildcard} area ${n.area}`).join('\n')} placeholder="10.0.0.0 0.0.0.255 area 0" onBlur={(e) => update((d) => {
+          <textarea key={`ospf-${device.config.ospf.networks.map((n) => n.network).join(',')}`} className="input mt-1 h-14 resize-none font-mono text-[11px]" defaultValue={device.config.ospf.networks.map((n) => `${n.network} ${n.wildcard} area ${n.area}`).join('\n')} placeholder="10.0.0.0 0.0.0.255 area 0" onBlur={(e) => update((d) => {
             d.config.ospf.networks = e.target.value.split('\n').map((line) => line.trim().split(/\s+/)).filter((p) => p.length >= 4).map((p) => ({ network: p[0], wildcard: p[1], area: Number(p[3]) || 0 }))
             sim.recompute()
           })} />
-          <div className="mt-1 text-[10px] text-slate-600">network wildcard area 0</div>
+          <div className="mt-1 text-[11px] text-slate-600">network wildcard area 0</div>
         </div>
         <div className="rounded-lg border border-white/8 bg-ink-900/40 p-2">
           <div className="flex items-center justify-between">
-            <span className="text-[10px] font-semibold text-slate-300">EIGRP</span>
+            <span className="text-[11px] font-semibold text-slate-300">EIGRP</span>
             <Toggle checked={device.config.eigrp.enabled} onChange={(v) => update((d) => { d.config.eigrp.enabled = v; sim.recompute() })} />
           </div>
-          <textarea key={`eigrp-${device.config.eigrp.networks.join(',')}`} className="input mt-1 h-14 resize-none font-mono text-[10px]" defaultValue={device.config.eigrp.networks.join('\n')} placeholder="10.0.0.0" onBlur={(e) => update((d) => { d.config.eigrp.networks = e.target.value.split('\n').map((x) => x.trim()).filter(Boolean); sim.recompute() })} />
-          <div className="mt-1 text-[10px] text-slate-600">Autonomous system {device.config.eigrp.as}</div>
+          <textarea key={`eigrp-${device.config.eigrp.networks.join(',')}`} className="input mt-1 h-14 resize-none font-mono text-[11px]" defaultValue={device.config.eigrp.networks.join('\n')} placeholder="10.0.0.0" onBlur={(e) => update((d) => { d.config.eigrp.networks = e.target.value.split('\n').map((x) => x.trim()).filter(Boolean); sim.recompute() })} />
+          <div className="mt-1 text-[11px] text-slate-600">Autonomous system {device.config.eigrp.as}</div>
         </div>
       </div>
       <div className="mt-2 rounded-lg border border-white/8 bg-ink-950/50 p-2">
-        <div className="mb-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500">Current routing table</div>
+        <div className="mb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">Current routing table</div>
         <div className="max-h-32 overflow-auto">
-          <table className="w-full text-[10px]">
+          <table className="w-full text-[11px]">
             <thead><tr><th className="table-head px-1">Code</th><th className="table-head px-1">Network</th><th className="table-head px-1">Next hop</th><th className="table-head px-1">AD</th></tr></thead>
             <tbody>
               {sim.routesFor(device.id).map((r, i) => (
@@ -373,16 +373,16 @@ function VlanSection({ device }: { device: Device }) {
         <button className="btn btn-primary" onClick={() => { const id = Number(newVlan); if (!id) return; update((d) => { if (!d.config.vlans.some((v) => v.id === id)) d.config.vlans.push({ id, name: newName || `VLAN${id}` }); sim.recompute() }) }}><Plus size={10} /> VLAN</button>
       </div>
       <div className="overflow-hidden rounded-lg border border-white/8">
-        <table className="w-full text-[10px]">
+        <table className="w-full text-[11px]">
           <thead className="bg-white/[0.03]"><tr><th className="table-head px-2 py-1">ID</th><th className="table-head px-2 py-1">Name</th><th className="table-head px-2 py-1">Ports</th><th /></tr></thead>
           <tbody>
             {device.config.vlans.map((v) => (
               <tr key={v.id} className="border-t border-white/5">
                 <td className="px-2 py-1 font-mono text-slate-300">{v.id}</td>
                 <td className="px-2 py-1">
-                  <input className="input px-1 py-0.5 text-[10px]" defaultValue={v.name} onBlur={(e) => update((d) => { const x = d.config.vlans.find((y) => y.id === v.id); if (x) x.name = e.target.value })} />
+                  <input className="input px-1 py-0.5 text-[11px]" defaultValue={v.name} onBlur={(e) => update((d) => { const x = d.config.vlans.find((y) => y.id === v.id); if (x) x.name = e.target.value })} />
                 </td>
-                <td className="px-2 py-1 text-[10px] text-slate-500">{device.interfaces.filter((i) => !i.trunk && (i.vlan ?? 1) === v.id).map((i) => shortIfaceName(i.name)).join(', ') || '—'}</td>
+                <td className="px-2 py-1 text-[11px] text-slate-500">{device.interfaces.filter((i) => !i.trunk && (i.vlan ?? 1) === v.id).map((i) => shortIfaceName(i.name)).join(', ') || '—'}</td>
                 <td className="px-1 py-1">
                   {v.id !== 1 && <button className="text-slate-600 hover:text-rose-300" onClick={() => update((d) => { d.config.vlans = d.config.vlans.filter((x) => x.id !== v.id); sim.recompute() })}><Trash2 size={10} /></button>}
                 </td>
@@ -391,13 +391,13 @@ function VlanSection({ device }: { device: Device }) {
           </tbody>
         </table>
       </div>
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Switched virtual interfaces</div>
-      {device.interfaces.filter((i) => i.kind === 'vlan').length === 0 && <div className="text-[10px] text-slate-600">No SVIs. Add one from the CLI with <span className="font-mono text-slate-400">interface vlan 10</span>.</div>}
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Switched virtual interfaces</div>
+      {device.interfaces.filter((i) => i.kind === 'vlan').length === 0 && <div className="text-[11px] text-slate-600">No SVIs. Add one from the CLI with <span className="font-mono text-slate-400">interface vlan 10</span>.</div>}
       {device.interfaces.filter((i) => i.kind === 'vlan').map((svi) => (
         <div key={svi.id} className="flex items-center gap-2 rounded-md border border-white/8 bg-ink-900/50 p-2">
-          <span className="w-16 font-mono text-[10px] text-cyan-200">{svi.name}</span>
-          <input className="input w-28 font-mono text-[10px]" defaultValue={svi.ip ?? ''} placeholder="IP" onBlur={(e) => update((d) => { const i = d.interfaces.find((x) => x.id === svi.id); if (i) i.ip = e.target.value || undefined; sim.recompute() })} />
-          <input className="input w-28 font-mono text-[10px]" defaultValue={svi.mask ?? ''} placeholder="mask" onBlur={(e) => update((d) => { const i = d.interfaces.find((x) => x.id === svi.id); if (i) i.mask = e.target.value || undefined; sim.recompute() })} />
+          <span className="w-16 font-mono text-[11px] text-cyan-200">{svi.name}</span>
+          <input className="input w-28 font-mono text-[11px]" defaultValue={svi.ip ?? ''} placeholder="IP" onBlur={(e) => update((d) => { const i = d.interfaces.find((x) => x.id === svi.id); if (i) i.ip = e.target.value || undefined; sim.recompute() })} />
+          <input className="input w-28 font-mono text-[11px]" defaultValue={svi.mask ?? ''} placeholder="mask" onBlur={(e) => update((d) => { const i = d.interfaces.find((x) => x.id === svi.id); if (i) i.mask = e.target.value || undefined; sim.recompute() })} />
           <Toggle checked={svi.adminUp} onChange={(v) => update((d) => { const i = d.interfaces.find((x) => x.id === svi.id); if (i) i.adminUp = v })} />
         </div>
       ))}
@@ -420,10 +420,10 @@ function DhcpSection({ device }: { device: Device }) {
   return (
     <Section title="DHCP server" icon={<Server size={12} />} defaultOpen={device.kind === 'router'}>
       <div className="flex items-center justify-between">
-        <span className="text-[10px] text-slate-400">{pools.length} pool(s) · {sim.rt(device.id).dhcpLeases.length} active lease(s)</span>
+        <span className="text-[11px] text-slate-400">{pools.length} pool(s) · {sim.rt(device.id).dhcpLeases.length} active lease(s)</span>
         <button className="btn btn-primary" onClick={addPool}><Plus size={10} /> Add pool</button>
       </div>
-      {pools.length === 0 && <div className="text-[10px] text-slate-600">No DHCP pools configured. Clients will not receive a lease.</div>}
+      {pools.length === 0 && <div className="text-[11px] text-slate-600">No DHCP pools configured. Clients will not receive a lease.</div>}
       {pools.map((p, idx) => (
         <div key={idx} className="rounded-lg border border-white/8 bg-ink-900/50 p-2">
           <div className="flex items-center gap-1.5">
@@ -433,7 +433,7 @@ function DhcpSection({ device }: { device: Device }) {
           <div className="mt-1.5 grid grid-cols-2 gap-1.5">
             {(['network', 'mask', 'start', 'gateway', 'dns'] as const).map((field) => (
               <Field key={field} label={field}>
-                <input className="input font-mono text-[10px]" defaultValue={(p[field] as string) ?? ''} onBlur={(e) => update((d) => { const x = d.kind === 'server' ? d.config.services.dhcp.pools[idx] : d.config.dhcpPools[idx]; if (x) (x[field] as string) = e.target.value })} />
+                <input className="input font-mono text-[11px]" defaultValue={(p[field] as string) ?? ''} onBlur={(e) => update((d) => { const x = d.kind === 'server' ? d.config.services.dhcp.pools[idx] : d.config.dhcpPools[idx]; if (x) (x[field] as string) = e.target.value })} />
               </Field>
             ))}
             <Field label="pool size">
@@ -444,7 +444,7 @@ function DhcpSection({ device }: { device: Device }) {
       ))}
       {device.kind === 'router' && (
         <Field label="Excluded addresses" hint="One address or range per line, e.g. 192.168.1.1 192.168.1.9">
-          <textarea key={device.config.dhcpExcluded.join('|')} className="input h-12 resize-none font-mono text-[10px]" defaultValue={device.config.dhcpExcluded.join('\n')} onBlur={(e) => update((d) => (d.config.dhcpExcluded = e.target.value.split('\n').map((x) => x.trim()).filter(Boolean)))} />
+          <textarea key={device.config.dhcpExcluded.join('|')} className="input h-12 resize-none font-mono text-[11px]" defaultValue={device.config.dhcpExcluded.join('\n')} onBlur={(e) => update((d) => (d.config.dhcpExcluded = e.target.value.split('\n').map((x) => x.trim()).filter(Boolean)))} />
         </Field>
       )}
     </Section>
@@ -483,32 +483,32 @@ function AclSection({ device }: { device: Device }) {
       {device.config.acls.map((acl) => (
         <div key={acl.id} className="rounded-lg border border-white/8 bg-ink-900/50 p-2">
           <div className="flex items-center justify-between">
-            <div className="text-[10px] font-semibold text-slate-200">ACL {acl.id} <span className="ml-1 text-[10px] uppercase text-slate-500">{acl.type}</span></div>
+            <div className="text-[11px] font-semibold text-slate-200">ACL {acl.id} <span className="ml-1 text-[11px] uppercase text-slate-500">{acl.type}</span></div>
             <button className="text-slate-600 hover:text-rose-300" onClick={() => update((d) => (d.config.acls = d.config.acls.filter((a) => a.id !== acl.id)))}><Trash2 size={10} /></button>
           </div>
           <div className="mt-1 space-y-0.5">
             {acl.rules.map((r, i) => (
-              <div key={i} className="flex items-center justify-between rounded bg-ink-950/50 px-1.5 py-0.5 font-mono text-[10px] text-slate-400">
+              <div key={i} className="flex items-center justify-between rounded bg-ink-950/50 px-1.5 py-0.5 font-mono text-[11px] text-slate-400">
                 <span>{r.remark ? `remark ${r.remark}` : `${r.action} ${r.proto ?? 'ip'} ${r.src ?? 'any'} ${r.srcWild ?? ''} ${r.dst ?? 'any'} ${r.dstWild ?? ''}${r.dstPort ? ' eq ' + r.dstPort : ''}`}</span>
                 <button className="text-slate-700 hover:text-rose-300" onClick={() => update((d) => { const a = d.config.acls.find((x) => x.id === acl.id); a?.rules.splice(i, 1) })}><Trash2 size={9} /></button>
               </div>
             ))}
-            {!acl.rules.length && <div className="text-[10px] text-slate-600">No rules — implicit deny.</div>}
+            {!acl.rules.length && <div className="text-[11px] text-slate-600">No rules — implicit deny.</div>}
           </div>
           <div className="mt-1.5 grid grid-cols-6 gap-1">
-            <select className="input px-1 py-0.5 text-[10px]" value={form.action} onChange={(e) => patchForm({ action: e.target.value })}><option>permit</option><option>deny</option></select>
-            <select className="input px-1 py-0.5 text-[10px]" value={form.proto} onChange={(e) => patchForm({ proto: e.target.value })}><option>ip</option><option>tcp</option><option>udp</option><option>icmp</option></select>
-            <input className="input px-1 py-0.5 text-[10px]" value={form.src} onChange={(e) => patchForm({ src: e.target.value })} placeholder="src" title="any, host 10.0.0.1, 10.0.0.1 or 192.168.1.0/24" />
-            <input className="input px-1 py-0.5 text-[10px]" value={form.dst} onChange={(e) => patchForm({ dst: e.target.value })} placeholder="dst" title="any, host 10.0.0.1, 10.0.0.1 or 192.168.1.0/24" />
-            <input className="input px-1 py-0.5 text-[10px]" value={form.dstPort} onChange={(e) => patchForm({ dstPort: e.target.value })} placeholder="port" />
-            <button className="btn px-1 py-0.5 text-[10px]" onClick={() => addRule(acl.id)}>Add</button>
+            <select className="input px-1 py-0.5 text-[11px]" value={form.action} onChange={(e) => patchForm({ action: e.target.value })}><option>permit</option><option>deny</option></select>
+            <select className="input px-1 py-0.5 text-[11px]" value={form.proto} onChange={(e) => patchForm({ proto: e.target.value })}><option>ip</option><option>tcp</option><option>udp</option><option>icmp</option></select>
+            <input className="input px-1 py-0.5 text-[11px]" value={form.src} onChange={(e) => patchForm({ src: e.target.value })} placeholder="src" title="any, host 10.0.0.1, 10.0.0.1 or 192.168.1.0/24" />
+            <input className="input px-1 py-0.5 text-[11px]" value={form.dst} onChange={(e) => patchForm({ dst: e.target.value })} placeholder="dst" title="any, host 10.0.0.1, 10.0.0.1 or 192.168.1.0/24" />
+            <input className="input px-1 py-0.5 text-[11px]" value={form.dstPort} onChange={(e) => patchForm({ dstPort: e.target.value })} placeholder="port" />
+            <button className="btn px-1 py-0.5 text-[11px]" onClick={() => addRule(acl.id)}>Add</button>
           </div>
-          <div className={`mt-1 font-mono text-[10px] ${error ? 'text-rose-300' : 'text-slate-500'}`}>
+          <div className={`mt-1 font-mono text-[11px] ${error ? 'text-rose-300' : 'text-slate-500'}`}>
             {error || (src && dst ? `${form.action} ${form.proto} ${src.addr} ${src.wildcard} ${dst.addr} ${dst.wildcard}${form.dstPort ? ' eq ' + form.dstPort : ''}` : 'Address: any, host 10.0.0.1, 10.0.0.1 or 192.168.1.0/24')}
           </div>
         </div>
       ))}
-      <div className="text-[10px] text-slate-600">Apply ACLs per interface in the Interfaces section (in/out). ACLs are evaluated top-down with an implicit deny.</div>
+      <div className="text-[11px] text-slate-600">Apply ACLs per interface in the Interfaces section (in/out). ACLs are evaluated top-down with an implicit deny.</div>
     </Section>
   )
 }
@@ -530,12 +530,12 @@ function NatSection({ device }: { device: Device }) {
           <Toggle checked={nat.insideSourceList?.overload ?? false} onChange={(v) => update((d) => { if (d.config.nat.insideSourceList) d.config.nat.insideSourceList.overload = v })} label="PAT overload" />
         </div>
       </div>
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Static translations</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Static translations</div>
       {nat.static.map((s, i) => (
         <div key={i} className="flex items-center gap-1.5">
-          <input className="input flex-1 font-mono text-[10px]" defaultValue={s.inside} onBlur={(e) => update((d) => (d.config.nat.static[i].inside = e.target.value))} />
+          <input className="input flex-1 font-mono text-[11px]" defaultValue={s.inside} onBlur={(e) => update((d) => (d.config.nat.static[i].inside = e.target.value))} />
           <span className="text-slate-600">→</span>
-          <input className="input flex-1 font-mono text-[10px]" defaultValue={s.outside} onBlur={(e) => update((d) => (d.config.nat.static[i].outside = e.target.value))} />
+          <input className="input flex-1 font-mono text-[11px]" defaultValue={s.outside} onBlur={(e) => update((d) => (d.config.nat.static[i].outside = e.target.value))} />
           <button className="text-slate-600 hover:text-rose-300" onClick={() => update((d) => d.config.nat.static.splice(i, 1))}><Trash2 size={10} /></button>
         </div>
       ))}
@@ -549,14 +549,14 @@ function HomeInterfaceSummary({ device }: { device: Device }) {
     <Section title="LAN & WAN" icon={<Network size={12} />}>
       <div className="grid grid-cols-2 gap-3">
         <div className="rounded-lg border border-white/8 bg-ink-900/50 p-2.5">
-          <div className="text-[10px] font-semibold text-slate-200">LAN</div>
-          <div className="mt-1 font-mono text-[10px] text-slate-400">{device.config.homeRouter?.lanIp} / {device.config.homeRouter?.lanMask}</div>
-          <div className="mt-1 text-[10px] text-slate-600">4 Ethernet ports + Wi-Fi bridge</div>
+          <div className="text-[11px] font-semibold text-slate-200">LAN</div>
+          <div className="mt-1 font-mono text-[11px] text-slate-400">{device.config.homeRouter?.lanIp} / {device.config.homeRouter?.lanMask}</div>
+          <div className="mt-1 text-[11px] text-slate-600">4 Ethernet ports + Wi-Fi bridge</div>
         </div>
         <div className="rounded-lg border border-white/8 bg-ink-900/50 p-2.5">
-          <div className="text-[10px] font-semibold text-slate-200">WAN</div>
-          <div className="mt-1 font-mono text-[10px] text-slate-400">{device.config.homeRouter?.wanIp ?? 'DHCP'} / {device.config.homeRouter?.wanMask ?? ''}</div>
-          <div className="mt-1 text-[10px] text-slate-600">{device.config.homeRouter?.wanMode} mode · NAT enabled</div>
+          <div className="text-[11px] font-semibold text-slate-200">WAN</div>
+          <div className="mt-1 font-mono text-[11px] text-slate-400">{device.config.homeRouter?.wanIp ?? 'DHCP'} / {device.config.homeRouter?.wanMask ?? ''}</div>
+          <div className="mt-1 text-[11px] text-slate-600">{device.config.homeRouter?.wanMode} mode · NAT enabled</div>
         </div>
       </div>
     </Section>
@@ -595,7 +595,7 @@ function HomeGatewayBasics({ device }: { device: Device }) {
         </Field>
       </div>
       <div className="flex items-center justify-between rounded-md border border-white/8 bg-ink-950/40 px-2 py-1.5">
-        <span className="text-[10px] text-slate-300">DHCP server enabled</span>
+        <span className="text-[11px] text-slate-300">DHCP server enabled</span>
         <Toggle checked={hr.dhcpEnabled} onChange={(v) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.dhcpEnabled = v })} />
       </div>
       {hr.wanMode === 'static' && (
@@ -607,13 +607,13 @@ function HomeGatewayBasics({ device }: { device: Device }) {
         </div>
       )}
       <WirelessEditor device={device} onChange={(fn) => update((d) => { if (d.config.homeRouter) fn(d.config.homeRouter.wireless) })} />
-      <div className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Port forwarding</div>
+      <div className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Port forwarding</div>
       {hr.portForwarding.map((f, i) => (
         <div key={i} className="flex items-center gap-1">
-          <input className="input flex-1 text-[10px]" defaultValue={f.name} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].name = e.target.value })} />
-          <input type="number" className="input w-16 text-[10px]" defaultValue={f.extPort} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].extPort = Number(e.target.value) || 0 })} />
-          <input className="input w-24 text-[10px]" defaultValue={f.intIp} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].intIp = e.target.value })} />
-          <input type="number" className="input w-16 text-[10px]" defaultValue={f.intPort} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].intPort = Number(e.target.value) || 0 })} />
+          <input className="input flex-1 text-[11px]" defaultValue={f.name} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].name = e.target.value })} />
+          <input type="number" className="input w-16 text-[11px]" defaultValue={f.extPort} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].extPort = Number(e.target.value) || 0 })} />
+          <input className="input w-24 text-[11px]" defaultValue={f.intIp} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].intIp = e.target.value })} />
+          <input type="number" className="input w-16 text-[11px]" defaultValue={f.intPort} onBlur={(e) => update((d) => { if (d.config.homeRouter) d.config.homeRouter.portForwarding[i].intPort = Number(e.target.value) || 0 })} />
           <button className="text-slate-600 hover:text-rose-300" onClick={() => update((d) => d.config.homeRouter?.portForwarding.splice(i, 1))}><Trash2 size={10} /></button>
         </div>
       ))}
@@ -624,10 +624,10 @@ function HomeGatewayBasics({ device }: { device: Device }) {
 
 function WirelessEditor({ device, onChange }: { device: Device; onChange: (fn: (w: import('../../types').WirelessSettings) => void) => void }) {
   const wifi = device.kind === 'homerouter' ? device.config.homeRouter?.wireless : device.interfaces.find((i) => i.kind === 'wireless')?.wireless
-  if (!wifi) return <div className="text-[10px] text-slate-600">No wireless radio installed.</div>
+  if (!wifi) return <div className="text-[11px] text-slate-600">No wireless radio installed.</div>
   return (
     <div className="space-y-2 rounded-lg border border-cyan-400/20 bg-cyan-400/[0.04] p-2">
-      <div className="flex items-center gap-1.5 text-[10px] font-semibold text-cyan-200"><Wifi size={11} /> Radio</div>
+      <div className="flex items-center gap-1.5 text-[11px] font-semibold text-cyan-200"><Wifi size={11} /> Radio</div>
       <div className="grid grid-cols-2 gap-1.5">
         <Field label="SSID"><input key={wifi.ssid} className="input" defaultValue={wifi.ssid} onBlur={(e) => onChange((w) => (w.ssid = e.target.value))} /></Field>
         <Field label="Security">

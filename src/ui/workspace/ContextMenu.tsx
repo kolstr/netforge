@@ -34,7 +34,7 @@ export function ContextMenu({ x, y, items, onClose }: { x: number; y: number; it
             item.onClick()
             onClose()
           }}
-          className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[11px] transition disabled:opacity-35 ${item.danger ? 'text-rose-300 hover:bg-rose-400/10' : 'text-slate-300 hover:bg-white/10'}`}
+          className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[12px] transition disabled:opacity-35 ${item.danger ? 'text-rose-300 hover:bg-rose-400/10' : 'text-slate-300 hover:bg-white/10'}`}
         >
           <span className="w-4 text-slate-500">{item.icon}</span>
           {item.label}

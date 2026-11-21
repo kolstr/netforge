@@ -51,7 +51,7 @@ export function TrafficApp({ device }: { device: Device }) {
           <Activity size={17} className="text-cyan-300" />
           <div>
             <div className="text-sm font-semibold text-slate-100">Traffic Generator</div>
-            <div className="text-[10px] text-slate-500">Send custom one-shot or periodic PDUs from {device.name}</div>
+            <div className="text-[11px] text-slate-500">Send custom one-shot or periodic PDUs from {device.name}</div>
           </div>
         </div>
         <div className="mt-3 grid grid-cols-2 gap-2">
@@ -80,10 +80,10 @@ export function TrafficApp({ device }: { device: Device }) {
         </div>
         <div className="mt-3 flex items-center gap-2">
           <button className="btn btn-primary" onClick={send}><Send size={12} /> Send PDU</button>
-          {status && <span className="text-[10px] text-cyan-300">{status}</span>}
+          {status && <span className="text-[11px] text-cyan-300">{status}</span>}
         </div>
       </div>
-      <div className="rounded-xl border border-white/8 bg-ink-950/50 p-3 text-[10px] leading-relaxed text-slate-500">
+      <div className="rounded-xl border border-white/8 bg-ink-950/50 p-3 text-[11px] leading-relaxed text-slate-500">
         The PDU is added to the current simulation scenario. In Simulation Mode it will travel the network one hop at a time; in Realtime it is delivered immediately.
       </div>
     </div>

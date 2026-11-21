@@ -19,7 +19,7 @@ export function IPConfigApp({ device }: { device: Device }) {
   const [dhcp, setDhcp] = useState(!!iface?.dhcp)
   const [status, setStatus] = useState('')
   const [error, setError] = useState('')
-  if (!iface) return <div className="p-4 text-[11px] text-slate-500">No Ethernet or wireless interface on this device.</div>
+  if (!iface) return <div className="p-4 text-[12px] text-slate-500">No Ethernet or wireless interface on this device.</div>
   const detail = sim.portDetail(device.id, iface.id)
   const lease = sim.rt(device.id).dhcpClient
 
@@ -83,10 +83,10 @@ export function IPConfigApp({ device }: { device: Device }) {
         <div className="flex items-center justify-between">
           <div>
             <div className="text-sm font-semibold text-slate-100">IP Configuration</div>
-            <div className="text-[10px] text-slate-500">{device.name} · {iface.name}</div>
+            <div className="text-[11px] text-slate-500">{device.name} · {iface.name}</div>
           </div>
           <div className="flex items-center gap-2">
-            <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] ${detail?.physicalUp ? 'bg-emerald-400/10 text-emerald-300' : 'bg-rose-400/10 text-rose-300'}`}>
+            <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] ${detail?.physicalUp ? 'bg-emerald-400/10 text-emerald-300' : 'bg-rose-400/10 text-rose-300'}`}>
               <span className={`h-1.5 w-1.5 rounded-full ${detail?.physicalUp ? 'bg-emerald-400' : 'bg-rose-400'}`} />
               {detail?.physicalUp ? 'link up' : 'link down'}
             </span>
@@ -100,10 +100,10 @@ export function IPConfigApp({ device }: { device: Device }) {
         )}
 
         <div className="mt-3 grid grid-cols-2 gap-2">
-          <button className={`rounded-lg border px-3 py-2 text-[11px] transition ${dhcp ? 'border-cyan-400/40 bg-cyan-400/10 text-cyan-200' : 'border-white/10 text-slate-500 hover:text-slate-300'}`} onClick={chooseDhcp}>
+          <button className={`rounded-lg border px-3 py-2 text-[12px] transition ${dhcp ? 'border-cyan-400/40 bg-cyan-400/10 text-cyan-200' : 'border-white/10 text-slate-500 hover:text-slate-300'}`} onClick={chooseDhcp}>
             DHCP
           </button>
-          <button className={`rounded-lg border px-3 py-2 text-[11px] transition ${!dhcp ? 'border-cyan-400/40 bg-cyan-400/10 text-cyan-200' : 'border-white/10 text-slate-500 hover:text-slate-300'}`} onClick={() => { setDhcp(false); setStatus('') }}>
+          <button className={`rounded-lg border px-3 py-2 text-[12px] transition ${!dhcp ? 'border-cyan-400/40 bg-cyan-400/10 text-cyan-200' : 'border-white/10 text-slate-500 hover:text-slate-300'}`} onClick={() => { setDhcp(false); setStatus('') }}>
             Static
           </button>
         </div>
@@ -116,7 +116,7 @@ export function IPConfigApp({ device }: { device: Device }) {
           <Field label="IPv6 address" className="col-span-2"><input className="input font-mono" value={ipv6} onChange={(e) => setIpv6(e.target.value)} disabled={dhcp} placeholder="2001:db8::1" /></Field>
         </div>
 
-        <div className="mt-2 grid grid-cols-2 gap-2 text-[10px] text-slate-500">
+        <div className="mt-2 grid grid-cols-2 gap-2 text-[11px] text-slate-500">
           <div>MAC address: <span className="font-mono text-slate-300">{iface.mac}</span></div>
           <div>Bandwidth: <span className="text-slate-300">{iface.speed} Mbps</span></div>
           <div>DHCP server: <span className="text-slate-300">{iface.dhcp ? (lease?.server ?? '—') : '—'}</span></div>
@@ -126,14 +126,14 @@ export function IPConfigApp({ device }: { device: Device }) {
         <div className="mt-3 flex flex-wrap items-center gap-2">
           {!dhcp && <button className="btn btn-primary" onClick={apply}><Save size={12} /> Apply static configuration</button>}
           {dhcp && <button className="btn" onClick={renew}><RefreshCw size={12} /> Renew DHCP</button>}
-          {error ? <span className="text-[10px] text-rose-300">{error}</span> : status && <span className="text-[10px] text-cyan-300">{status}</span>}
+          {error ? <span className="text-[11px] text-rose-300">{error}</span> : status && <span className="text-[11px] text-cyan-300">{status}</span>}
         </div>
-        <div className="mt-1 text-[10px] text-slate-600">
+        <div className="mt-1 text-[11px] text-slate-600">
           {dhcp ? 'DHCP is active automatically. Renew requests a fresh lease from the server.' : 'Enter static settings above, then apply or press Enter.'}
         </div>
       </div>
 
-      <div className="rounded-xl border border-white/8 bg-ink-950/50 p-3 text-[10px] leading-relaxed text-slate-500">
+      <div className="rounded-xl border border-white/8 bg-ink-950/50 p-3 text-[11px] leading-relaxed text-slate-500">
         DHCP clients broadcast a DISCOVER and accept the first OFFER from a reachable DHCP server or router pool. Use the Inspect tool to view leases, ARP and routing tables.
       </div>
     </div>

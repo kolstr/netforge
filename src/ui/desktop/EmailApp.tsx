@@ -62,7 +62,7 @@ export function EmailApp({ device }: { device: Device }) {
           <Mail size={18} className="text-cyan-300" />
           <div>
             <div className="text-sm font-semibold text-slate-100">Email Setup</div>
-            <div className="text-[10px] text-slate-500">Configure your mail account</div>
+            <div className="text-[11px] text-slate-500">Configure your mail account</div>
           </div>
         </div>
         <div className="mt-4 grid grid-cols-2 gap-2">
@@ -77,7 +77,7 @@ export function EmailApp({ device }: { device: Device }) {
           <button className="btn btn-primary" onClick={saveCfg}><Settings2 size={12} /> Save account</button>
           <button className="btn" onClick={() => setSetup(false)}>Cancel</button>
         </div>
-        <p className="mt-3 text-[10px] leading-relaxed text-slate-600">The server's Email service must have an account for this user. SMTP is used for outgoing mail and POP3 for incoming mail.</p>
+        <p className="mt-3 text-[11px] leading-relaxed text-slate-600">The server's Email service must have an account for this user. SMTP is used for outgoing mail and POP3 for incoming mail.</p>
       </div>
     )
   }
@@ -86,7 +86,7 @@ export function EmailApp({ device }: { device: Device }) {
     <div className="flex min-h-0 flex-1 flex-col overflow-hidden rounded-xl border border-white/10 bg-ink-900">
       <div className="flex items-center gap-2 border-b border-white/8 px-3 py-2">
         <Mail size={15} className="text-cyan-300" />
-        <span className="text-[11px] font-semibold text-slate-200">{cfg.address || 'Email'}</span>
+        <span className="text-[12px] font-semibold text-slate-200">{cfg.address || 'Email'}</span>
         <div className="ml-3 flex gap-1">
           <button className={`tab ${tab === 'inbox' ? 'tab-active' : 'text-slate-500'}`} onClick={() => setTab('inbox')}><Inbox size={11} className="mr-1 inline" />Inbox</button>
           <button className={`tab ${tab === 'compose' ? 'tab-active' : 'text-slate-500'}`} onClick={() => setTab('compose')}><Send size={11} className="mr-1 inline" />Compose</button>
@@ -96,16 +96,16 @@ export function EmailApp({ device }: { device: Device }) {
           <button className="btn-icon" title="Account settings" onClick={() => setSetup(true)}><Settings2 size={13} /></button>
         </div>
       </div>
-      {status && <div className="border-b border-white/8 bg-cyan-400/5 px-3 py-1 text-[10px] text-cyan-300">{status}</div>}
+      {status && <div className="border-b border-white/8 bg-cyan-400/5 px-3 py-1 text-[11px] text-cyan-300">{status}</div>}
       <div className="min-h-0 flex-1">
         {tab === 'inbox' ? (
           <div className="flex h-full">
             <div className="w-2/5 overflow-auto border-r border-white/8">
-              {!messages.length && <div className="p-4 text-center text-[10px] text-slate-600">Inbox empty. Click Receive to fetch mail.</div>}
+              {!messages.length && <div className="p-4 text-center text-[11px] text-slate-600">Inbox empty. Click Receive to fetch mail.</div>}
               {messages.map((m) => (
                 <button key={m.id} className={`block w-full border-b border-white/5 px-3 py-2 text-left hover:bg-white/5 ${selected?.id === m.id ? 'bg-cyan-400/10' : ''}`} onClick={() => setSelected(m)}>
-                  <div className="truncate text-[10px] font-medium text-slate-200">{m.subject}</div>
-                  <div className="truncate text-[10px] text-slate-500">from {m.from}</div>
+                  <div className="truncate text-[11px] font-medium text-slate-200">{m.subject}</div>
+                  <div className="truncate text-[11px] text-slate-500">from {m.from}</div>
                 </button>
               ))}
             </div>
@@ -113,11 +113,11 @@ export function EmailApp({ device }: { device: Device }) {
               {selected ? (
                 <>
                   <div className="text-sm font-semibold text-slate-100">{selected.subject}</div>
-                  <div className="mt-1 text-[10px] text-slate-500">From: {selected.from} · To: {selected.to}</div>
-                  <div className="mt-3 whitespace-pre-wrap border-t border-white/8 pt-3 text-[11px] leading-relaxed text-slate-300">{selected.body}</div>
+                  <div className="mt-1 text-[11px] text-slate-500">From: {selected.from} · To: {selected.to}</div>
+                  <div className="mt-3 whitespace-pre-wrap border-t border-white/8 pt-3 text-[12px] leading-relaxed text-slate-300">{selected.body}</div>
                   <button className="btn btn-danger mt-4" onClick={() => { setMessages((m) => m.filter((x) => x.id !== selected.id)); setSelected(null) }}><Trash2 size={11} /> Delete</button>
                 </>
-              ) : <div className="text-[10px] text-slate-600">Select a message to read it.</div>}
+              ) : <div className="text-[11px] text-slate-600">Select a message to read it.</div>}
             </div>
           </div>
         ) : (

@@ -30,7 +30,7 @@ export function Inspector() {
   return (
     <aside className="flex w-[286px] shrink-0 flex-col border-l border-white/8 bg-ink-900/70">
       <div className="flex items-center justify-between px-3 pb-2 pt-3">
-        <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">{device ? 'Device' : shape ? 'Shape' : link ? 'Link' : 'Overview'}</div>
+        <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-slate-400">{device ? 'Device' : shape ? 'Shape' : link ? 'Link' : 'Overview'}</div>
         <button className="btn-icon" title="Hide inspector" onClick={() => store.setRightOpen(false)}>
           <X size={13} />
         </button>
@@ -46,10 +46,10 @@ export function Inspector() {
                 </span>
                 <div className="min-w-0 flex-1">
                   <div className="truncate text-sm font-semibold text-slate-100">{device.name}</div>
-                  <div className="text-[10px] text-slate-500">{device.model} · {device.kind}</div>
+                  <div className="text-[11px] text-slate-500">{device.model} · {device.kind}</div>
                   <div className="mt-1.5 flex flex-wrap gap-1">
                     <StatusPill up={device.power} label={device.power ? 'powered on' : 'powered off'} />
-                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-slate-400">{device.interfaces.length} ports</span>
+                    <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-slate-400">{device.interfaces.length} ports</span>
                   </div>
                 </div>
               </div>
@@ -72,10 +72,10 @@ export function Inspector() {
             <div>
               <div className="mb-1.5 flex items-center justify-between">
                 <span className="label">Interfaces</span>
-                <span className="text-[10px] text-slate-600">{sim.portViews(device.id).filter((p) => p.protocolUp).length} up</span>
+                <span className="text-[11px] text-slate-600">{sim.portViews(device.id).filter((p) => p.protocolUp).length} up</span>
               </div>
               <div className="overflow-hidden rounded-lg border border-white/8">
-                <table className="w-full text-[10px]">
+                <table className="w-full text-[11px]">
                   <thead className="bg-white/[0.03]">
                     <tr>
                       <th className="table-head px-2 py-1.5">Port</th>
@@ -92,7 +92,7 @@ export function Inspector() {
                             {p.iface.name.replace('GigabitEthernet', 'Gi').replace('FastEthernet', 'Fa').replace('Ethernet', 'Eth')}
                           </span>
                         </td>
-                        <td className="px-1 py-1 font-mono text-[10px] text-slate-500">{formatIpWithMask(p.iface.ip, p.iface.mask) ?? (p.iface.dhcp ? 'DHCP' : '—')}</td>
+                        <td className="px-1 py-1 font-mono text-[11px] text-slate-500">{formatIpWithMask(p.iface.ip, p.iface.mask) ?? (p.iface.dhcp ? 'DHCP' : '—')}</td>
                         <td className="px-1 py-1 text-slate-500">
                           {p.peer ? sim.device(p.peer.deviceId)?.name : p.iface.kind === 'wireless' && sim.wireless.some((w) => w.clientId === device.id) ? 'Wi-Fi' : '—'}
                         </td>
@@ -105,13 +105,13 @@ export function Inspector() {
 
             {device.kind === 'accesspoint' || device.kind === 'homerouter' ? (
               <div className="rounded-lg border border-cyan-400/20 bg-cyan-400/5 p-2.5">
-                <div className="flex items-center gap-1.5 text-[10px] font-semibold text-cyan-200">
+                <div className="flex items-center gap-1.5 text-[11px] font-semibold text-cyan-200">
                   <Activity size={11} /> Wireless
                 </div>
-                <div className="mt-1 text-[10px] text-slate-400">
+                <div className="mt-1 text-[11px] text-slate-400">
                   SSID <span className="font-mono text-slate-200">{device.kind === 'homerouter' ? device.config.homeRouter?.wireless.ssid : device.interfaces.find((i) => i.kind === 'wireless')?.wireless?.ssid}</span>
                 </div>
-                <div className="text-[10px] text-slate-500">{sim.rt(device.id).assoc.length} associated client(s)</div>
+                <div className="text-[11px] text-slate-500">{sim.rt(device.id).assoc.length} associated client(s)</div>
               </div>
             ) : null}
 
@@ -122,7 +122,7 @@ export function Inspector() {
                     <button
                       key={t.id}
                       onClick={() => setTableId(t.id)}
-                      className={`shrink-0 rounded-md border px-2 py-1 text-[10px] transition ${activeTable?.id === t.id ? 'border-cyan-400/30 bg-cyan-400/10 text-cyan-200' : 'border-white/8 text-slate-500 hover:text-slate-300'}`}
+                      className={`shrink-0 rounded-md border px-2 py-1 text-[11px] transition ${activeTable?.id === t.id ? 'border-cyan-400/30 bg-cyan-400/10 text-cyan-200' : 'border-white/8 text-slate-500 hover:text-slate-300'}`}
                     >
                       {t.label}
                     </button>
@@ -130,10 +130,10 @@ export function Inspector() {
                 </div>
                 {activeTable && (
                   <div className="overflow-hidden rounded-lg border border-white/8">
-                    <div className="border-b border-white/5 bg-white/[0.03] px-2 py-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{activeTable.label}</div>
+                    <div className="border-b border-white/5 bg-white/[0.03] px-2 py-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{activeTable.label}</div>
                     {activeTable.rows.length ? (
                       <div className="max-h-56 overflow-auto">
-                        <table className="w-full text-[10px]">
+                        <table className="w-full text-[11px]">
                           <thead className="bg-white/[0.02]">
                             <tr>{activeTable.columns.map((c) => <th key={c} className="table-head px-1.5 py-1">{c}</th>)}</tr>
                           </thead>
@@ -147,7 +147,7 @@ export function Inspector() {
                         </table>
                       </div>
                     ) : (
-                      <div className="p-3 text-[10px] text-slate-600">{activeTable.empty ?? 'No entries yet.'}</div>
+                      <div className="p-3 text-[11px] text-slate-600">{activeTable.empty ?? 'No entries yet.'}</div>
                     )}
                   </div>
                 )}
@@ -165,7 +165,7 @@ export function Inspector() {
                 </span>
                 <div>
                   <div className="text-sm font-semibold capitalize text-slate-100">{shape.kind} shape</div>
-                  <div className="text-[10px] text-slate-500">{shape.kind === 'line' ? 'Line annotation' : shape.kind === 'text' ? 'Text annotation' : 'Canvas annotation'}</div>
+                  <div className="text-[11px] text-slate-500">{shape.kind === 'line' ? 'Line annotation' : shape.kind === 'text' ? 'Text annotation' : 'Canvas annotation'}</div>
                 </div>
               </div>
 
@@ -181,7 +181,7 @@ export function Inspector() {
                       style={{ backgroundColor: color }}
                     />
                   ))}
-                  <label className="ml-1 inline-flex cursor-pointer items-center gap-1 rounded-md border border-white/10 px-1.5 py-1 text-[10px] text-slate-400 hover:text-slate-200" title="Custom color">
+                  <label className="ml-1 inline-flex cursor-pointer items-center gap-1 rounded-md border border-white/10 px-1.5 py-1 text-[11px] text-slate-400 hover:text-slate-200" title="Custom color">
                     <Palette size={11} />
                     <input type="color" value={shape.color} onChange={(e) => store.updateShape(shape.id, { color: e.target.value })} className="h-4 w-5 cursor-pointer border-0 bg-transparent p-0" />
                   </label>
@@ -191,7 +191,7 @@ export function Inspector() {
               <div className="mt-3 flex items-center gap-2">
                 <span className="label">Stroke</span>
                 <input type="range" min={1} max={6} value={shape.stroke} onChange={(e) => store.updateShape(shape.id, { stroke: Number(e.target.value) })} className="flex-1 accent-cyan-400" />
-                <span className="w-5 text-right font-mono text-[10px] text-slate-400">{shape.stroke}</span>
+                <span className="w-5 text-right font-mono text-[11px] text-slate-400">{shape.stroke}</span>
               </div>
 
               <div className="mt-3">
@@ -200,13 +200,13 @@ export function Inspector() {
                   key={`${shape.id}-${shape.text ?? ''}`}
                   defaultValue={shape.text ?? ''}
                   placeholder="Add a label…"
-                  className="input mt-1 text-[11px]"
+                  className="input mt-1 text-[12px]"
                   onBlur={(e) => store.updateShape(shape.id, { text: e.target.value || undefined })}
                   onKeyDown={(e) => { if (e.key === 'Enter') (e.target as HTMLInputElement).blur() }}
                 />
               </div>
 
-              <div className="mt-2 text-[10px] leading-relaxed text-slate-600">
+              <div className="mt-2 text-[11px] leading-relaxed text-slate-600">
                 {shape.kind === 'line' ? 'Drag the two endpoint handles to move each end of the line.' : shape.kind === 'text' ? 'Drag the label to move it. Double-click to edit its text.' : 'Drag the square handles on the edges and corners to resize.'}
               </div>
 
@@ -226,25 +226,25 @@ export function Inspector() {
           <div className="space-y-3">
             <div className="rounded-xl border border-white/8 bg-ink-950/50 p-3">
               <div className="text-sm font-semibold text-slate-100">{link.type} link</div>
-              <div className="mt-1 text-[10px] text-slate-500">ID {link.id.slice(-6)}</div>
+              <div className="mt-1 text-[11px] text-slate-500">ID {link.id.slice(-6)}</div>
               <div className="mt-2 flex gap-1.5">
                 <StatusPill up={sim.linkUp(link)} label={sim.linkUp(link) ? 'link up' : 'link down'} />
-                <span className="rounded-full bg-white/5 px-2 py-0.5 text-[10px] text-slate-400">{link.lengthM ?? 3} m</span>
+                <span className="rounded-full bg-white/5 px-2 py-0.5 text-[11px] text-slate-400">{link.lengthM ?? 3} m</span>
               </div>
-              <div className="mt-3 space-y-2 text-[10px]">
+              <div className="mt-3 space-y-2 text-[11px]">
                 {[link.a, link.b].map((end, i) => {
                   const d = sim.device(end.deviceId)
                   const iface = d?.interfaces.find((x) => x.id === end.ifaceId)
                   return (
                     <div key={i} className="flex items-center justify-between rounded-md border border-white/8 bg-ink-900/60 px-2 py-1.5">
                       <span className="text-slate-300">{d?.name}</span>
-                      <span className="font-mono text-[10px] text-slate-500">{iface?.name}</span>
+                      <span className="font-mono text-[11px] text-slate-500">{iface?.name}</span>
                     </div>
                   )
                 })}
               </div>
               {linkIssue && (
-                <div className="mt-3 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-1.5 text-[10px] leading-relaxed text-amber-200">
+                <div className="mt-3 rounded-md border border-amber-400/30 bg-amber-400/10 px-2 py-1.5 text-[11px] leading-relaxed text-amber-200">
                   {linkIssue}
                 </div>
               )}
@@ -258,7 +258,7 @@ export function Inspector() {
         {!device && !link && !shape && (
           <div className="space-y-3">
             <div className="rounded-xl border border-white/8 bg-gradient-to-br from-cyan-400/10 to-indigo-500/5 p-3">
-              <div className="flex items-center gap-2 text-[11px] font-semibold text-slate-100">
+              <div className="flex items-center gap-2 text-[12px] font-semibold text-slate-100">
                 <Layers size={13} className="text-cyan-300" /> Workspace
               </div>
               <div className="mt-3 grid grid-cols-2 gap-2">
@@ -268,15 +268,15 @@ export function Inspector() {
                 <Stat label="Events" value={sim.log.length} />
               </div>
               <div className="mt-3 flex items-center justify-between rounded-lg border border-white/8 bg-ink-950/50 px-2 py-1.5">
-                <span className="text-[10px] text-slate-500">Mode</span>
-                <span className={`text-[10px] font-semibold ${sim.mode === 'realtime' ? 'text-emerald-300' : 'text-amber-300'}`}>{sim.mode}</span>
+                <span className="text-[11px] text-slate-500">Mode</span>
+                <span className={`text-[11px] font-semibold ${sim.mode === 'realtime' ? 'text-emerald-300' : 'text-amber-300'}`}>{sim.mode}</span>
               </div>
             </div>
 
             {sim.assessment?.enabled && (
               <div className="rounded-xl border border-violet-400/25 bg-violet-400/5 p-3">
-                <div className="text-[11px] font-semibold text-violet-200">{sim.assessment.title}</div>
-                <div className="mt-1 max-h-28 overflow-y-auto whitespace-pre-wrap text-[10px] leading-relaxed text-slate-400">{sim.assessment.instructions}</div>
+                <div className="text-[12px] font-semibold text-violet-200">{sim.assessment.title}</div>
+                <div className="mt-1 max-h-28 overflow-y-auto whitespace-pre-wrap text-[11px] leading-relaxed text-slate-400">{sim.assessment.instructions}</div>
                 <button className="btn btn-primary mt-2 w-full" onClick={() => store.runAssessment()}>
                   <CheckCircle2 size={12} /> Check results
                 </button>
@@ -284,13 +284,13 @@ export function Inspector() {
             )}
 
             <div className="rounded-xl border border-white/8 bg-ink-950/50 p-3">
-              <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 <Activity size={11} className="text-cyan-300" /> Recent events
               </div>
               <div className="mt-2 space-y-1">
-                {events.length === 0 && <div className="text-[10px] text-slate-600">No events yet. Send a ping or switch to Simulation Mode.</div>}
+                {events.length === 0 && <div className="text-[11px] text-slate-600">No events yet. Send a ping or switch to Simulation Mode.</div>}
                 {events.map((e) => (
-                  <button key={e.id} onClick={() => store.setDialog({ type: 'pdu-info', eventId: e.id })} className="block w-full truncate rounded px-1 py-0.5 text-left font-mono text-[10px] text-slate-500 hover:bg-white/5 hover:text-slate-300">
+                  <button key={e.id} onClick={() => store.setDialog({ type: 'pdu-info', eventId: e.id })} className="block w-full truncate rounded px-1 py-0.5 text-left font-mono text-[11px] text-slate-500 hover:bg-white/5 hover:text-slate-300">
                     {e.time.toFixed(3)} {e.type} · {sim.device(e.atDeviceId)?.name}
                   </button>
                 ))}
@@ -298,7 +298,7 @@ export function Inspector() {
             </div>
 
             <div className="rounded-xl border border-white/8 bg-ink-950/50 p-3">
-              <div className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400">
+              <div className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400">
                 <Info size={11} className="text-cyan-300" /> Quick actions
               </div>
               <div className="mt-2 space-y-1.5">
@@ -314,7 +314,7 @@ export function Inspector() {
               </div>
             </div>
 
-            <div className="rounded-xl border border-white/8 bg-ink-950/40 p-3 text-[10px] leading-relaxed text-slate-600">
+            <div className="rounded-xl border border-white/8 bg-ink-950/40 p-3 text-[11px] leading-relaxed text-slate-600">
               Tip: press <span className="kbd">Esc</span> to return to the select tool, <span className="kbd">Del</span> to delete a selection, and double-click any device to open its configuration.
             </div>
           </div>
@@ -327,7 +327,7 @@ export function Inspector() {
 function Stat({ label, value }: { label: string; value: number }) {
   return (
     <div className="rounded-lg border border-white/8 bg-ink-950/40 px-2 py-1.5">
-      <div className="text-[10px] uppercase tracking-wider text-slate-600">{label}</div>
+      <div className="text-[11px] uppercase tracking-wider text-slate-600">{label}</div>
       <div className="text-sm font-semibold text-slate-200">{value}</div>
     </div>
   )

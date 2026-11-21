@@ -28,8 +28,8 @@ export function Palette() {
     <aside className="flex w-[236px] shrink-0 flex-col border-r border-white/8 bg-ink-900/70">
       <div className="flex items-center justify-between px-3 pb-2 pt-3">
         <div>
-          <div className="text-[11px] font-semibold uppercase tracking-[0.14em] text-slate-400">Network Components</div>
-          <div className="mt-0.5 text-[10px] text-slate-600">
+          <div className="text-[12px] font-semibold uppercase tracking-[0.14em] text-slate-400">Network Components</div>
+          <div className="mt-0.5 text-[11px] text-slate-600">
             {store.palette.once
               ? 'Connecting one link · Esc to cancel'
               : store.palette.kind || store.palette.cable
@@ -45,21 +45,21 @@ export function Palette() {
       <div className="px-3 pb-2">
         <div className="relative">
           <Search size={12} className="pointer-events-none absolute left-2 top-1/2 -translate-y-1/2 text-slate-500" />
-          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search devices…" className="input pl-7 text-[11px]" />
+          <input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search devices…" className="input pl-7 text-[12px]" />
         </div>
       </div>
 
       <div className="min-h-0 flex-1 overflow-y-auto px-2 pb-3">
-        {!grouped.length && <div className="px-2 py-6 text-center text-[11px] text-slate-600">No matching devices</div>}
+        {!grouped.length && <div className="px-2 py-6 text-center text-[12px] text-slate-600">No matching devices</div>}
         {grouped.map(({ cat, items }) => (
           <div key={cat} className="mb-1">
             <button
-              className="flex w-full items-center gap-1 rounded px-1.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-300"
+              className="flex w-full items-center gap-1 rounded px-1.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-300"
               onClick={() => setCollapsed((c) => ({ ...c, [cat]: !c[cat] }))}
             >
               {collapsed[cat] ? <ChevronRight size={10} /> : <ChevronDown size={10} />}
               {CATEGORY_LABELS[cat]}
-              <span className="ml-auto text-[10px] font-normal text-slate-700">{items.length}</span>
+              <span className="ml-auto text-[11px] font-normal text-slate-700">{items.length}</span>
             </button>
             {!collapsed[cat] && (
               <div className="space-y-0.5">
@@ -89,8 +89,8 @@ export function Palette() {
                         <DeviceIcon kind={spec.kind as DeviceKind} size={15} />
                       </span>
                       <span className="min-w-0 flex-1">
-                        <span className="block truncate text-[11px] font-medium text-slate-200">{spec.label}</span>
-                        <span className="block truncate text-[10px] text-slate-600">{spec.model}</span>
+                        <span className="block truncate text-[12px] font-medium text-slate-200">{spec.label}</span>
+                        <span className="block truncate text-[11px] text-slate-600">{spec.model}</span>
                       </span>
                       {active && <span className="h-1.5 w-1.5 rounded-full bg-cyan-400" />}
                     </button>
@@ -103,12 +103,12 @@ export function Palette() {
 
         <div className="mt-2 border-t border-white/8 pt-1">
           <button
-            className="flex w-full items-center gap-1 rounded px-1.5 py-1 text-[10px] font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-300"
+            className="flex w-full items-center gap-1 rounded px-1.5 py-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500 hover:text-slate-300"
             onClick={() => setConnOpen(!connOpen)}
           >
             {connOpen ? <ChevronDown size={10} /> : <ChevronRight size={10} />}
             Connections
-            <span className="ml-auto text-[10px] font-normal text-slate-700">{CABLE_SPECS.length}</span>
+            <span className="ml-auto text-[11px] font-normal text-slate-700">{CABLE_SPECS.length}</span>
           </button>
           {connOpen && (
             <div className="space-y-0.5">
@@ -133,8 +133,8 @@ export function Palette() {
                       <Cable size={14} />
                     </span>
                     <span className="min-w-0 flex-1">
-                      <span className="block truncate text-[11px] font-medium text-slate-200">{cable.label}</span>
-                      <span className="block truncate text-[10px] text-slate-600">{cable.hint}</span>
+                      <span className="block truncate text-[12px] font-medium text-slate-200">{cable.label}</span>
+                      <span className="block truncate text-[11px] text-slate-600">{cable.hint}</span>
                     </span>
                     <span className="h-2 w-2 rounded-full" style={{ backgroundColor: cable.color }} />
                   </button>
@@ -150,7 +150,7 @@ export function Palette() {
           <button className="btn btn-primary w-full" onClick={store.loadExample}>
             <Sparkles size={13} /> Load example lab
           </button>
-          <p className="mt-2 text-[10px] leading-relaxed text-slate-600">Or pick a device above and click the workspace to start building.</p>
+          <p className="mt-2 text-[11px] leading-relaxed text-slate-600">Or pick a device above and click the workspace to start building.</p>
         </div>
       )}
     </aside>

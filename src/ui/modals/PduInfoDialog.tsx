@@ -32,29 +32,29 @@ export function PduInfoDialog() {
         {tab === 'osi' && (
           <div className="grid gap-3 md:grid-cols-2">
             <div className="rounded-xl border border-white/8 bg-ink-950/40 p-3">
-              <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-cyan-300"><ArrowDown size={11} /> In Layers (bottom → top)</div>
+              <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-cyan-300"><ArrowDown size={11} /> In Layers (bottom → top)</div>
               <div className="space-y-1">
                 {[...layers].reverse().map((l) => (
                   <div key={`in-${l.layer}`} className="rounded-lg border border-white/8 bg-ink-900/50 p-2">
                     <div className="flex items-center gap-2">
-                      <span className="flex h-5 w-5 items-center justify-center rounded bg-cyan-400/10 font-mono text-[10px] text-cyan-200">L{l.layer}</span>
-                      <span className="text-[10px] font-medium text-slate-200">{l.name}</span>
+                      <span className="flex h-5 w-5 items-center justify-center rounded bg-cyan-400/10 font-mono text-[11px] text-cyan-200">L{l.layer}</span>
+                      <span className="text-[11px] font-medium text-slate-200">{l.name}</span>
                     </div>
-                    <div className="mt-1 font-mono text-[10px] leading-relaxed text-slate-400">{l.inbound}</div>
+                    <div className="mt-1 font-mono text-[11px] leading-relaxed text-slate-400">{l.inbound}</div>
                   </div>
                 ))}
               </div>
             </div>
             <div className="rounded-xl border border-white/8 bg-ink-950/40 p-3">
-              <div className="mb-2 flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-emerald-300"><ArrowUp size={11} /> Out Layers (top → bottom)</div>
+              <div className="mb-2 flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-emerald-300"><ArrowUp size={11} /> Out Layers (top → bottom)</div>
               <div className="space-y-1">
                 {layers.map((l) => (
                   <div key={`out-${l.layer}`} className="rounded-lg border border-white/8 bg-ink-900/50 p-2">
                     <div className="flex items-center gap-2">
-                      <span className="flex h-5 w-5 items-center justify-center rounded bg-emerald-400/10 font-mono text-[10px] text-emerald-200">L{l.layer}</span>
-                      <span className="text-[10px] font-medium text-slate-200">{l.name}</span>
+                      <span className="flex h-5 w-5 items-center justify-center rounded bg-emerald-400/10 font-mono text-[11px] text-emerald-200">L{l.layer}</span>
+                      <span className="text-[11px] font-medium text-slate-200">{l.name}</span>
                     </div>
-                    <div className="mt-1 font-mono text-[10px] leading-relaxed text-slate-400">{l.outbound}</div>
+                    <div className="mt-1 font-mono text-[11px] leading-relaxed text-slate-400">{l.outbound}</div>
                   </div>
                 ))}
               </div>
@@ -65,7 +65,7 @@ export function PduInfoDialog() {
           <HeaderDetails title={last ? `Received from ${last.name}` : 'Originated at this device'} p={p} />
         )}
         {tab === 'outbound' && <HeaderDetails title={`Forwarded by ${at?.name ?? 'device'}`} p={p} />}
-        <div className="mt-3 rounded-lg border border-white/8 bg-ink-950/40 p-2.5 font-mono text-[10px] text-slate-500">
+        <div className="mt-3 rounded-lg border border-white/8 bg-ink-950/40 p-2.5 font-mono text-[11px] text-slate-500">
           <span className="text-slate-600">Event info:</span> {event.info}
           <span className="ml-3 text-slate-600">Size:</span> {p.size} bytes
           {p.vlan ? <><span className="ml-3 text-slate-600">VLAN:</span> {p.vlan}</> : null}
@@ -92,8 +92,8 @@ function HeaderDetails({ title, p }: { title: string; p: PacketRecord }) {
   if (p.payload) rows.push(['Application · Payload', String(p.payload).slice(0, 120)])
   return (
     <div className="rounded-xl border border-white/8 bg-ink-950/40">
-      <div className="border-b border-white/8 px-3 py-2 text-[10px] font-semibold uppercase tracking-wider text-slate-400">{title}</div>
-      <table className="w-full text-[10px]">
+      <div className="border-b border-white/8 px-3 py-2 text-[11px] font-semibold uppercase tracking-wider text-slate-400">{title}</div>
+      <table className="w-full text-[11px]">
         <tbody>
           {rows.map(([k, v], i) => (
             <tr key={i} className="border-t border-white/5">

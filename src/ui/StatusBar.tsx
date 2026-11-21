@@ -6,7 +6,7 @@ export function StatusBar() {
   const sim = store.sim
   const selected = store.selectedIds.length ? store.sim.device(store.selectedIds[0])?.name : null
   return (
-    <div className="flex h-7 shrink-0 items-center gap-3 border-t border-white/8 bg-ink-950 px-3 text-[10px] text-slate-500">
+    <div className="flex h-7 shrink-0 items-center gap-3 border-t border-white/8 bg-ink-950 px-3 text-[11px] text-slate-500">
       <span className="flex items-center gap-1.5">
         <span className={`h-1.5 w-1.5 rounded-full ${sim.mode === 'realtime' ? 'bg-emerald-400' : 'bg-amber-400'}`} />
         <span className="text-slate-400">{store.statusMessage}</span>

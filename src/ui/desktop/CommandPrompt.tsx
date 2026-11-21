@@ -148,7 +148,7 @@ export function CommandPrompt({ device }: { device: Device }) {
       <div className="flex h-full flex-col">
         <div className="mb-2 flex items-center gap-2">
           <button className="btn" onClick={() => setRemote(null)}><ArrowLeft size={12} /> Back to {device.name}</button>
-          <span className="text-[10px] text-slate-500">Remote {remote.protocol.toUpperCase()} session → {target?.name}</span>
+          <span className="text-[11px] text-slate-500">Remote {remote.protocol.toUpperCase()} session → {target?.name}</span>
         </div>
         <div className="min-h-0 flex-1">
           <CliTerminal deviceId={remote.deviceId} access="vty" compact />
@@ -161,10 +161,10 @@ export function CommandPrompt({ device }: { device: Device }) {
     <div className="nf-palette-default flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-white/10 bg-[#03080d]">
       <div className="flex items-center gap-2 border-b border-white/8 bg-ink-900/80 px-3 py-1.5">
         <Terminal size={12} className="text-slate-400" />
-        <span className="font-mono text-[10px] text-slate-400">Command Prompt — {device.name}</span>
-        <span className="ml-auto text-[10px] text-slate-600">{primaryAddress}</span>
+        <span className="font-mono text-[11px] text-slate-400">Command Prompt — {device.name}</span>
+        <span className="ml-auto text-[11px] text-slate-600">{primaryAddress}</span>
       </div>
-      <div className="min-h-0 flex-1 overflow-auto px-3 py-2 font-mono text-[11px] leading-[1.55] text-slate-300" onClick={() => inputRef.current?.focus()}>
+      <div className="min-h-0 flex-1 overflow-auto px-3 py-2 font-mono text-[12px] leading-[1.55] text-slate-300" onClick={() => inputRef.current?.focus()}>
         {lines.map((line, i) => <div key={i} className="whitespace-pre-wrap">{line || '\u00a0'}</div>)}
         {!busy && (
           <div className="flex items-center">
@@ -185,7 +185,7 @@ export function CommandPrompt({ device }: { device: Device }) {
                   if (histIdx !== -1) { const idx = histIdx + 1; if (idx >= history.length) { setHistIdx(-1); setInput('') } else { setHistIdx(idx); setInput(history[idx]) } }
                 }
               }}
-              className="min-w-0 flex-1 border-0 bg-transparent font-mono text-[11px] text-slate-100 caret-cyan-300 outline-none"
+              className="min-w-0 flex-1 border-0 bg-transparent font-mono text-[12px] text-slate-100 caret-cyan-300 outline-none"
               spellCheck={false}
               autoComplete="off"
             />

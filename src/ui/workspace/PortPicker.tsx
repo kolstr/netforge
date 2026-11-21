@@ -48,20 +48,20 @@ export function PortPicker({
   return (
     <Modal onClose={onClose} title={title} subtitle={`${device.name} · ${device.model}`} width="max-w-lg">
       <div className="space-y-2">
-        <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-ink-950/60 px-2.5 py-2 text-[11px] text-slate-400">
+        <div className="flex items-center gap-2 rounded-lg border border-white/8 bg-ink-950/60 px-2.5 py-2 text-[12px] text-slate-400">
           <Cable size={13} style={{ color: cableColor(cable, true) }} />
           {cable} cable · {available} of {ports.length} compatible port{ports.length === 1 ? '' : 's'} available
         </div>
         <div className="max-h-80 overflow-y-auto rounded-lg border border-white/8">
           {!ports.length && (
-            <div className="p-6 text-center text-[11px] text-slate-500">
+            <div className="p-6 text-center text-[12px] text-slate-500">
               {usable.length
                 ? `No ${cable} port works with ${peerDevice?.name ?? 'the other end'}: a ${cable} cable cannot pair those ports. Choose a different cable type.`
                 : 'No compatible ports. Add a module (Physical tab) or choose a different cable type.'}
             </div>
           )}
           {!!ports.length && !available && (
-            <div className="p-6 text-center text-[11px] text-slate-500">
+            <div className="p-6 text-center text-[12px] text-slate-500">
               Every compatible port already has a cable plugged in. Remove an existing link to free one up.
             </div>
           )}
@@ -83,8 +83,8 @@ export function PortPicker({
               >
                 <span className={`h-2 w-2 rounded-full ${detail?.physicalUp ? 'bg-emerald-400' : busy ? 'bg-amber-400' : 'bg-slate-600'}`} />
                 <span className="min-w-0 flex-1">
-                  <span className="block truncate font-mono text-[11px] text-slate-200">{iface.name}</span>
-                  <span className="block text-[10px] text-slate-500">
+                  <span className="block truncate font-mono text-[12px] text-slate-200">{iface.name}</span>
+                  <span className="block text-[11px] text-slate-500">
                     {iface.kind} · {iface.speed >= 1000 ? `${iface.speed / 1000} Gbps` : `${iface.speed} Mbps`}
                     {addr ? ` · ${addr}` : ''}
                     {iface.kind === 'serial' ? ' · serial WAN' : ''}
@@ -92,7 +92,7 @@ export function PortPicker({
                   </span>
                 </span>
                 {busy ? (
-                  <span className="rounded bg-amber-400/10 px-1.5 py-0.5 text-[10px] text-amber-300">in use</span>
+                  <span className="rounded bg-amber-400/10 px-1.5 py-0.5 text-[11px] text-amber-300">in use</span>
                 ) : (
                   <Check size={13} className="text-slate-600" />
                 )}
@@ -101,9 +101,9 @@ export function PortPicker({
           })}
         </div>
         {!!inUse.size && !!available && (
-          <p className="text-[10px] text-amber-300/80">Ports marked “in use” already have a cable plugged in and cannot be selected.</p>
+          <p className="text-[11px] text-amber-300/80">Ports marked “in use” already have a cable plugged in and cannot be selected.</p>
         )}
-        <p className="text-[10px] text-slate-600">
+        <p className="text-[11px] text-slate-600">
           {cable === 'serial'
             ? 'The first device you select becomes the DCE side. Configure a clock rate on the DCE interface to bring the line up.'
             : cable === 'console'

@@ -653,7 +653,7 @@ export function Workspace() {
                 <div className="absolute left-0 top-[5px] w-full rounded" style={{ height: shape.stroke, backgroundColor: shape.color, opacity: 0.75 }} />
                 {selected && <div className="absolute inset-0 rounded outline outline-1 outline-cyan-300/80" />}
                 {shape.text && (
-                  <span className="absolute left-1/2 top-[-14px] -translate-x-1/2 whitespace-nowrap rounded bg-ink-950/85 px-1 text-[10px] font-semibold" style={{ color: shape.color }}>
+                  <span className="absolute left-1/2 top-[-14px] -translate-x-1/2 whitespace-nowrap rounded bg-ink-950/85 px-1 text-[11px] font-semibold" style={{ color: shape.color }}>
                     {shape.text}
                   </span>
                 )}
@@ -683,7 +683,7 @@ export function Workspace() {
               onContextMenu={(e) => openShapeContext(e, shape)}
               title="Drag to move · double-click to edit text"
             >
-              <div className={`whitespace-pre-wrap px-2 ${shape.kind === 'text' ? 'py-1 text-[12px] font-semibold' : 'py-1.5 text-[10px] font-semibold'}`}>
+              <div className={`whitespace-pre-wrap px-2 ${shape.kind === 'text' ? 'py-1 text-[13px] font-semibold' : 'py-1.5 text-[11px] font-semibold'}`}>
                 {shape.text || (shape.kind === 'text' ? 'Text' : '')}
               </div>
             </div>
@@ -741,7 +741,7 @@ export function Workspace() {
                   setEditingShape(null)
                 }
               }}
-              className="pointer-events-auto absolute z-40 resize-none rounded border border-cyan-300/60 bg-ink-950/95 px-2 py-1 text-[12px] text-slate-100 shadow-xl outline-none"
+              className="pointer-events-auto absolute z-40 resize-none rounded border border-cyan-300/60 bg-ink-950/95 px-2 py-1 text-[13px] text-slate-100 shadow-xl outline-none"
               style={{ left: shape.x, top: shape.y, width: Math.max(180, Math.abs(shape.w)), minHeight: 28 }}
             />
           )
@@ -770,7 +770,7 @@ export function Workspace() {
             }}
           >
             <div className="flex items-center justify-between border-b border-black/10 px-2 py-1">
-              <span className="text-[10px] font-semibold uppercase tracking-wider opacity-60">Note</span>
+              <span className="text-[11px] font-semibold uppercase tracking-wider opacity-60">Note</span>
               <button className="rounded p-0.5 opacity-50 hover:bg-black/10 hover:opacity-100" onClick={() => { sim.notes = sim.notes.filter((n) => n.id !== note.id); sim.bump(); store.saveLocal() }}>
                 <Trash2 size={10} />
               </button>
@@ -779,7 +779,7 @@ export function Workspace() {
               <textarea
                 autoFocus
                 defaultValue={note.text}
-                className="h-full min-h-[64px] w-full resize-none bg-transparent px-2 py-1.5 text-[11px] leading-relaxed outline-none"
+                className="h-full min-h-[64px] w-full resize-none bg-transparent px-2 py-1.5 text-[12px] leading-relaxed outline-none"
                 onBlur={(e) => {
                   store.updateNote(note.id, { text: e.target.value })
                   setEditingNote(null)
@@ -793,7 +793,7 @@ export function Workspace() {
                 }}
               />
             ) : (
-              <div className="whitespace-pre-wrap px-2 py-1.5 text-[11px] leading-relaxed">{note.text}</div>
+              <div className="whitespace-pre-wrap px-2 py-1.5 text-[12px] leading-relaxed">{note.text}</div>
             )}
           </div>
         ))}
@@ -814,39 +814,39 @@ export function Workspace() {
             className="pointer-events-none absolute rounded-xl border-2 border-dashed border-amber-300/80"
             style={{ left: sim.device(pduFrom)!.x - 74, top: sim.device(pduFrom)!.y - 41, width: 148, height: 82 }}
           >
-            <span className="absolute -top-5 left-1/2 -translate-x-1/2 rounded bg-amber-300 px-1.5 py-0.5 text-[10px] font-bold uppercase text-accent-ink">source</span>
+            <span className="absolute -top-5 left-1/2 -translate-x-1/2 rounded bg-amber-300 px-1.5 py-0.5 text-[11px] font-bold uppercase text-accent-ink">source</span>
           </div>
         )}
       </div>
 
       {/* HUD */}
       <div className="pointer-events-none absolute left-3 top-3 flex items-center gap-2">
-        <div className="flex items-center gap-1.5 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[10px] font-medium text-slate-300 shadow-lg backdrop-blur">
+        <div className="flex items-center gap-1.5 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[11px] font-medium text-slate-300 shadow-lg backdrop-blur">
           <Network size={12} className="text-cyan-300" />
           Logical Workspace
           <span className="text-slate-600">/</span>
           <span className="text-slate-500">Root</span>
         </div>
         {store.connectingFrom && (
-          <div className="rounded-lg border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1.5 text-[10px] text-cyan-200 shadow-lg">
+          <div className="rounded-lg border border-cyan-400/30 bg-cyan-400/10 px-2.5 py-1.5 text-[11px] text-cyan-200 shadow-lg">
             <Cable size={11} className="mr-1 inline" />
             select the far-end interface · Esc to cancel
           </div>
         )}
         {sim.mode === 'simulation' && (
-          <div className="rounded-lg border border-amber-400/25 bg-amber-400/10 px-2.5 py-1.5 text-[10px] text-amber-200 shadow-lg">
+          <div className="rounded-lg border border-amber-400/25 bg-amber-400/10 px-2.5 py-1.5 text-[11px] text-amber-200 shadow-lg">
             <Play size={10} className="mr-1 inline" /> batch {sim.batch} · {visibleEvents.length} packet event{visibleEvents.length === 1 ? '' : 's'}
           </div>
         )}
       </div>
 
       <div className="pointer-events-none absolute right-3 top-3 flex items-center gap-2">
-        <div className="rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[10px] text-slate-400 shadow-lg backdrop-blur">
+        <div className="rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[11px] text-slate-400 shadow-lg backdrop-blur">
           <span className="font-semibold text-slate-200">{devices.length}</span> devices · <span className="font-semibold text-slate-200">{sim.links.length}</span> links
         </div>
         {sim.assessment?.enabled && (
           <button
-            className="pointer-events-auto flex items-center gap-1.5 rounded-lg border border-violet-400/30 bg-violet-400/15 px-2.5 py-1.5 text-[10px] font-medium text-violet-200 shadow-lg"
+            className="pointer-events-auto flex items-center gap-1.5 rounded-lg border border-violet-400/30 bg-violet-400/15 px-2.5 py-1.5 text-[11px] font-medium text-violet-200 shadow-lg"
             onClick={() => store.runAssessment()}
           >
             <CheckCircle2 size={12} /> Check activity
@@ -854,14 +854,14 @@ export function Workspace() {
         )}
       </div>
 
-      <div className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-3 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[10px] text-slate-500 shadow-lg backdrop-blur">
+      <div className="pointer-events-none absolute bottom-3 left-3 flex items-center gap-3 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[11px] text-slate-500 shadow-lg backdrop-blur">
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-emerald-400" /> up</span>
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-rose-500" /> down</span>
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-amber-400" /> STP blocked</span>
         <span className="flex items-center gap-1"><span className="h-2 w-2 rounded-full bg-cyan-300" /> activity</span>
       </div>
 
-      <div className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[10px] text-slate-600 shadow-lg backdrop-blur">
+      <div className="pointer-events-none absolute bottom-3 right-3 rounded-lg border border-white/8 bg-ink-900/80 px-2.5 py-1.5 text-[11px] text-slate-600 shadow-lg backdrop-blur">
         {store.palette.kind
           ? 'Click to place another · Esc or right-click to finish'
           : store.palette.cable
@@ -878,7 +878,7 @@ export function Workspace() {
               <Network size={24} className="text-accent-ink" />
             </div>
             <h2 className="text-lg font-semibold text-slate-100">Build your network</h2>
-            <p className="mx-auto mt-2 max-w-[320px] text-[12px] leading-relaxed text-slate-400">
+            <p className="mx-auto mt-2 max-w-[320px] text-[13px] leading-relaxed text-slate-400">
               Drag devices from the palette, wire them together, then configure addresses via the GUI or an IOS-style CLI.
             </p>
             <div className="mt-5 flex items-center justify-center gap-2">
@@ -897,8 +897,8 @@ export function Workspace() {
               ].map((s) => (
                 <div key={s.title} className="rounded-lg border border-white/8 bg-ink-950/50 p-2.5">
                   <div className="text-cyan-300">{s.icon}</div>
-                  <div className="mt-1 text-[10px] font-semibold text-slate-200">{s.title}</div>
-                  <div className="mt-0.5 text-[10px] leading-snug text-slate-500">{s.text}</div>
+                  <div className="mt-1 text-[11px] font-semibold text-slate-200">{s.title}</div>
+                  <div className="mt-0.5 text-[11px] leading-snug text-slate-500">{s.text}</div>
                 </div>
               ))}
             </div>
@@ -919,7 +919,7 @@ export function Workspace() {
 
       {context && <ContextMenu x={context.x} y={context.y} items={context.items} onClose={() => setContext(null)} />}
 
-      <div className="pointer-events-none absolute bottom-3 left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-white/8 bg-ink-950/70 px-3 py-1 text-[10px] text-slate-600 backdrop-blur lg:flex">
+      <div className="pointer-events-none absolute bottom-3 left-1/2 hidden -translate-x-1/2 items-center gap-1 rounded-full border border-white/8 bg-ink-950/70 px-3 py-1 text-[11px] text-slate-600 backdrop-blur lg:flex">
         <Grid3x3 size={10} /> {store.settings.snapToGrid ? 'snap on' : 'snap off'}
       </div>
     </div>

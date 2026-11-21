@@ -42,7 +42,7 @@ export function MenuBar() {
 
   const menu = (id: string) => ({
     onClick: () => setOpen(open === id ? null : id),
-    className: `flex h-7 items-center gap-1 rounded-md px-2.5 text-[11px] font-medium transition ${open === id ? 'bg-white/10 text-slate-100' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`,
+    className: `flex h-7 items-center gap-1 rounded-md px-2.5 text-[12px] font-medium transition ${open === id ? 'bg-white/10 text-slate-100' : 'text-slate-400 hover:bg-white/5 hover:text-slate-200'}`,
   })
 
   const item = (label: string, fn: () => void, shortcut?: string, icon?: React.ReactNode, disabled?: boolean) => (
@@ -52,11 +52,11 @@ export function MenuBar() {
         setOpen(null)
         fn()
       }}
-      className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-[11px] text-slate-300 transition hover:bg-white/10 disabled:opacity-40"
+      className="flex w-full items-center gap-2.5 rounded-md px-2 py-1.5 text-left text-[12px] text-slate-300 transition hover:bg-white/10 disabled:opacity-40"
     >
       <span className="w-4 text-slate-500">{icon}</span>
       <span className="flex-1">{label}</span>
-      {shortcut && <span className="text-[10px] text-slate-600">{shortcut}</span>}
+      {shortcut && <span className="text-[11px] text-slate-600">{shortcut}</span>}
     </button>
   )
 
@@ -74,10 +74,10 @@ export function MenuBar() {
           </svg>
         </div>
         <div className="leading-none">
-          <div className="text-[13px] font-semibold tracking-tight text-slate-100">
+          <div className="text-[14px] font-semibold tracking-tight text-slate-100">
             NetForge <span className="font-normal text-slate-500">Studio</span>
           </div>
-          <div className="mt-0.5 text-[10px] uppercase tracking-[0.18em] text-slate-600">Network Simulator</div>
+          <div className="mt-0.5 text-[11px] uppercase tracking-[0.18em] text-slate-600">Network Simulator</div>
         </div>
       </div>
 
@@ -167,7 +167,7 @@ export function MenuBar() {
       </div>
 
       <div className="ml-auto flex items-center gap-2">
-        <div className="hidden items-center gap-1.5 text-[10px] text-slate-600 md:flex">
+        <div className="hidden items-center gap-1.5 text-[11px] text-slate-600 md:flex">
           <span className={`h-1.5 w-1.5 rounded-full ${store.dirty ? 'bg-amber-400' : 'bg-emerald-400'}`} />
           {store.dirty ? 'Unsaved changes' : store.settings.autoSave ? 'Autosaved locally' : 'Autosave off'}
         </div>

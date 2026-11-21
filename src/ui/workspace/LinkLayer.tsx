@@ -93,19 +93,19 @@ export function LinkLayer({
                 }}
               />
               {selected && (
-                <text x={mid.x} y={mid.y - 8} textAnchor="middle" fill="#67e8f9" fontSize={9} className="pointer-events-none select-none">
+                <text x={mid.x} y={mid.y - 8} textAnchor="middle" fill="#67e8f9" fontSize={10} className="pointer-events-none select-none">
                   {link.type} · {up ? 'up' : 'down'}
                 </text>
               )}
               {showLights && <LinkLight x={pa.x + (pb.x - pa.x) * 0.08 + nx * 5} y={pa.y + (pb.y - pa.y) * 0.08 + ny * 5} up={up} active={activeA} stp={stpA} />}
               {showLights && <LinkLight x={pb.x + (pa.x - pb.x) * 0.08 + nx * 5} y={pb.y + (pa.y - pb.y) * 0.08 + ny * 5} up={up} active={activeB} stp={stpB} />}
               {link.type === 'serial' && (
-                <text x={mid.x + nx * 9} y={mid.y + ny * 9} textAnchor="middle" fill={cableColor('serial', true)} fontSize={7} className="pointer-events-none select-none">
+                <text x={mid.x + nx * 9} y={mid.y + ny * 9} textAnchor="middle" fill={cableColor('serial', true)} fontSize={8} className="pointer-events-none select-none">
                   {link.dceSide === 'a' ? 'DCE' : 'DTE'}
                 </text>
               )}
               {link.type === 'console' && (
-                <text x={mid.x} y={mid.y - 6} textAnchor="middle" fill={cableColor('console', true)} fontSize={7} className="pointer-events-none select-none">
+                <text x={mid.x} y={mid.y - 6} textAnchor="middle" fill={cableColor('console', true)} fontSize={8} className="pointer-events-none select-none">
                   console
                 </text>
               )}
@@ -131,7 +131,7 @@ export function LinkLayer({
               />
               <circle cx={mid.x} cy={mid.y} r={2} fill="#22d3ee" opacity={0.75} />
               {sig && sig.rssi < -70 && (
-                <text x={mid.x} y={mid.y - 6} textAnchor="middle" fill="#fbbf24" fontSize={8}>
+                <text x={mid.x} y={mid.y - 6} textAnchor="middle" fill="#fbbf24" fontSize={9}>
                   weak {sig.rssi} dBm
                 </text>
               )}
@@ -158,7 +158,7 @@ export function LinkLayer({
                   <span className="packet-pulse absolute h-3 w-3 rounded-full" style={{ backgroundColor: color }} />
                   <span className="h-1.5 w-1.5 rounded-full ring-1 ring-black/40" style={{ backgroundColor: color }} />
                 </span>
-                <span className="rounded bg-ink-950/85 px-1 py-0.5 font-mono text-[10px] text-slate-200 shadow" style={{ borderLeft: `2px solid ${color}` }}>
+                <span className="rounded bg-ink-950/85 px-1 py-0.5 font-mono text-[11px] text-slate-200 shadow" style={{ borderLeft: `2px solid ${color}` }}>
                   {entry.type}
                 </span>
               </div>

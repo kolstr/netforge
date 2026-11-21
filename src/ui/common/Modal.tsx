@@ -39,7 +39,7 @@ export function Modal({
             {icon}
             <div className="min-w-0 flex-1">
               <div className="flex items-center gap-2 text-sm font-semibold text-slate-100">{title}</div>
-              {subtitle && <div className="mt-0.5 truncate text-[11px] text-slate-500">{subtitle}</div>}
+              {subtitle && <div className="mt-0.5 truncate text-[12px] text-slate-500">{subtitle}</div>}
             </div>
             {headerRight}
             {onClose && (
@@ -85,7 +85,7 @@ export function Field({ label, children, hint, className = '' }: { label: string
     <label className={`block ${className}`}>
       <span className="label">{label}</span>
       <div className="mt-1">{children}</div>
-      {hint && <div className="mt-1 text-[10px] leading-snug text-slate-500">{hint}</div>}
+      {hint && <div className="mt-1 text-[11px] leading-snug text-slate-500">{hint}</div>}
     </label>
   )
 }
@@ -108,7 +108,7 @@ export function Toggle({ checked, onChange, label, disabled }: { checked: boolea
 
 export function StatusPill({ up, label }: { up: boolean; label: string }) {
   return (
-    <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[10px] font-medium ${up ? 'bg-emerald-400/10 text-emerald-300' : 'bg-rose-400/10 text-rose-300'}`}>
+    <span className={`inline-flex items-center gap-1.5 rounded-full px-2 py-0.5 text-[11px] font-medium ${up ? 'bg-emerald-400/10 text-emerald-300' : 'bg-rose-400/10 text-rose-300'}`}>
       <span className={`h-1.5 w-1.5 rounded-full ${up ? 'bg-emerald-400' : 'bg-rose-400'}`} />
       {label}
     </span>
@@ -122,7 +122,7 @@ export function Segmented<T extends string>({ options, value, onChange }: { opti
         <button
           key={o.id}
           onClick={() => onChange(o.id)}
-          className={`rounded-md px-2.5 py-1 text-[11px] font-medium transition ${value === o.id ? 'bg-white/10 text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
+          className={`rounded-md px-2.5 py-1 text-[12px] font-medium transition ${value === o.id ? 'bg-white/10 text-slate-100 shadow-sm' : 'text-slate-500 hover:text-slate-300'}`}
         >
           {o.label}
         </button>

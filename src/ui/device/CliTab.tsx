@@ -170,14 +170,14 @@ export function CliTerminal({ deviceId, access = 'console', compact = false }: {
     <div className={`nf-palette-default flex min-h-0 flex-col overflow-hidden rounded-xl border border-white/10 bg-[#03080d] ${compact ? 'flex-1' : 'h-[calc(92vh-160px)] min-h-[420px]'}`}>
       <div className="flex shrink-0 items-center gap-2 border-b border-white/8 bg-ink-900/80 px-3 py-1.5">
         <TerminalIcon size={12} className="text-cyan-300" />
-        <span className="font-mono text-[10px] text-slate-300">{device?.name ?? 'Device'} — {access === 'console' ? 'console' : 'vty'} session</span>
-        <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-slate-500">{session.mode}</span>
+        <span className="font-mono text-[11px] text-slate-300">{device?.name ?? 'Device'} — {access === 'console' ? 'console' : 'vty'} session</span>
+        <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[11px] text-slate-500">{session.mode}</span>
         <div className="ml-auto flex items-center gap-1">
-          {stack.length > 0 && <span className="text-[10px] text-slate-600">{stack.length} nested session(s)</span>}
+          {stack.length > 0 && <span className="text-[11px] text-slate-600">{stack.length} nested session(s)</span>}
           <button className="btn-icon" title="Restart session" onClick={restart}><RotateCcw size={12} /></button>
         </div>
       </div>
-      <div className="min-h-0 flex-1 overflow-auto px-3 py-2 font-mono text-[11px] leading-[1.5]" onClick={() => inputRef.current?.focus()}>
+      <div className="min-h-0 flex-1 overflow-auto px-3 py-2 font-mono text-[12px] leading-[1.5]" onClick={() => inputRef.current?.focus()}>
         {lines.map((line, i) => (
           <div key={i} className={`whitespace-pre-wrap break-words ${line.kind === 'error' ? 'text-rose-300' : line.kind === 'input' ? 'text-slate-200' : line.kind === 'system' ? 'text-slate-500' : line.kind === 'notice' ? 'text-cyan-300' : 'text-slate-400'}`}>
             {line.text || '\u00a0'}
@@ -192,7 +192,7 @@ export function CliTerminal({ deviceId, access = 'console', compact = false }: {
                 value={input}
                 onChange={(e) => { setInput(e.target.value); setSuggestions([]) }}
                 onKeyDown={onKeyDown}
-                className="min-w-0 flex-1 border-0 bg-transparent font-mono text-[11px] text-slate-100 caret-cyan-300 outline-none"
+                className="min-w-0 flex-1 border-0 bg-transparent font-mono text-[12px] text-slate-100 caret-cyan-300 outline-none"
                 spellCheck={false}
                 autoComplete="off"
                 disabled={busy}
@@ -205,7 +205,7 @@ export function CliTerminal({ deviceId, access = 'console', compact = false }: {
                 type="password"
                 onChange={(e) => setInput(e.target.value)}
                 onKeyDown={onKeyDown}
-                className="min-w-0 flex-1 border-0 bg-transparent font-mono text-[11px] text-slate-100 caret-cyan-300 outline-none"
+                className="min-w-0 flex-1 border-0 bg-transparent font-mono text-[12px] text-slate-100 caret-cyan-300 outline-none"
                 autoComplete="off"
                 disabled={busy}
               />
@@ -214,13 +214,13 @@ export function CliTerminal({ deviceId, access = 'console', compact = false }: {
           </div>
         )}
         {session.closed && (
-          <div className="mt-2 flex items-center gap-2 text-[10px] text-slate-500">
+          <div className="mt-2 flex items-center gap-2 text-[11px] text-slate-500">
             Session closed.
             <button className="btn" onClick={restart}><RotateCcw size={10} /> Reconnect</button>
           </div>
         )}
         {suggestions.length > 0 && (
-          <div className="mt-1 rounded border border-white/8 bg-ink-900/60 p-1 text-[10px] text-slate-500">{suggestions.join('   ')}</div>
+          <div className="mt-1 rounded border border-white/8 bg-ink-900/60 p-1 text-[11px] text-slate-500">{suggestions.join('   ')}</div>
         )}
         <div ref={bottomRef} />
       </div>

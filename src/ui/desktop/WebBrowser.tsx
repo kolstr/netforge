@@ -93,12 +93,12 @@ export function WebBrowser({ device }: { device: Device }) {
             onChange={(e) => setUrl(e.target.value)}
             onKeyDown={(e) => { if (e.key === 'Enter') void navigate(url) }}
             placeholder="Enter URL, IP address or hostname"
-            className="min-w-0 flex-1 bg-transparent text-[11px] text-slate-800 outline-none placeholder:text-slate-400"
+            className="min-w-0 flex-1 bg-transparent text-[12px] text-slate-800 outline-none placeholder:text-slate-400"
             spellCheck={false}
           />
           {url && <button className="text-slate-400 hover:text-slate-600" onClick={() => setUrl('')}><X size={11} /></button>}
         </div>
-        <button className="rounded bg-cyan-600 px-2.5 py-1 text-[10px] font-medium text-white hover:bg-cyan-700" onClick={() => void navigate(url)}>Go</button>
+        <button className="rounded bg-cyan-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-cyan-700" onClick={() => void navigate(url)}>Go</button>
       </div>
 
       <div className="relative min-h-0 flex-1 overflow-auto bg-white">
@@ -108,36 +108,36 @@ export function WebBrowser({ device }: { device: Device }) {
               <Globe size={28} />
             </div>
             <h2 className="text-lg font-semibold text-slate-800">NetForge Browser</h2>
-            <p className="mt-1 text-[11px] text-slate-500">Visit a server by IP address or DNS name.</p>
+            <p className="mt-1 text-[12px] text-slate-500">Visit a server by IP address or DNS name.</p>
             <div className="mt-5 grid w-full max-w-md gap-2">
-              <button className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[11px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate('www.netforge.lab')}>
-                <Search size={13} className="text-cyan-600" /> <span className="font-medium">www.netforge.lab</span> <span className="ml-auto text-[10px] text-slate-400">requires DNS</span>
+              <button className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[12px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate('www.netforge.lab')}>
+                <Search size={13} className="text-cyan-600" /> <span className="font-medium">www.netforge.lab</span> <span className="ml-auto text-[11px] text-slate-400">requires DNS</span>
               </button>
               {servers.map((s) => {
                 const iface = s.interfaces.find((i) => i.ip)
                 const ip = iface?.ip
                 return (
-                  <button key={s.id} className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[11px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate(ip!)}>
-                    <Globe size={13} className="text-slate-500" /> <span className="font-mono">{formatIpWithMask(ip, iface?.mask)}</span> <span className="ml-auto text-[10px] text-slate-400">{s.name}</span>
+                  <button key={s.id} className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[12px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate(ip!)}>
+                    <Globe size={13} className="text-slate-500" /> <span className="font-mono">{formatIpWithMask(ip, iface?.mask)}</span> <span className="ml-auto text-[11px] text-slate-400">{s.name}</span>
                   </button>
                 )
               })}
-              <button className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[11px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate('192.168.0.1')}>
-                <Lock size={13} className="text-amber-500" /> <span className="font-mono">192.168.0.1</span> <span className="ml-auto text-[10px] text-slate-400">home router</span>
+              <button className="flex items-center gap-2 rounded-lg border border-slate-300 bg-white px-3 py-2 text-left text-[12px] text-slate-700 hover:border-cyan-400" onClick={() => void navigate('192.168.0.1')}>
+                <Lock size={13} className="text-amber-500" /> <span className="font-mono">192.168.0.1</span> <span className="ml-auto text-[11px] text-slate-400">home router</span>
               </button>
             </div>
           </div>
         )}
         {loading && (
-          <div className="flex h-full items-center justify-center text-[11px] text-slate-500">
+          <div className="flex h-full items-center justify-center text-[12px] text-slate-500">
             <RefreshCw size={14} className="mr-2 animate-spin" /> Resolving {result?.host ?? url} and loading…
           </div>
         )}
         {!loading && result && !result.ok && (
           <div className="p-10">
             <h2 className="text-lg font-semibold text-slate-800">This site can’t be reached</h2>
-            <p className="mt-2 text-[12px] text-slate-500">{result.error ?? 'The connection failed.'}</p>
-            <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 font-mono text-[10px] text-slate-500">
+            <p className="mt-2 text-[13px] text-slate-500">{result.error ?? 'The connection failed.'}</p>
+            <div className="mt-4 rounded-lg border border-slate-200 bg-slate-50 p-3 font-mono text-[11px] text-slate-500">
               {current}
               {result.targetIp ? `\nresolved to ${result.targetIp}` : ''}
             </div>
@@ -156,7 +156,7 @@ export function WebBrowser({ device }: { device: Device }) {
           />
         )}
       </div>
-      <div className="flex shrink-0 items-center gap-3 border-t border-slate-300 bg-slate-100 px-2 py-1 text-[10px] text-slate-500">
+      <div className="flex shrink-0 items-center gap-3 border-t border-slate-300 bg-slate-100 px-2 py-1 text-[11px] text-slate-500">
         {result?.ok ? <span>HTTP {result.status ?? 200} · {result.targetIp ?? ''} · {result.resolvedFrom ?? 'direct'}</span> : <span>Ready</span>}
         <span className="ml-auto">{device.name}</span>
       </div>

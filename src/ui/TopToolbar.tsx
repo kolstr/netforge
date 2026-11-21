@@ -85,13 +85,13 @@ export function TopToolbar() {
         <div className="flex rounded-lg border border-white/10 bg-ink-950/60 p-0.5">
           <button
             onClick={() => store.setMode('realtime')}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-[11px] font-semibold transition ${mode === 'realtime' ? 'bg-emerald-400/15 text-emerald-300 shadow-[inset_0_0_0_1px_rgba(52,211,153,0.25)]' : 'text-slate-500 hover:text-slate-300'}`}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-[12px] font-semibold transition ${mode === 'realtime' ? 'bg-emerald-400/15 text-emerald-300 shadow-[inset_0_0_0_1px_rgba(52,211,153,0.25)]' : 'text-slate-500 hover:text-slate-300'}`}
           >
             <Wifi size={12} /> Realtime
           </button>
           <button
             onClick={() => store.setMode('simulation')}
-            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-[11px] font-semibold transition ${mode === 'simulation' ? 'bg-amber-400/15 text-amber-300 shadow-[inset_0_0_0_1px_rgba(251,191,36,0.25)]' : 'text-slate-500 hover:text-slate-300'}`}
+            className={`flex items-center gap-1.5 rounded-md px-3 py-1 text-[12px] font-semibold transition ${mode === 'simulation' ? 'bg-amber-400/15 text-amber-300 shadow-[inset_0_0_0_1px_rgba(251,191,36,0.25)]' : 'text-slate-500 hover:text-slate-300'}`}
           >
             <Activity size={12} /> Simulation
           </button>
@@ -140,7 +140,7 @@ export function TopToolbar() {
           </div>
         )}
 
-        <div className="ml-1 hidden items-center gap-1.5 rounded-md border border-white/8 bg-ink-950/60 px-2.5 py-1 font-mono text-[11px] text-cyan-200/80 sm:flex">
+        <div className="ml-1 hidden items-center gap-1.5 rounded-md border border-white/8 bg-ink-950/60 px-2.5 py-1 font-mono text-[12px] text-cyan-200/80 sm:flex">
           <span className={`h-1.5 w-1.5 rounded-full ${store.playing ? 'animate-pulse bg-amber-400' : mode === 'realtime' ? 'bg-emerald-400' : 'bg-slate-500'}`} />
           {store.sim.time.toFixed(3)}s
         </div>
@@ -150,7 +150,7 @@ export function TopToolbar() {
         <button className="btn-icon" title="Zoom out" onClick={() => store.setView({ zoom: Math.max(0.25, store.view.zoom / 1.15) })}>
           <ZoomOut size={14} />
         </button>
-        <button className="w-10 text-center font-mono text-[10px] text-slate-500" title="Reset zoom" onClick={() => store.setView({ zoom: 1 })}>
+        <button className="w-10 text-center font-mono text-[11px] text-slate-500" title="Reset zoom" onClick={() => store.setView({ zoom: 1 })}>
           {Math.round(store.view.zoom * 100)}%
         </button>
         <button className="btn-icon" title="Zoom in" onClick={() => store.setView({ zoom: Math.min(2.2, store.view.zoom * 1.15) })}>

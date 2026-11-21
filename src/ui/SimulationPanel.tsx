@@ -32,7 +32,7 @@ export function SimulationPanel() {
 
   if (!store.simPanelOpen) {
     return (
-      <div className="flex h-8 shrink-0 items-center gap-3 border-t border-white/8 bg-ink-900/80 px-3 text-[10px] text-slate-500">
+      <div className="flex h-8 shrink-0 items-center gap-3 border-t border-white/8 bg-ink-900/80 px-3 text-[11px] text-slate-500">
         <button className="inline-flex items-center gap-1 text-slate-400 hover:text-slate-200" onClick={() => store.setSimPanelOpen(true)}>
           <ChevronUp size={12} /> Simulation panel
         </button>
@@ -60,10 +60,10 @@ export function SimulationPanel() {
   return (
     <div className="flex h-[210px] shrink-0 flex-col border-t border-white/8 bg-ink-900/85">
       <div className="flex h-9 shrink-0 items-center gap-2 border-b border-white/8 px-2.5">
-        <button className="flex items-center gap-1.5 text-[10px] font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-200" onClick={() => store.setSimPanelOpen(false)}>
+        <button className="flex items-center gap-1.5 text-[11px] font-semibold uppercase tracking-wider text-slate-400 hover:text-slate-200" onClick={() => store.setSimPanelOpen(false)}>
           <ChevronDown size={12} /> Simulation
         </button>
-        <span className={`rounded-full px-2 py-0.5 text-[10px] font-medium ${sim.mode === 'simulation' ? 'bg-amber-400/15 text-amber-300' : 'bg-emerald-400/10 text-emerald-300'}`}>
+        <span className={`rounded-full px-2 py-0.5 text-[11px] font-medium ${sim.mode === 'simulation' ? 'bg-amber-400/15 text-amber-300' : 'bg-emerald-400/10 text-emerald-300'}`}>
           {sim.mode}
         </span>
         <div className="ml-1 flex items-center gap-0.5 rounded-md border border-white/8 bg-ink-950/50 p-0.5">
@@ -98,14 +98,14 @@ export function SimulationPanel() {
             {filterOpen && (
               <div className="absolute bottom-9 right-0 z-40 w-64 rounded-lg border border-white/10 bg-ink-850/98 p-2 shadow-2xl">
                 <div className="mb-1 flex items-center justify-between">
-                  <span className="text-[10px] font-semibold uppercase tracking-wider text-slate-500">Event filters</span>
-                  <button className="text-[10px] text-cyan-300 hover:underline" onClick={() => { sim.filters.clear(); sim.bump() }}>Show all</button>
+                  <span className="text-[11px] font-semibold uppercase tracking-wider text-slate-500">Event filters</span>
+                  <button className="text-[11px] text-cyan-300 hover:underline" onClick={() => { sim.filters.clear(); sim.bump() }}>Show all</button>
                 </div>
                 <div className="grid max-h-52 grid-cols-2 gap-0.5 overflow-y-auto">
                   {PROTOCOLS.map((p) => {
                     const checked = sim.filters.size === 0 || sim.filters.has(p)
                     return (
-                      <label key={p} className="flex cursor-pointer items-center gap-1.5 rounded px-1.5 py-1 text-[10px] text-slate-400 hover:bg-white/5">
+                      <label key={p} className="flex cursor-pointer items-center gap-1.5 rounded px-1.5 py-1 text-[11px] text-slate-400 hover:bg-white/5">
                         <input
                           type="checkbox"
                           checked={checked}
@@ -129,7 +129,7 @@ export function SimulationPanel() {
               </div>
             )}
           </div>
-          <span className="font-mono text-[10px] text-slate-500">{events.length} events</span>
+          <span className="font-mono text-[11px] text-slate-500">{events.length} events</span>
         </div>
       </div>
 
@@ -149,7 +149,7 @@ export function SimulationPanel() {
               <tbody>
                 {!events.length && (
                   <tr>
-                    <td colSpan={5} className="px-3 py-8 text-center text-[10px] text-slate-600">
+                    <td colSpan={5} className="px-3 py-8 text-center text-[11px] text-slate-600">
                       No events captured. Add a PDU and press <span className="kbd">Capture / Forward</span> or switch to Realtime.
                     </td>
                   </tr>
@@ -167,16 +167,16 @@ export function SimulationPanel() {
                       <td className="px-2 py-1 text-slate-500">{last?.name ?? '—'}</td>
                       <td className="px-2 py-1 text-slate-300">{at?.name ?? '—'}</td>
                       <td className="px-2 py-1">
-                        <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[10px] text-cyan-200/80">{e.type}</span>
+                        <span className="rounded bg-white/5 px-1.5 py-0.5 font-mono text-[11px] text-cyan-200/80">{e.type}</span>
                       </td>
-                      <td className="max-w-[420px] truncate px-2 py-1 font-mono text-[10px] text-slate-500">{e.info}</td>
+                      <td className="max-w-[420px] truncate px-2 py-1 font-mono text-[11px] text-slate-500">{e.info}</td>
                     </tr>
                   )
                 })}
               </tbody>
             </table>
           </div>
-          <div className="flex h-7 shrink-0 items-center gap-3 border-t border-white/8 px-2.5 text-[10px] text-slate-600">
+          <div className="flex h-7 shrink-0 items-center gap-3 border-t border-white/8 px-2.5 text-[11px] text-slate-600">
             <span>{sim.mode === 'simulation' ? `batch ${sim.batch}` : 'realtime capture'}</span>
             <span>{sim.queue.length} queued</span>
             <span>{sim.filters.size ? `${sim.filters.size} filters active` : 'all protocols'}</span>
@@ -186,16 +186,16 @@ export function SimulationPanel() {
 
         <div className="flex w-[42%] min-w-[230px] max-w-[400px] shrink-0 flex-col">
           <div className="relative flex items-center gap-1.5 border-b border-white/8 px-2.5 py-1.5">
-            <button className="flex min-w-0 flex-1 items-center gap-1 rounded border border-white/8 bg-ink-950/50 px-2 py-1 text-[10px] text-slate-300" onClick={() => setSceneOpen(!sceneOpen)}>
+            <button className="flex min-w-0 flex-1 items-center gap-1 rounded border border-white/8 bg-ink-950/50 px-2 py-1 text-[11px] text-slate-300" onClick={() => setSceneOpen(!sceneOpen)}>
               <span className="truncate">{scenario.name}</span>
               <ChevronDown size={10} className="ml-auto text-slate-500" />
             </button>
             {sceneOpen && (
               <div className="absolute left-1 top-9 z-40 w-52 rounded-lg border border-white/10 bg-ink-850/98 p-1 shadow-2xl">
                 {sim.scenarios.map((s) => (
-                  <button key={s.id} className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[10px] ${s.id === sim.activeScenarioId ? 'bg-cyan-400/10 text-cyan-200' : 'text-slate-400 hover:bg-white/5'}`} onClick={() => { sim.activeScenarioId = s.id; sim.bump(); setSceneOpen(false) }}>
+                  <button key={s.id} className={`flex w-full items-center gap-2 rounded px-2 py-1.5 text-left text-[11px] ${s.id === sim.activeScenarioId ? 'bg-cyan-400/10 text-cyan-200' : 'text-slate-400 hover:bg-white/5'}`} onClick={() => { sim.activeScenarioId = s.id; sim.bump(); setSceneOpen(false) }}>
                     <span className="flex-1 truncate">{s.name}</span>
-                    <span className="text-[10px] text-slate-600">{s.pdus.length} PDUs</span>
+                    <span className="text-[11px] text-slate-600">{s.pdus.length} PDUs</span>
                   </button>
                 ))}
                 <div className="mt-1 flex gap-1 border-t border-white/8 pt-1">
@@ -211,13 +211,13 @@ export function SimulationPanel() {
               <textarea
                 defaultValue={scenario.description}
                 placeholder="Describe this scenario…"
-                className="input h-14 resize-none text-[10px]"
+                className="input h-14 resize-none text-[11px]"
                 onBlur={(e) => { scenario.description = e.target.value; sim.bump(); store.saveLocal() }}
               />
             </div>
           )}
           <div className="min-h-0 flex-1 overflow-auto">
-            <table className="w-full text-[10px]">
+            <table className="w-full text-[11px]">
               <thead className="sticky top-0 z-10 bg-ink-850">
                 <tr>
                   <th className="table-head px-1.5 py-1.5">Fire</th>
@@ -231,7 +231,7 @@ export function SimulationPanel() {
               </thead>
               <tbody>
                 {!scenario.pdus.length && (
-                  <tr><td colSpan={7} className="px-3 py-8 text-center text-[10px] text-slate-600">No PDUs in this scenario.<br />Use the Simple PDU or Custom PDU tools.</td></tr>
+                  <tr><td colSpan={7} className="px-3 py-8 text-center text-[11px] text-slate-600">No PDUs in this scenario.<br />Use the Simple PDU or Custom PDU tools.</td></tr>
                 )}
                 {scenario.pdus.map((pdu) => (
                   <tr key={pdu.id} className="border-t border-white/5">
@@ -241,14 +241,14 @@ export function SimulationPanel() {
                       </button>
                     </td>
                     <td className="px-1.5 py-1">
-                      <span className={`inline-flex items-center gap-1 text-[10px] ${pdu.status === 'success' ? 'text-emerald-300' : pdu.status === 'fail' ? 'text-rose-300' : pdu.status === 'in-progress' ? 'text-amber-300' : 'text-slate-500'}`}>
+                      <span className={`inline-flex items-center gap-1 text-[11px] ${pdu.status === 'success' ? 'text-emerald-300' : pdu.status === 'fail' ? 'text-rose-300' : pdu.status === 'in-progress' ? 'text-amber-300' : 'text-slate-500'}`}>
                         <span className={`h-1.5 w-1.5 rounded-full ${pdu.status === 'success' ? 'bg-emerald-400' : pdu.status === 'fail' ? 'bg-rose-400' : pdu.status === 'in-progress' ? 'bg-amber-400' : 'bg-slate-600'}`} />
                         {pdu.status === 'in-progress' ? 'running' : pdu.status}
                       </span>
                     </td>
                     <td className="px-1.5 py-1 text-slate-300">{sim.device(pdu.sourceId)?.name ?? '—'}</td>
                     <td className="px-1.5 py-1 text-slate-400">{pdu.destId ? sim.device(pdu.destId)?.name : pdu.destIp ?? '—'}</td>
-                    <td className="px-1.5 py-1 font-mono text-[10px] text-cyan-200/70">{pdu.type}</td>
+                    <td className="px-1.5 py-1 font-mono text-[11px] text-cyan-200/70">{pdu.type}</td>
                     <td className="px-1.5 py-1 font-mono text-slate-500">{pdu.time.toFixed(1)}s{pdu.periodic ? ' ↻' : ''}</td>
                     <td className="px-1 py-1">
                       <button className="text-slate-600 hover:text-rose-300" title="Remove PDU" onClick={() => store.removePdu(pdu.id)}><Trash2 size={10} /></button>
@@ -258,7 +258,7 @@ export function SimulationPanel() {
               </tbody>
             </table>
           </div>
-          <div className="flex h-7 shrink-0 items-center justify-between border-t border-white/8 px-2.5 text-[10px] text-slate-600">
+          <div className="flex h-7 shrink-0 items-center justify-between border-t border-white/8 px-2.5 text-[11px] text-slate-600">
             <span>{scenario.pdus.length} user PDU(s)</span>
             <span>idle PDUs fire on Play</span>
           </div>
