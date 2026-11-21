@@ -1,7 +1,7 @@
 import type { CableType } from '../../types'
 import { CABLE_COLORS } from '../../data/catalog'
 
-export const DEVICE_W = 156
+export const DEVICE_W = 176
 export const DEVICE_H = 72
 
 export interface Point {
