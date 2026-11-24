@@ -31,7 +31,7 @@ import {
   type RouteLookup,
 } from '../lib/ip'
 import { emptyRuntime } from './runtime'
-import { computeDynamicRoutes, getL3Endpoints, type L3Endpoint, type Neighbor } from './routing'
+import { buildL2Segments, computeDynamicRoutes, getL3Endpoints, type L3Endpoint, type Neighbor } from './routing'
 import { evaluateAssessment } from './assessment'
 
 let seqCounter = 1
@@ -91,6 +91,18 @@ export interface PortDetail {
   speed: number
   linkType?: string
   warning?: string
+}
+
+export interface TraceHop {
+  hop: number
+  ip: string
+  rtt: number
+}
+
+export interface TraceResult {
+  hops: TraceHop[]
+  /** True when the trace reached the destination, false when a hop was powered off or unreachable. */
+  complete: boolean
 }
 
 export class Simulator {
@@ -3091,39 +3103,51 @@ export class Simulator {
   // ---------------------------------------------------------------------------
   // Routing protocols / app probes
   // ---------------------------------------------------------------------------
-  traceRoute(clientId: string, dstIp: string): { hop: number; ip: string; rtt: number }[] {
+  traceRoute(clientId: string, dstIp: string): TraceResult {
     const d = this.devices.get(clientId)
-    if (!d) return []
-    const hops: { hop: number; ip: string; rtt: number }[] = []
+    if (!d || !d.power) return { hops: [], complete: false }
     const ep = this.preferredEndpoint(d)
-    if (!ep) return []
+    if (!ep) return { hops: [], complete: false }
+    const segments = buildL2Segments(this.listDevices(), this.links, this.wireless, (l) => this.linkUp(l))
+    const hops: TraceHop[] = [{ hop: 1, ip: ep.ip, rtt: 0.5 }]
+    let complete = this.l3Endpoints(d).some((e) => e.ip === dstIp)
+    const visited = new Set<string>()
     let currentDevice = d
     let currentIp = ep.ip
-    const visited = new Set<string>()
-    hops.push({ hop: 1, ip: currentIp, rtt: 0.5 })
-    for (let i = 0; i < 15; i++) {
+    for (let i = 0; i < 15 && !complete; i++) {
       if (visited.has(currentDevice.id)) break
       visited.add(currentDevice.id)
-      if (this.l3Endpoints(currentDevice).some((e) => e.ip === dstIp)) break
       const route = this.routeLookup(currentDevice.id, dstIp)
       if (!route) break
-      let nextIp = route.nextHop ?? dstIp
-      if (route.type === 'connected') {
-        nextIp = dstIp
-      }
+      const nextIp = route.type === 'connected' ? dstIp : route.nextHop ?? dstIp
       if (nextIp === currentIp) break
       const owner = this.findOwnerOfIp(nextIp)
       if (!owner) {
         hops.push({ hop: hops.length + 1, ip: nextIp, rtt: 1 + hops.length * 0.4 })
+        complete = nextIp === dstIp
         break
       }
+      // A powered-off hop cannot answer; a hop outside the current broadcast
+      // domain is unreachable (powered-off switch or link down in between).
+      if (!owner.power) break
+      const nextEp = this.endpointByIp(owner, nextIp)
+      const egress = this.egressForRoute(currentDevice, route, dstIp)
+      if (!nextEp || !egress || !this.sameL2Segment(segments, egress, nextEp)) break
       hops.push({ hop: hops.length + 1, ip: nextIp, rtt: Number((1 + hops.length * 0.6).toFixed(2)) })
       if (owner.id === currentDevice.id) break
       currentDevice = owner
       currentIp = nextIp
-      if (this.l3Endpoints(owner).some((e) => e.ip === dstIp)) break
+      complete = this.l3Endpoints(owner).some((e) => e.ip === dstIp)
     }
-    return hops
+    return { hops, complete }
+  }
+
+  private sameL2Segment(segments: Map<string, L3Endpoint[]>, a: L3Endpoint, b: L3Endpoint): boolean {
+    for (const eps of segments.values()) {
+      if (!eps.some((e) => e.deviceId === a.deviceId && e.ifaceId === a.ifaceId && e.ip === a.ip)) continue
+      return eps.some((e) => e.deviceId === b.deviceId && e.ifaceId === b.ifaceId && e.ip === b.ip)
+    }
+    return false
   }
 
   findOwnerOfIp(ip: string): Device | undefined {

@@ -24,7 +24,7 @@ export function PhysicalTab({ device }: { device: Device }) {
     <div className="grid gap-4 lg:grid-cols-[1.15fr_0.85fr]">
       <div className="space-y-4">
         <div className="relative overflow-hidden rounded-xl border border-white/10 bg-gradient-to-br from-ink-800 to-ink-950 p-5">
-          <div className="absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-20 blur-3xl" style={{ backgroundColor: deviceTint(device.kind) }} />
+          <div className="pointer-events-none absolute -right-16 -top-16 h-48 w-48 rounded-full opacity-20 blur-3xl" style={{ backgroundColor: deviceTint(device.kind) }} />
           <div className="flex items-start justify-between gap-4">
             <div className="flex items-center gap-4">
               <div className="flex h-20 w-20 items-center justify-center rounded-2xl border border-white/15 bg-white/[0.03] shadow-inner" style={{ color: deviceTint(device.kind) }}>

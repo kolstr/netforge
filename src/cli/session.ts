@@ -787,10 +787,11 @@ export class CliSession {
   private traceroute(a: string[]): string {
     const dst = a[0]
     if (!isValidIp(dst ?? '')) return '% Invalid IP address'
-    const hops = this.sim.traceRoute(this.deviceId, dst)
+    const trace = this.sim.traceRoute(this.deviceId, dst)
     const lines = ['Type escape sequence to abort.', `Tracing the route to ${dst}`, '']
-    for (const h of hops) lines.push(` ${String(h.hop).padStart(2)}  ${h.ip.padEnd(16)} ${Math.round(h.rtt)} msec`)
-    if (!hops.length) lines.push('Unable to trace route.')
+    for (const h of trace.hops) lines.push(` ${String(h.hop).padStart(2)}  ${h.ip.padEnd(16)} ${Math.round(h.rtt)} msec`)
+    if (!trace.hops.length) lines.push('Unable to trace route.')
+    else if (!trace.complete) lines.push(` ${String(trace.hops.length + 1).padStart(2)}  *               *`)
     return lines.join('\n')
   }
 

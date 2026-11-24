@@ -74,6 +74,44 @@ describe('network engine', () => {
     expect(res.replies?.filter((r) => r.ok).length).toBe(2)
   })
 
+  it('traces every routed hop to a remote host', () => {
+    const { s, pc } = lab()
+    for (let i = 0; i < 60; i++) s.step()
+    const res = s.traceRoute(pc.id, '10.0.0.10')
+    expect(res.complete).toBe(true)
+    expect(res.hops.map((h) => h.ip)).toEqual([pc.interfaces.find((i) => i.kind === 'ethernet')!.ip, '192.168.1.1', '10.0.0.10'])
+  })
+
+  it('does not trace from a powered-off device', () => {
+    const { s, pc } = lab()
+    for (let i = 0; i < 60; i++) s.step()
+    pc.power = false
+    s.topologyChanged()
+    expect(s.traceRoute(pc.id, '10.0.0.10')).toEqual({ hops: [], complete: false })
+  })
+
+  it('stops the trace at a powered-off router', () => {
+    const { s, r, pc } = lab()
+    for (let i = 0; i < 60; i++) s.step()
+    const before = s.traceRoute(pc.id, '10.0.0.10')
+    expect(before.hops.length).toBe(3)
+    r.power = false
+    s.topologyChanged()
+    const res = s.traceRoute(pc.id, '10.0.0.10')
+    expect(res.complete).toBe(false)
+    expect(res.hops.length).toBe(1)
+  })
+
+  it('stops the trace at a powered-off switch', () => {
+    const { s, sw, pc } = lab()
+    for (let i = 0; i < 60; i++) s.step()
+    sw.power = false
+    s.topologyChanged()
+    const res = s.traceRoute(pc.id, '10.0.0.10')
+    expect(res.complete).toBe(false)
+    expect(res.hops.length).toBe(1)
+  })
+
   it('serves HTTP over TCP with DNS resolution', async () => {
     const { s, pc } = lab()
     for (let i = 0; i < 60; i++) s.step()

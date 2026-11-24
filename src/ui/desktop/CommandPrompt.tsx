@@ -96,11 +96,19 @@ export function CommandPrompt({ device }: { device: Device }) {
           const resolved = /^\d+\.\d+\.\d+\.\d+$/.test(target) ? { ok: true, ip: target } : await sim.resolveName(device.id, target)
           if (!resolved.ip) print(`Unable to resolve target system name ${target}.`)
           else {
-            const hops = sim.traceRoute(device.id, resolved.ip)
+            const trace = sim.traceRoute(device.id, resolved.ip)
             const out = [`Tracing route to ${target} [${resolved.ip}]`, 'over a maximum of 30 hops:', '']
-            for (const h of hops) out.push(`  ${String(h.hop).padStart(2)}    ${Math.round(h.rtt)} ms    ${Math.round(h.rtt + 1)} ms    ${Math.round(h.rtt + 2)} ms  ${h.ip}`)
-            out.push('', 'Trace complete.')
-            print(out.join('\n'))
+            if (!trace.hops.length) {
+              print(out.concat(`Unable to trace route: ${device.name} is powered off or has no usable IP address.`).join('\n'))
+            } else {
+              for (const h of trace.hops) out.push(`  ${String(h.hop).padStart(2)}    ${Math.round(h.rtt)} ms    ${Math.round(h.rtt + 1)} ms    ${Math.round(h.rtt + 2)} ms  ${h.ip}`)
+              if (!trace.complete) {
+                out.push(`  ${String(trace.hops.length + 1).padStart(2)}     *        *        *     Request timed out.`)
+                out.push('', 'Trace could not reach the destination: check that routers and switches along the path are powered on.')
+              }
+              out.push('', 'Trace complete.')
+              print(out.join('\n'))
+            }
           }
         }
       } else if (low === 'arp') {
