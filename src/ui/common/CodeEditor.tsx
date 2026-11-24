@@ -18,6 +18,11 @@ const TOKEN_CLASS: Record<TokenKind, string> = {
 /**
  * Minimal HTML source editor: a transparent textarea layered over a highlighted copy of the same
  * text, so scrolling and the caret stay native while tags/attributes get coloured.
+ *
+ * The highlight layer follows the textarea by translating its content instead of scrolling itself.
+ * A scroll container clamps `scrollTop` to its own range, and the textarea's range is larger: its
+ * horizontal scrollbar eats client height. Scrolled near the bottom, the textarea keeps going while
+ * a scrolled copy would stop ~15px early, leaving the caret almost a full line above the text.
  */
 export function CodeEditor({
   defaultValue,
@@ -31,25 +36,26 @@ export function CodeEditor({
   label?: string
 }) {
   const [text, setText] = useState(defaultValue)
-  const preRef = useRef<HTMLPreElement>(null)
+  const preContentRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLTextAreaElement>(null)
   const pendingSelection = useRef<[number, number] | null>(null)
   const tokens = useMemo(() => tokenizeHtml(text), [text])
 
   const syncScroll = () => {
     const input = inputRef.current
-    const pre = preRef.current
-    if (!input || !pre) return
-    pre.scrollTop = input.scrollTop
-    pre.scrollLeft = input.scrollLeft
+    const content = preContentRef.current
+    if (!input || !content) return
+    content.style.transform = `translate(${-input.scrollLeft}px, ${-input.scrollTop}px)`
   }
 
   useLayoutEffect(() => {
     const input = inputRef.current
+    if (!input) return
     const selection = pendingSelection.current
-    if (!input || !selection) return
-    pendingSelection.current = null
-    input.setSelectionRange(selection[0], selection[1])
+    if (selection) {
+      pendingSelection.current = null
+      input.setSelectionRange(selection[0], selection[1])
+    }
     syncScroll()
   }, [text])
 
@@ -65,13 +71,15 @@ export function CodeEditor({
 
   return (
     <div className={`code-editor focus-within:border-cyan-400/50 focus-within:ring-2 focus-within:ring-cyan-400/15 ${className}`}>
-      <pre ref={preRef} aria-hidden="true" className="code-editor-layer code-editor-pre">
-        {tokens.map((token, index) => (
-          <span key={index} className={TOKEN_CLASS[token.kind]}>
-            {token.text}
-          </span>
-        ))}
-        {'\n'}
+      <pre aria-hidden="true" className="code-editor-layer code-editor-pre">
+        <div ref={preContentRef} className="code-editor-pre-content">
+          {tokens.map((token, index) => (
+            <span key={index} className={TOKEN_CLASS[token.kind]}>
+              {token.text}
+            </span>
+          ))}
+          {'\n'}
+        </div>
       </pre>
       <textarea
         ref={inputRef}
