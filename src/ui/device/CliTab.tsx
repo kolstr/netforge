@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react'
 import { RotateCcw, Terminal as TerminalIcon } from 'lucide-react'
 import { CliSession } from '../../cli/session'
+import type { Simulator } from '../../sim/engine'
 import { useApp } from '../../store'
+import { loadCommandHistory, saveCommandHistory } from '../../lib/cmdHistory'
 import type { Device } from '../../types'
 
 interface Line {
@@ -13,10 +15,17 @@ export function CliTab({ device }: { device: Device }) {
   return <CliTerminal deviceId={device.id} access="console" />
 }
 
+/** New session seeded with the commands this device ran before. */
+function openSession(sim: Simulator, deviceId: string, access: 'console' | 'vty'): CliSession {
+  const session = new CliSession(sim, deviceId, access)
+  session.history = loadCommandHistory(deviceId)
+  return session
+}
+
 export function CliTerminal({ deviceId, access = 'console', compact = false }: { deviceId: string; access?: 'console' | 'vty'; compact?: boolean }) {
   const sim = useApp((s) => s.sim)
   const device = sim.device(deviceId)
-  const [session, setSession] = useState<CliSession>(() => new CliSession(sim, deviceId, access))
+  const [session, setSession] = useState<CliSession>(() => openSession(sim, deviceId, access))
   const [stack, setStack] = useState<CliSession[]>([])
   const [lines, setLines] = useState<Line[]>(() => [
     { kind: 'system', text: `NetForge IOS Software, ${device?.model ?? 'Device'} Software (${device?.model ?? 'NF'}-UNIVERSALK9), Version 15.7(3)M` },
@@ -33,7 +42,7 @@ export function CliTerminal({ deviceId, access = 'console', compact = false }: {
   const inputRef = useRef<HTMLInputElement>(null)
 
   useEffect(() => {
-    setSession(new CliSession(sim, deviceId, access))
+    setSession(openSession(sim, deviceId, access))
     setStack([])
     setLines([
       { kind: 'system', text: `NetForge IOS Software, ${device?.model ?? 'Device'} Software, Version 15.7(3)M` },
@@ -65,12 +74,13 @@ export function CliTerminal({ deviceId, access = 'console', compact = false }: {
     setBusy(true)
     try {
       const out = await session.execute(raw)
+      saveCommandHistory(session.deviceId, session.history)
       if (out) setLines((l) => [...l, { kind: out.startsWith('%') ? 'error' : 'output', text: out }])
       if (session.pendingRemote) {
         const target = session.pendingRemote
         session.pendingRemote = null
         setStack((s) => [...s, session])
-        const next = new CliSession(sim, target.deviceId, 'vty')
+        const next = openSession(sim, target.deviceId, 'vty')
         const targetDevice = sim.device(target.deviceId)
         setLines((l) => [
           ...l,
@@ -154,7 +164,7 @@ export function CliTerminal({ deviceId, access = 'console', compact = false }: {
   }
 
   const restart = () => {
-    const fresh = new CliSession(sim, deviceId, access)
+    const fresh = openSession(sim, deviceId, access)
     setSession(fresh)
     setStack([])
     setLines([

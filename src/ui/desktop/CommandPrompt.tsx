@@ -4,6 +4,12 @@ import type { Device } from '../../types'
 import { useApp } from '../../store'
 import { CliTerminal } from '../device/CliTab'
 import { formatIpWithMask } from '../../lib/ip'
+import { loadCommandHistory, recordCommand } from '../../lib/cmdHistory'
+
+function formatRtt(rtt?: number): string {
+  const ms = (rtt ?? 0) * 1000
+  return ms < 1 ? 'time<1ms' : `time=${Math.round(ms)}ms`
+}
 
 export function CommandPrompt({ device }: { device: Device }) {
   const sim = useApp((s) => s.sim)
@@ -13,7 +19,7 @@ export function CommandPrompt({ device }: { device: Device }) {
   const [input, setInput] = useState('')
   const [busy, setBusy] = useState(false)
   const [remote, setRemote] = useState<{ deviceId: string; protocol: string } | null>(null)
-  const [history, setHistory] = useState<string[]>([])
+  const [history, setHistory] = useState<string[]>(() => loadCommandHistory(device.id))
   const [histIdx, setHistIdx] = useState(-1)
   const bottomRef = useRef<HTMLDivElement>(null)
   const inputRef = useRef<HTMLInputElement>(null)
@@ -34,7 +40,7 @@ export function CommandPrompt({ device }: { device: Device }) {
     setInput('')
     setHistIdx(-1)
     if (!cmd) return
-    setHistory((h) => [...h, cmd])
+    setHistory(recordCommand(device.id, cmd))
     const [name, ...args] = cmd.split(/\s+/)
     const low = name.toLowerCase()
     setBusy(true)
@@ -75,7 +81,7 @@ export function CommandPrompt({ device }: { device: Device }) {
           } else {
             const res = await sim.ping(device.id, resolved.ip, 4, true)
             const out = [`Pinging ${target} [${resolved.ip}] with 32 bytes of data:`]
-            for (const r of res.replies ?? []) out.push(r.ok ? `Reply from ${resolved.ip}: bytes=32 time=${Math.round((r.rtt ?? 0) * 1000)}ms TTL=64` : 'Request timed out.')
+            for (const r of res.replies ?? []) out.push(r.ok ? `Reply from ${resolved.ip}: bytes=32 ${formatRtt(r.rtt)} TTL=64` : 'Request timed out.')
             const lost = 4 - (res.replies?.filter((r) => r.ok).length ?? 0)
             out.push('', `Ping statistics for ${resolved.ip}:`, `    Packets: Sent = 4, Received = ${4 - lost}, Lost = ${lost} (${lost * 25}% loss),`)
             if (lost > 0) {

@@ -773,14 +773,15 @@ export class CliSession {
     const marks = seqs.map((n) => (res.replies?.some((r) => r.seq === n && r.ok) ? '!' : '.')).join('')
     const recv = res.replies?.filter((r) => r.ok).length ?? 0
     const rtts = res.replies?.filter((r) => r.ok && r.rtt !== undefined).map((r) => r.rtt!) ?? []
-    const min = rtts.length ? Math.min(...rtts) : 0
-    const max = rtts.length ? Math.max(...rtts) : 0
-    const avg = rtts.length ? rtts.reduce((n, x) => n + x, 0) / rtts.length : 0
+    const ms = rtts.map((rtt) => Math.round(rtt * 1000))
+    const min = ms.length ? Math.min(...ms) : 0
+    const max = ms.length ? Math.max(...ms) : 0
+    const avg = ms.length ? Math.round(ms.reduce((n, x) => n + x, 0) / ms.length) : 0
     return [
       'Type escape sequence to abort.',
       `Sending ${count}, ${size}-byte ICMP Echos to ${dst}, timeout is 2 seconds:`,
       marks,
-      `Success rate is ${Math.round((recv / count) * 100)} percent (${recv}/${count}), round-trip min/avg/max = ${min}/${Math.round(avg)}/${max} ms`,
+      `Success rate is ${Math.round((recv / count) * 100)} percent (${recv}/${count}), round-trip min/avg/max = ${min}/${avg}/${max} ms`,
     ].join('\n')
   }
 

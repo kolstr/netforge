@@ -73,6 +73,12 @@ export function sameSubnet(a: string, b: string, mask: string): boolean {
   return networkAddress(a, mask) === networkAddress(b, mask)
 }
 
+/** True for any address in the IPv4 loopback range 127.0.0.0/8. */
+export function isLoopbackIp(ip: string): boolean {
+  const n = parseIp(ip)
+  return n !== null && (n >>> 24) === 127
+}
+
 export function wildcardToMask(wildcard: string): string {
   const w = parseIp(wildcard)
   if (w === null) return '0.0.0.0'

@@ -132,6 +132,31 @@ describe('network engine', () => {
     expect(r.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!.ip).toBe('10.0.0.1')
   })
 
+  it('answers a ping to the loopback address', async () => {
+    const { s, pc } = lab()
+    for (let i = 0; i < 60; i++) s.step()
+    const res = await s.ping(pc.id, '127.0.0.1', 2, true)
+    expect(res.ok).toBe(true)
+    expect(res.replies?.map((r) => r.ok)).toEqual([true, true])
+    expect(s.traceRoute(pc.id, '127.0.0.1')).toEqual({ hops: [{ hop: 1, ip: '127.0.0.1', rtt: 0.5 }], complete: true })
+  })
+
+  it('answers a loopback ping on a host without an IP address', async () => {
+    const s = new Simulator()
+    s.dispose()
+    sims.push(s)
+    s.setMode('simulation')
+    const pc = s.addDevice('pc', 100, 100)
+    const res = await s.ping(pc.id, '127.0.0.1', 1, true)
+    expect(res.ok).toBe(true)
+    expect(s.traceRoute(pc.id, '127.0.0.1').complete).toBe(true)
+  })
+
+  it('resolves localhost locally', async () => {
+    const { s, pc } = lab()
+    expect(await s.resolveName(pc.id, 'localhost')).toEqual({ ok: true, ip: '127.0.0.1' })
+  })
+
   it('does not count a router unreachable message as a ping reply', async () => {
     const { s, pc } = lab()
     for (let i = 0; i < 60; i++) s.step()

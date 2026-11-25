@@ -23,6 +23,7 @@ import {
   incrementIp,
   ipInNetwork,
   ipInWildcard,
+  isLoopbackIp,
   isValidIp,
   longestPrefixMatch,
   networkAddress,
@@ -2371,13 +2372,18 @@ export class Simulator {
   // ---------------------------------------------------------------------------
   ping(clientId: string, dstIp: string, count = 4, autoDrain = true): Promise<AppResult & { replies: { seq: number; rtt?: number; ok: boolean }[] }> {
     const d = this.devices.get(clientId)
-    const ep = d ? this.preferredEndpoint(d) : undefined
-    if (!d || !ep || !isValidIp(dstIp)) {
+    if (!d || !isValidIp(dstIp)) {
+      return Promise.resolve({ ...toOutcome, replies: [] })
+    }
+    // The loopback range and the device's own addresses are answered locally,
+    // so they work even on a host without any configured interface.
+    const loopback = isLoopbackIp(dstIp) || this.l3Endpoints(d).some((e) => e.ip === dstIp)
+    const ep = loopback ? undefined : this.preferredEndpoint(d)
+    if (!loopback && !ep) {
       return Promise.resolve({ ...toOutcome, replies: [] })
     }
     const id = ++this.requestSeq
     const requestId = `req-${id}`
-    const loopback = this.l3Endpoints(d).some((e) => e.ip === dstIp)
     return new Promise((resolve) => {
       const replies: { seq: number; rtt?: number; ok: boolean }[] = []
       const req: AppRequest = {
@@ -2397,9 +2403,14 @@ export class Simulator {
       }
       this.requests.set(requestId, req)
       if (loopback) {
-        for (let seq = 1; seq <= count; seq++) replies.push({ seq, rtt: 0.001, ok: true })
+        for (let seq = 1; seq <= count; seq++) replies.push({ seq, rtt: 0.0005, ok: true })
         req.done = true
         req.resolve({ ok: true })
+        return
+      }
+      if (!ep) {
+        req.done = true
+        req.resolve({ ...toOutcome })
         return
       }
       for (let seq = 1; seq <= count; seq++) {
@@ -2564,6 +2575,7 @@ export class Simulator {
   // ---------------------------------------------------------------------------
   async resolveName(clientId: string, name: string): Promise<{ ok: boolean; ip?: string; error?: string; cached?: boolean }> {
     if (isValidIp(name)) return { ok: true, ip: name }
+    if (name.toLowerCase() === 'localhost') return { ok: true, ip: '127.0.0.1' }
     const d = this.devices.get(clientId)
     if (!d) return { ok: false, error: 'Device not found' }
     const rt = this.rt(clientId)
@@ -3118,11 +3130,15 @@ export class Simulator {
   traceRoute(clientId: string, dstIp: string): TraceResult {
     const d = this.devices.get(clientId)
     if (!d || !d.power) return { hops: [], complete: false }
+    // The loopback range and the device's own addresses never leave the host.
+    if (isLoopbackIp(dstIp) || this.l3Endpoints(d).some((e) => e.ip === dstIp)) {
+      return { hops: [{ hop: 1, ip: dstIp, rtt: 0.5 }], complete: true }
+    }
     const ep = this.preferredEndpoint(d)
     if (!ep) return { hops: [], complete: false }
     const segments = buildL2Segments(this.listDevices(), this.links, this.wireless, (l) => this.linkUp(l))
     const hops: TraceHop[] = [{ hop: 1, ip: ep.ip, rtt: 0.5 }]
-    let complete = this.l3Endpoints(d).some((e) => e.ip === dstIp)
+    let complete = false
     const visited = new Set<string>()
     let currentDevice = d
     let currentIp = ep.ip

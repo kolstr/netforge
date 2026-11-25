@@ -67,8 +67,8 @@ Double-click a device to open its window:
 
 - **Physical** — power, modules, port LEDs and cable management.
 - **Config** — hostname, interface addressing, VLANs, gateway, DNS, routing, NAT, ACLs, DHCP pools and services in forms.
-- **CLI** — an IOS-style modal CLI with `enable`, `configure terminal`, interface/line/router modes, abbreviations, `?` context help, tab completion and common `show`/`debug` commands.
-- **Desktop** — IP configuration, command prompt, web browser, email, FTP, wireless client, traffic generator and terminal.
+- **CLI** — an IOS-style modal CLI with `enable`, `configure terminal`, interface/line/router modes, abbreviations, `?` context help, tab completion and common `show`/`debug` commands. Command history is kept per device, so the up/down arrows recall earlier commands after the window is closed.
+- **Desktop** — IP configuration, command prompt, web browser, email, FTP, wireless client, traffic generator and terminal. The command prompt keeps its per-device history across sessions and can ping the loopback address (`127.0.0.1` / `localhost`).
 - **Services** — HTTP/HTTPS pages, DNS records, DHCP, TFTP, email accounts, FTP files, NTP and syslog.
 - **Attributes** — device metadata and runtime information.
 

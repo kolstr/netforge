@@ -47,7 +47,7 @@ export function DesktopTab({ device }: { device: Device }) {
         </div>
         <div className="flex min-h-0 flex-1 flex-col">
           {app === 'ipconfig' && <IPConfigApp device={device} />}
-          {app === 'command' && <CommandPrompt device={device} />}
+          {app === 'command' && <CommandPrompt key={device.id} device={device} />}
           {app === 'browser' && <WebBrowser device={device} />}
           {app === 'email' && <EmailApp device={device} />}
           {app === 'wireless' && <WirelessApp device={device} />}
