@@ -30,7 +30,7 @@ export interface Settings {
 const defaultSettings: Settings = {
   theme: 'dark',
   showGrid: true,
-  snapToGrid: false,
+  snapToGrid: true,
   showLabels: true,
   showLinkLights: true,
   autoSave: true,
