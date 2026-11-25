@@ -89,7 +89,7 @@ See [doc/wan-cloud.md](doc/wan-cloud.md) for WAN emulation: how the WAN Cloud an
 ## Protocols and services
 
 - Ethernet switching, MAC learning, flooding, VLANs, 802.1Q trunks, native VLANs and STP.
-- IPv4 addressing, subnet masks, ARP, ICMP, default gateways and static routes.
+- IPv4 addressing, subnet masks, ARP, ICMP, default gateways and static routes. Replies follow the same routing rules as requests, so a host without a gateway cannot answer traffic from another subnet.
 - RIP v1/v2, OSPF and EIGRP with per-interface network statements and passive interfaces.
 - DHCP server, relay (`ip helper-address`) and clients; DNS; HTTP/HTTPS; SMTP/POP3 email; FTP; TFTP; NTP and syslog.
 - NAT/PAT, static NAT/port forwarding, standard/extended ACLs and stateful firewall zones.

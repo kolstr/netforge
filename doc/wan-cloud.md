@@ -74,6 +74,9 @@ How the router chooses:
   **not redistributed by RIP/OSPF/EIGRP** — every router that needs one must be configured with it.
 * A **home router installs its default route automatically** from its WAN gateway (static WAN mode) or from
   the DHCP lease (automatic WAN mode); end devices use the *Default gateway* field in their Config tab.
+* **Replies are routed like any other packet.** A PC/server without a default gateway can still be reached
+  from its own subnet, but traffic from another subnet never gets an answer: the echo reply has no route
+  back and is dropped, so remote `ping` fails and `tracert` stops at the last router.
 
 ### Pattern 2 — home LAN to the internet through a cable modem
 

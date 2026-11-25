@@ -101,7 +101,7 @@ export interface TraceHop {
 
 export interface TraceResult {
   hops: TraceHop[]
-  /** True when the trace reached the destination, false when a hop was powered off or unreachable. */
+  /** True when the trace reached the destination, false when a hop was powered off, is unreachable, or cannot route its reply back to the source. */
   complete: boolean
 }
 
@@ -1672,6 +1672,15 @@ export class Simulator {
     }
     if (packet.type === 'ICMP' && packet.icmp && packet.dstIp === iface.ip) {
       if (packet.icmp.type === 8) {
+        const replyEp = this.endpointByIface(device, iface.id) ?? {
+          deviceId: device.id,
+          ifaceId: iface.id,
+          ifaceName: iface.name,
+          ip: iface.ip ?? '',
+          mask: iface.mask ?? '255.255.255.0',
+          vlan: 1,
+          speed: iface.speed,
+        }
         const reply: WirePacket = {
           id: `pkt-${packetCounter++}`,
           type: 'ICMP',
@@ -1684,7 +1693,9 @@ export class Simulator {
           icmp: { type: 0, code: 0, id: packet.icmp.id, seq: packet.icmp.seq, data: packet.icmp.data },
           meta: { ...packet.meta, fromDeviceId: device.id },
         }
-        this.sendOutIface(device, iface, reply)
+        // A reply still has to follow the host's routing table: without a route
+        // (e.g. a missing default gateway) the echo reply is dropped.
+        this.routeFromSource(device, reply, replyEp, packet.srcIp ?? '', packet.srcMac)
       } else if (packet.icmp.type === 0 && packet.meta.ownerPduId) {
         this.completePdu(packet.meta.ownerPduId, true)
       } else if (packet.icmp.type === 0 || packet.icmp.type === 11 || packet.icmp.type === 3) {
@@ -2417,15 +2428,16 @@ export class Simulator {
     const req = this.requests.get(requestId)
     if (!req) return
     const seq = packet.icmp?.seq ?? 0
-    const rtt = Number(((packet.meta.pingStart as number) ?? this.time - 0.01).toFixed(3))
+    if (req.replies?.some((r) => r.seq === seq)) return
+    // Only an echo reply proves the round trip; TTL exceeded / unreachable
+    // messages come from a router in between and must not count as answers.
+    const answered = packet.icmp?.type === 0
     const start = (packet.meta.pingStart as number) ?? this.time
     const actualRtt = Math.max(0.001, this.time - start)
-    if (!req.replies?.some((r) => r.seq === seq)) req.replies?.push({ seq, rtt: Number(actualRtt.toFixed(3)), ok: true })
+    req.replies?.push(answered ? { seq, rtt: Number(actualRtt.toFixed(3)), ok: true } : { seq, ok: false })
     if ((req.replies?.length ?? 0) >= (req.count ?? 4)) {
       req.done = true
-      req.resolve({ ok: true, replies: req.replies })
-    } else if (rtt < 0) {
-      // no-op
+      req.resolve({ ok: req.replies?.some((r) => r.ok) ?? false, replies: req.replies })
     }
   }
 
@@ -3114,6 +3126,7 @@ export class Simulator {
     const visited = new Set<string>()
     let currentDevice = d
     let currentIp = ep.ip
+    let sourceIp = ep.ip
     for (let i = 0; i < 15 && !complete; i++) {
       if (visited.has(currentDevice.id)) break
       visited.add(currentDevice.id)
@@ -3133,13 +3146,43 @@ export class Simulator {
       const nextEp = this.endpointByIp(owner, nextIp)
       const egress = this.egressForRoute(currentDevice, route, dstIp)
       if (!nextEp || !egress || !this.sameL2Segment(segments, egress, nextEp)) break
+      // A hop can only answer when it can route the reply back to the source
+      // (a host without a default gateway cannot answer from another subnet).
+      if (!this.canReplyTo(owner.id, sourceIp, segments)) break
       hops.push({ hop: hops.length + 1, ip: nextIp, rtt: Number((1 + hops.length * 0.6).toFixed(2)) })
       if (owner.id === currentDevice.id) break
+      sourceIp = this.natTranslateSource(currentDevice, egress, sourceIp)
       currentDevice = owner
       currentIp = nextIp
       complete = this.l3Endpoints(owner).some((e) => e.ip === dstIp)
     }
     return { hops, complete }
+  }
+
+  /** Whether `deviceId` has a working route back to `sourceIp`, so its ICMP answer arrives. */
+  private canReplyTo(deviceId: string, sourceIp: string, segments: Map<string, L3Endpoint[]>): boolean {
+    const device = this.devices.get(deviceId)
+    if (!device || !device.power) return false
+    const route = this.routeLookup(deviceId, sourceIp)
+    if (!route || (!route.iface && !route.nextHop)) return false
+    const egress = this.egressForRoute(device, route, sourceIp)
+    if (!egress) return false
+    const nextIp = route.nextHop ?? sourceIp
+    const owner = this.findOwnerOfIp(nextIp)
+    if (!owner || !owner.power) return false
+    const nextEp = this.endpointByIp(owner, nextIp)
+    if (!nextEp) return false
+    return this.sameL2Segment(segments, egress, nextEp)
+  }
+
+  /** Source address that hops beyond `device` see once it translates the flow on egress. */
+  private natTranslateSource(device: Device, egress: L3Endpoint, sourceIp: string): string {
+    if (device.kind === 'homerouter') return egress.ifaceId === 'wan' ? egress.ip : sourceIp
+    const egressIface = this.ifaceById(device, egress.ifaceId)
+    if (egressIface?.nat !== 'outside') return sourceIp
+    const staticRule = device.config.nat.static.find((s) => s.inside === sourceIp)
+    if (staticRule) return staticRule.outside
+    return device.config.nat.insideSourceList ? egress.ip : sourceIp
   }
 
   private sameL2Segment(segments: Map<string, L3Endpoint[]>, a: L3Endpoint, b: L3Endpoint): boolean {

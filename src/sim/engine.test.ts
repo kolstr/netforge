@@ -112,6 +112,44 @@ describe('network engine', () => {
     expect(res.hops.length).toBe(1)
   })
 
+  it('does not ping or trace a remote host that has no route back', async () => {
+    const { s, server, pc } = lab()
+    for (let i = 0; i < 60; i++) s.step()
+    server.config.gateway = ''
+    const pcIp = pc.interfaces.find((i) => i.kind === 'ethernet')!.ip
+    expect((await s.ping(pc.id, '10.0.0.10', 2, true)).ok).toBe(false)
+    const trace = s.traceRoute(pc.id, '10.0.0.10')
+    expect(trace.complete).toBe(false)
+    expect(trace.hops.map((h) => h.ip)).toEqual([pcIp, '192.168.1.1'])
+  })
+
+  it('still pings a host without a gateway from its own subnet', async () => {
+    const { s, server, r } = lab()
+    for (let i = 0; i < 60; i++) s.step()
+    server.config.gateway = ''
+    expect((await s.ping(server.id, '10.0.0.1', 1, true)).ok).toBe(true)
+    expect(s.traceRoute(server.id, '10.0.0.1').complete).toBe(true)
+    expect(r.interfaces.find((i) => i.name === 'GigabitEthernet0/1')!.ip).toBe('10.0.0.1')
+  })
+
+  it('does not count a router unreachable message as a ping reply', async () => {
+    const { s, pc } = lab()
+    for (let i = 0; i < 60; i++) s.step()
+    const pending = s.ping(pc.id, '172.16.0.5', 1, false)
+    for (let i = 0; i < 20; i++) s.step()
+    const res = await pending
+    expect(res.ok).toBe(false)
+    expect(res.replies?.some((r) => r.ok)).toBeFalsy()
+  })
+
+  it('does not answer a ping when the default gateway is not on the wire', async () => {
+    const { s, server, pc } = lab()
+    for (let i = 0; i < 60; i++) s.step()
+    server.config.gateway = '10.0.0.99'
+    expect((await s.ping(pc.id, '10.0.0.10', 2, true)).ok).toBe(false)
+    expect(s.traceRoute(pc.id, '10.0.0.10').complete).toBe(false)
+  })
+
   it('serves HTTP over TCP with DNS resolution', async () => {
     const { s, pc } = lab()
     for (let i = 0; i < 60; i++) s.step()

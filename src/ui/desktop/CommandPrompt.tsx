@@ -104,7 +104,7 @@ export function CommandPrompt({ device }: { device: Device }) {
               for (const h of trace.hops) out.push(`  ${String(h.hop).padStart(2)}    ${Math.round(h.rtt)} ms    ${Math.round(h.rtt + 1)} ms    ${Math.round(h.rtt + 2)} ms  ${h.ip}`)
               if (!trace.complete) {
                 out.push(`  ${String(trace.hops.length + 1).padStart(2)}     *        *        *     Request timed out.`)
-                out.push('', 'Trace could not reach the destination: check that routers and switches along the path are powered on.')
+                out.push('', 'Trace could not reach the destination: check that routers and switches along the path are powered on and that the destination can route replies back to this host.')
               }
               out.push('', 'Trace complete.')
               print(out.join('\n'))
