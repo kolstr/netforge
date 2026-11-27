@@ -60,7 +60,7 @@
   --color-violet-300: #c4b5fd;
   --nf-text: #e2e8f0;
   /* Placeholders stay clearly dimmer than real input values. */
-  --nf-placeholder: #7f90a6;
+  --nf-placeholder: #5c6b80;
   --nf-edge: rgb(255 255 255 / 0.08);
   --nf-edge-strong: rgb(255 255 255 / 0.15);
   --nf-fill-subtle: rgb(255 255 255 / 0.04);
@@ -108,7 +108,7 @@
   --color-violet-300: #6d28d9;
   --nf-text: #1e293b;
   /* Placeholders stay clearly dimmer than real input values. */
-  --nf-placeholder: #6f7b8b;
+  --nf-placeholder: #98a3b3;
   --nf-edge: rgb(15 23 42 / 0.1);
   --nf-edge-strong: rgb(15 23 42 / 0.18);
   --nf-fill-subtle: rgb(15 23 42 / 0.04);
@@ -131,7 +131,7 @@
   --color-slate-600: #374151;
   --color-slate-700: #1f2937;
   --color-slate-800: #111827;
-  --nf-placeholder: #6b7280;
+  --nf-placeholder: #949ca8;
 }
 
 * { box-sizing: border-box; }

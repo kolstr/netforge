@@ -4,7 +4,7 @@ import type { Acl, Device, DhcpPool, Interface, StaticRoute } from '../../types'
 import { useApp } from '../../store'
 import { Field, Toggle } from '../common/Modal'
 import { shortIfaceName } from '../../sim/runtime'
-import { formatIpWithMask, parseAclAddress } from '../../lib/ip'
+import { formatIpWithMask, isValidMask, parseAclAddress } from '../../lib/ip'
 
 export function ConfigTab({ device }: { device: Device }) {
   const store = useApp()
@@ -287,7 +287,8 @@ function RoutingSection({ device }: { device: Device }) {
   const store = useApp()
   const sim = store.sim
   const update = (fn: (d: Device) => void) => store.updateDevice(device.id, fn)
-  const [route, setRoute] = useState<StaticRoute>({ network: '', mask: '255.255.255.0', nextHop: '' })
+  const [route, setRoute] = useState<StaticRoute>({ network: '', mask: '', nextHop: '' })
+  const canAddRoute = !!route.network.trim() && isValidMask(route.mask)
   return (
     <Section title="Routing" icon={<Route size={12} />}>
       <div className="space-y-2">
@@ -295,17 +296,17 @@ function RoutingSection({ device }: { device: Device }) {
         {device.config.routes.length === 0 && <div className="text-[11px] text-slate-600">No static routes.</div>}
         {device.config.routes.map((r, idx) => (
           <div key={idx} className="flex items-center gap-1.5 rounded-md border border-white/8 bg-ink-900/50 p-1.5">
-            <input className="input flex-1 font-mono text-[11px]" defaultValue={r.network} placeholder="network" onBlur={(e) => update((d) => (d.config.routes[idx].network = e.target.value))} />
-            <input className="input w-28 font-mono text-[11px]" defaultValue={r.mask} placeholder="mask" onBlur={(e) => update((d) => (d.config.routes[idx].mask = e.target.value))} />
-            <input className="input w-28 font-mono text-[11px]" defaultValue={r.nextHop ?? r.iface ?? ''} placeholder="next hop" onBlur={(e) => update((d) => { d.config.routes[idx].nextHop = e.target.value; delete d.config.routes[idx].iface })} />
+            <input className="input min-w-0 flex-1 font-mono text-[11px]" defaultValue={r.network} placeholder="network" onBlur={(e) => update((d) => (d.config.routes[idx].network = e.target.value))} />
+            <input className="input min-w-0 flex-1 font-mono text-[11px]" defaultValue={r.mask} placeholder="subnet mask" onBlur={(e) => update((d) => (d.config.routes[idx].mask = e.target.value))} />
+            <input className="input min-w-0 flex-1 font-mono text-[11px]" defaultValue={r.nextHop ?? r.iface ?? ''} placeholder="next hop" onBlur={(e) => update((d) => { d.config.routes[idx].nextHop = e.target.value; delete d.config.routes[idx].iface })} />
             <button className="text-slate-600 hover:text-rose-300" onClick={() => update((d) => d.config.routes.splice(idx, 1))}><Trash2 size={11} /></button>
           </div>
         ))}
         <div className="flex items-center gap-1.5">
-          <input className="input flex-1 font-mono text-[11px]" value={route.network} onChange={(e) => setRoute({ ...route, network: e.target.value })} placeholder="0.0.0.0" />
-          <input className="input w-28 font-mono text-[11px]" value={route.mask} onChange={(e) => setRoute({ ...route, mask: e.target.value })} placeholder="mask" />
-          <input className="input w-28 font-mono text-[11px]" value={route.nextHop} onChange={(e) => setRoute({ ...route, nextHop: e.target.value })} placeholder="next hop" />
-          <button className="btn btn-primary" onClick={() => { if (!route.network) return; update((d) => { d.config.routes.push(route); sim.recompute() }); setRoute({ network: '', mask: '255.255.255.0', nextHop: '' }) }}><Plus size={10} /></button>
+          <input className="input min-w-0 flex-1 font-mono text-[11px]" value={route.network} onChange={(e) => setRoute({ ...route, network: e.target.value })} placeholder="0.0.0.0" />
+          <input className="input min-w-0 flex-1 font-mono text-[11px]" value={route.mask} onChange={(e) => setRoute({ ...route, mask: e.target.value })} placeholder="subnet mask" />
+          <input className="input min-w-0 flex-1 font-mono text-[11px]" value={route.nextHop} onChange={(e) => setRoute({ ...route, nextHop: e.target.value })} placeholder="next hop" />
+          <button className="btn btn-primary" disabled={!canAddRoute} title={canAddRoute ? 'Add route' : 'Enter a network and subnet mask first'} onClick={() => { if (!canAddRoute) return; update((d) => { d.config.routes.push(route); sim.recompute() }); setRoute({ network: '', mask: '', nextHop: '' }) }}><Plus size={10} /></button>
         </div>
       </div>
       <div className="mt-3 grid gap-2 md:grid-cols-3">
