@@ -42,10 +42,11 @@
   --color-slate-100: #f1f5f9;
   --color-slate-200: #e2e8f0;
   --color-slate-300: #cbd5e1;
-  --color-slate-400: #94a3b8;
-  --color-slate-500: #64748b;
-  --color-slate-600: #475569;
-  --color-slate-700: #334155;
+  /* Dim text tiers lifted for legibility on the dark surfaces (slate-600 now clears 4.5:1). */
+  --color-slate-400: #a3b1c4;
+  --color-slate-500: #8496ac;
+  --color-slate-600: #73869e;
+  --color-slate-700: #5d6f87;
   --color-slate-800: #1e293b;
   --color-cyan-200: #a5f3fc;
   --color-cyan-300: #67e8f9;
@@ -59,7 +60,7 @@
   --color-violet-300: #c4b5fd;
   --nf-text: #e2e8f0;
   /* Placeholders stay clearly dimmer than real input values. */
-  --nf-placeholder: #5c6b80;
+  --nf-placeholder: #7f90a6;
   --nf-edge: rgb(255 255 255 / 0.08);
   --nf-edge-strong: rgb(255 255 255 / 0.15);
   --nf-fill-subtle: rgb(255 255 255 / 0.04);
@@ -90,10 +91,11 @@
   --color-slate-200: #1e293b;
   --color-slate-300: #334155;
   --color-slate-400: #475569;
-  --color-slate-500: #5b6779;
-  --color-slate-600: #6b7789;
-  --color-slate-700: #94a3b8;
-  --color-slate-800: #cbd5e1;
+  /* Dim text tiers deepened: the old values sat under 2.6:1 on the light surfaces. */
+  --color-slate-500: #4d5a6d;
+  --color-slate-600: #5c6a7d;
+  --color-slate-700: #6a7688;
+  --color-slate-800: #8c98a8;
   --color-cyan-200: #0e7490;
   --color-cyan-300: #0e7490;
   --color-sky-200: #0369a1;
@@ -106,7 +108,7 @@
   --color-violet-300: #6d28d9;
   --nf-text: #1e293b;
   /* Placeholders stay clearly dimmer than real input values. */
-  --nf-placeholder: #98a3b3;
+  --nf-placeholder: #6f7b8b;
   --nf-edge: rgb(15 23 42 / 0.1);
   --nf-edge-strong: rgb(15 23 42 / 0.18);
   --nf-fill-subtle: rgb(15 23 42 / 0.04);
@@ -119,6 +121,17 @@
   --nf-canvas-dot: rgb(100 116 139 / 0.3);
   --nf-selection: rgb(34 211 238 / 0.35);
   --nf-shape-text: #334155;
+}
+
+/* The simulated browser always draws a light page (fixed #f8fafc), so its text
+   ramp must stay dark-on-light in both themes instead of following the theme. */
+.nf-palette-default.nf-sim-light {
+  --color-slate-400: #5b6779;
+  --color-slate-500: #4a5568;
+  --color-slate-600: #374151;
+  --color-slate-700: #1f2937;
+  --color-slate-800: #111827;
+  --nf-placeholder: #6b7280;
 }
 
 * { box-sizing: border-box; }

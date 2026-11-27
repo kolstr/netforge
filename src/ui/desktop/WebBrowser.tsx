@@ -80,7 +80,7 @@ export function WebBrowser({ device }: { device: Device }) {
   }
 
   return (
-    <div className="nf-palette-default flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-white/10 bg-[#f8fafc]">
+    <div className="nf-palette-default nf-sim-light flex min-h-0 flex-1 flex-col overflow-hidden rounded-lg border border-white/10 bg-[#f8fafc]">
       <div className="flex shrink-0 items-center gap-1.5 border-b border-slate-300 bg-slate-200 px-2 py-1.5">
         <button className="rounded p-1 text-slate-600 hover:bg-slate-300 disabled:opacity-30" onClick={goBack} disabled={histIdx <= 0}><ArrowLeft size={14} /></button>
         <button className="rounded p-1 text-slate-600 hover:bg-slate-300 disabled:opacity-30" onClick={goForward} disabled={histIdx >= history.length - 1}><ArrowRight size={14} /></button>
@@ -98,7 +98,7 @@ export function WebBrowser({ device }: { device: Device }) {
           />
           {url && <button className="text-slate-400 hover:text-slate-600" onClick={() => setUrl('')}><X size={11} /></button>}
         </div>
-        <button className="rounded bg-cyan-600 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-cyan-700" onClick={() => void navigate(url)}>Go</button>
+        <button className="rounded bg-cyan-700 px-2.5 py-1 text-[11px] font-medium text-white hover:bg-cyan-800" onClick={() => void navigate(url)}>Go</button>
       </div>
 
       <div className="relative min-h-0 flex-1 overflow-auto bg-white">
